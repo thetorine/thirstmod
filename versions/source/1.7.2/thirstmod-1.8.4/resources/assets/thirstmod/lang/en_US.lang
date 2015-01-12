@@ -1,0 +1,34 @@
+//blocks
+tile.rain_collector.name=Rain Collector
+tile.drinks_brewer.name=Drinks Brewer
+tile.drink_shop.name=Drinks Store
+
+//items
+item.dirty_filter.name=Dirty Filter
+item.filter.name=Filter
+item.coins.name=Coins
+item.coal_filter.name=Charcoal Filter
+item.wood_cup.name=Wood Cup
+item.wood_water.name=Cup of Water
+item.filtered_water.name=Cup of Clean Water
+item.fresh_water.name=Fresh Water
+item.milk_bottle.name=Milk Bottle
+item.chocolate_milk.name=Chocolate Milk
+item.clean_bucket.name=Filter Water Bucket
+
+canteen_0.name=Empty Canteen
+
+canteen_1.name=Canteen 1/5
+canteen_2.name=Canteen 2/5
+canteen_3.name=Canteen 3/5
+canteen_4.name=Canteen 4/5
+canteen_5.name=Canteen
+
+canteen_6.name=Filtered Canteen 1/5
+canteen_7.name=Filtered Canteen 2/5
+canteen_8.name=Filtered Canteen 3/5
+canteen_9.name=Filtered Canteen 4/5
+canteen_10.name=Filtered Canteen
+
+//other
+itemGroup.drinks=Thirst Mod
