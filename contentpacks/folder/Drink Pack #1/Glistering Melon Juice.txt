@@ -1,0 +1,11 @@
+item
+ name:Glistering Melon Juice
+ internal_name:gmelon_juice
+ colour:FFB375
+ stacksize:4
+ effect:true
+recipe
+ item:speckled_melon
+thirst_stats
+ bar_heal:8
+ saturation_heal:2.1

@@ -1,0 +1,10 @@
+item
+ name:Apple Juice
+ internal_name:apple_juice
+ colour:C4694B
+ stacksize:4
+recipe
+ item:apple
+thirst_stats
+ bar_heal:5
+ saturation_heal:1.2

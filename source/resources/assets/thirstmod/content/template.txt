@@ -1,0 +1,25 @@
+item
+ name string
+ internal_name string
+ colour hex
+ stacksize integer
+ effect boolean
+ always_drinkable boolean
+recipe
+ item string
+ metadata integer
+thirst_stats
+ bar_heal integer
+ saturation_heal float
+ poison_chance float
+ potion_cure boolean
+hunger_stats
+ bar_heal_hunger integer
+ saturation_heal_hunger float
+potion_effect
+ id integer
+ duration integer
+ amplifier integer
+
+//careful there is a space in there - add modifiers in brackets
+split_modifier [@:-=* ]

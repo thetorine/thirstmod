@@ -1,0 +1,10 @@
+item
+ name:Cactus Water
+ internal_name:cactus_water
+ colour:519695
+ stacksize:4
+recipe
+ item:cactus
+thirst_stats
+ bar_heal:3
+ saturation_heal:1.7

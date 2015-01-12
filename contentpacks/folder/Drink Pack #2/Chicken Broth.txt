@@ -1,0 +1,10 @@
+item
+ name:Chicken Broth
+ internal_name:chicken_broth
+ colour:F0B16E
+ stacksize:4
+recipe
+ item:cooked_chicken
+thirst_stats
+ bar_heal:5
+ saturation_heal:1.3

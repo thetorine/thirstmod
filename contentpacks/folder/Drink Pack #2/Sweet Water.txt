@@ -1,0 +1,10 @@
+item
+ name:Sweet Water
+ internal_name:sweet_water
+ colour:72FCAB
+ stacksize:4
+recipe
+ item:sugar
+thirst_stats
+ bar_heal:6
+ saturation_heal:1

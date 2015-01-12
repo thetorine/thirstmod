@@ -1,0 +1,10 @@
+item
+ name:Protein Mix
+ internal_name:protein_mix
+ colour:EEF0AF
+ stacksize:4
+recipe
+ item:nether_wart
+thirst_stats
+ bar_heal:4
+ saturation_heal:1.3

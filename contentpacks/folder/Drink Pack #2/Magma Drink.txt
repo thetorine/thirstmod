@@ -1,0 +1,10 @@
+item
+ name:Liquid Magma Cream
+ internal_name:magma_drink
+ colour:401213
+ stacksize:4
+recipe
+ item:magma_cream
+thirst_stats
+ bar_heal:9
+ saturation_heal:1.6

@@ -1,0 +1,10 @@
+item
+ name:Pumpkin Juice
+ internal_name:pumpkin_juice
+ colour:FF7300
+ stacksize:4
+recipe
+ item:pumpkin
+thirst_stats
+ bar_heal:4
+ saturation_heal:1.4

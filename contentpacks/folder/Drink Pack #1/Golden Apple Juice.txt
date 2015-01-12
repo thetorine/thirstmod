@@ -1,0 +1,16 @@
+item
+ name:Golden Apple Juice
+ internal_name:gapple_juice
+ colour:E3C100
+ stacksize:1
+ effect:true
+ always_drinkable:true
+recipe
+ item:golden_apple
+thirst_stats
+ bar_heal:20
+ saturation_heal:10
+potion_effect
+ id:10
+ duration:15
+ amplifier:1

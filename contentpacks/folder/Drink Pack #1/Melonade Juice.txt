@@ -1,0 +1,10 @@
+item
+ name:Melonade
+ internal_name:melonade
+ colour:ED934A
+ stacksize:4
+recipe
+ item:melon
+thirst_stats
+ bar_heal:7
+ saturation_heal:1.5

@@ -1,0 +1,10 @@
+item
+ name:Nether Wart Drink
+ internal_name:nw_drink
+ colour:291313
+ stacksize:4
+recipe
+ item:nether_wart
+thirst_stats
+ bar_heal:7
+ saturation_heal:1.4

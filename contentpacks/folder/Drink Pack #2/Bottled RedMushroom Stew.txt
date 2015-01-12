@@ -1,0 +1,10 @@
+item
+ name:Bottled Red Mushroom Stew
+ internal_name:bottled_redstew
+ colour:E0384F
+ stacksize:4
+recipe
+ item:red_mushroom
+thirst_stats
+ bar_heal:5
+ saturation_heal:1.5

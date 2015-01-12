@@ -1,0 +1,10 @@
+item
+ name:Dandelion Tea
+ internal_name:flower_tea
+ colour:FAF86B
+ stacksize:4
+recipe
+ item:yellow_flower
+thirst_stats
+ bar_heal:1
+ saturation_heal:0.5

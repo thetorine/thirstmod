@@ -1,0 +1,12 @@
+item
+ name:Diamond Drink
+ internal_name:diamond_drink
+ colour:6F00FF
+ stacksize:1
+ effect:true
+ always_drinkable:true
+recipe
+ item:diamond
+thirst_stats
+ bar_heal:20
+ saturation_heal:10

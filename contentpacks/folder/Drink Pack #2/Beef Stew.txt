@@ -1,0 +1,10 @@
+item
+ name:Beef Stew
+ internal_name:beef_stew
+ colour:D16D15
+ stacksize:4
+recipe
+ item:cooked_beef
+thirst_stats
+ bar_heal:5
+ saturation_heal:1.2

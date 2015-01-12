@@ -1,0 +1,10 @@
+item
+ name:Bottled Mushroom Stew
+ internal_name:bottled_stew
+ colour:8CA395
+ stacksize:4
+recipe
+ item:brown_mushroom
+thirst_stats
+ bar_heal:3
+ saturation_heal:1
