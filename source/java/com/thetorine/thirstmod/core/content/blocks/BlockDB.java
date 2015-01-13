@@ -2,6 +2,7 @@ package com.thetorine.thirstmod.core.content.blocks;
 
 import java.util.Random;
 
+import com.thetorine.thirstmod.core.content.packs.ContentLoader;
 import com.thetorine.thirstmod.core.main.ThirstMod;
 import com.thetorine.thirstmod.core.utils.Constants;
 
@@ -16,6 +17,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -39,7 +41,14 @@ public class BlockDB extends BlockContainer {
 	
 	@Override
 	public boolean onBlockActivated(World par1World, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
-		player.openGui(ThirstMod.instance, Constants.DRINKS_BREWER_ID, par1World, x, y, z);
+		if(ContentLoader.ADDED_DRINKS.size() > 0) {
+			player.openGui(ThirstMod.instance, Constants.DRINKS_BREWER_ID, par1World, x, y, z);
+		} else {
+			if(player.worldObj.isRemote) {
+				player.addChatComponentMessage(new ChatComponentText("There are no drink packs installed!"));
+				player.addChatComponentMessage(new ChatComponentText("Download from Thirst Mod post on Minecraft Forums and place in [minecraft-dir]/thirstmod/content"));
+			}
+		}
 		return true;
 	}
 	

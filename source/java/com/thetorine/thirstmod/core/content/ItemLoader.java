@@ -24,21 +24,21 @@ public class ItemLoader {
 	public static Item milk = new ItemDrink(6, 1.8f, 0xF0E8DF, Constants.DRINKS_STACKSIZE, false, false, "milk");
 	public static Item chocolate_milk = new ItemDrink(7, 2f, 0x6E440D, Constants.DRINKS_STACKSIZE, false, false, "chocolate_milk");
 	public static Item fresh_water_bucket = new ItemInternalDrink(10, 4f, 0f, "thirstmod:clean_bucket", 1).setReturnItem(Items.bucket).setUnlocalizedName("clean_bucket");
-	public static Item canteen = new ItemCanteen().setCreativeTab(ThirstMod.thirst);
+	public static Item canteen = new ItemCanteen().setCreativeTab(ThirstMod.thirst).setUnlocalizedName("canteen");
 	
 	public ItemLoader() {
-		GameRegistry.registerItem(gold_coin, gold_coin.getUnlocalizedName());
-		GameRegistry.registerItem(filter, filter.getUnlocalizedName());
-		GameRegistry.registerItem(dirty_filter, dirty_filter.getUnlocalizedName());
-		GameRegistry.registerItem(charcoal_filter, charcoal_filter.getUnlocalizedName());
-		GameRegistry.registerItem(cup, cup.getUnlocalizedName());
-		GameRegistry.registerItem(water_cup, water_cup.getUnlocalizedName());
-		GameRegistry.registerItem(filtered_water_cup, filtered_water_cup.getUnlocalizedName());
-		GameRegistry.registerItem(fresh_water, fresh_water.getUnlocalizedName());
-		GameRegistry.registerItem(milk, milk.getUnlocalizedName());
-		GameRegistry.registerItem(chocolate_milk, chocolate_milk.getUnlocalizedName());
-		GameRegistry.registerItem(fresh_water_bucket, fresh_water_bucket.getUnlocalizedName());
-		GameRegistry.registerItem(canteen, canteen.getUnlocalizedName());
+		registerItem(gold_coin);
+		registerItem(filter);
+		registerItem(dirty_filter);
+		registerItem(charcoal_filter);
+		registerItem(cup);
+		registerItem(water_cup);
+		registerItem(filtered_water_cup);
+		registerItem(fresh_water);
+		registerItem(milk);
+		registerItem(chocolate_milk);
+		registerItem(fresh_water_bucket);
+		registerItem(canteen);
 		
 		GameRegistry.addSmelting(Items.potionitem, new ItemStack(fresh_water, 1), 0.3f);
 		GameRegistry.addSmelting(Items.water_bucket, new ItemStack(fresh_water_bucket, 1), 0.4f);
@@ -63,5 +63,10 @@ public class ItemLoader {
 		RCRecipes.addRecipe(cup, 150, new ItemStack(filtered_water_cup));
 		RCRecipes.addRecipe(Items.bucket, 600, new ItemStack(fresh_water_bucket));
 		RCRecipes.addRecipe(canteen, 175, new ItemStack(canteen, 1, 10));
+	}
+	
+	private void registerItem(Item i) {
+		String name = i.getUnlocalizedName().replace("item.", "");
+		GameRegistry.registerItem(i, name);
 	}
 }

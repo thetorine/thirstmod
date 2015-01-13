@@ -7,6 +7,7 @@ import java.util.zip.*;
 
 import com.thetorine.thirstmod.core.main.ThirstMod;
 
+import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.item.*;
 
 public class DrinkRegistry {
@@ -20,7 +21,7 @@ public class DrinkRegistry {
 	}
 
 	public void findFiles() throws Exception {
-		File modsDir = new File(ThirstMod.mcDir(), "/mods");
+		File modsDir = new File(ThirstMod.getMinecraftDir(), "/mods");
 		List<URI> mods = new ArrayList<URI>();
 		if (modsDir.listFiles().length > 0) {
 			for (int i = 0; i < modsDir.listFiles().length; i++) {
@@ -32,10 +33,8 @@ public class DrinkRegistry {
 
 		for (int i = 0; i < mods.size(); i++) {
 			URI uri = mods.get(i);
-
 			File zipFile = new File(uri);
 			ZipFile zip = new ZipFile(zipFile);
-
 			try {
 				InputStream is = zip.getInputStream(zip.getEntry("drinks.txt"));
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -47,7 +46,7 @@ public class DrinkRegistry {
 			zip.close();
 		}
 
-		File contentDir = new File(ThirstMod.mcDir(), "/thirstmod/external/");
+		File contentDir = new File(ThirstMod.getMinecraftDir(), "/thirstmod/external/");
 		contentDir.mkdirs();
 		createInstructions(new File(contentDir, "usage.info"));
 		createDrinks(new File(contentDir, "minecraft-items.txt"));
@@ -63,21 +62,18 @@ public class DrinkRegistry {
 	}
 
 	public void init(BufferedReader br) {
-		while (true) {
-			String line = null;
-			try {
-				line = br.readLine();
-			} catch (Exception e) {
-				break;
+		try {
+			while(br.ready()) {
+				String line = br.readLine();
+				if(line.startsWith("//")) {
+					continue;
+				} else {
+					String[] split = line.split(" ");
+					readFiles(split);
+				}
 			}
-			if (line == null) {
-				break;
-			}
-			if (line.startsWith("//")) {
-				continue;
-			}
-			String[] colon = line.split(":");
-			readFiles(colon);
+		} catch(Exception e) {
+			System.out.println("Couldn't load external drinks.");
 		}
 	}
 
@@ -98,17 +94,17 @@ public class DrinkRegistry {
 			metadata = Integer.parseInt(colon[5]);
 		}
 
-		Item item = (Item) Item.itemRegistry.getObject(id);
+		Item item = (Item) GameData.getItemRegistry().getObject(id);
 		DrinkLists.addDrink(new ItemStack(item, 0, metadata), level, saturation, poison, chance);
-		ThirstMod.print("Added: " + id);
+		ThirstMod.print("Added: " + id + " at " + item);
 	}
 
 	public void createDrinks(File file) throws Exception {
 		if (!file.exists()) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			writer.write("mushroom_stew:7:1.2\n");
-			writer.write("milk_bucket:8:3.4\n");
-			writer.write("potion:3:1.4:true:0.4:0");
+			writer.write("mushroom_stew 7 1.2\n");
+			writer.write("milk_bucket 8 3.4\n");
+			writer.write("potion 3 1.4 true 0.4 0");
 			writer.close();
 		}
 	}
@@ -117,7 +113,7 @@ public class DrinkRegistry {
 		if (!file.exists()) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 			writer.write("Lets hope you're not an idiot. :D\n\n");
-			writer.write("item_id:thirst_replenish:thirst_saturation:causes_poison:poison_chance:metadata\n\n");
+			writer.write("item_id thirst_replenish thirst_saturation causes_poison poison_chance metadata\n\n");
 			writer.write("Copy and paste this in a new [.txt] file. Replace all of the above with the correct values.\n");
 			writer.write("    item_id = String (consult wiki or mod author for item id)\n"
 					   + "    thirst_replenish = Integer (one to twenty)\n"
@@ -126,6 +122,7 @@ public class DrinkRegistry {
 					   + "    poison_chance = Decimal (0.1 to 0.9)\n"
 					   + "    metadata = Integer (consult wiki or mod author for item metadata)\n\n");
 			writer.write("Use the exact format displayed. Do NOT misplace the values or the game WILL crash.\n\n");
+			writer.write("Don't forget the spaces between each value!\n\n");
 			writer.write("One item per line in a [.txt] file in this folder. Ask tarun1998 on the forums about any issues.");
 			writer.close();
 		}

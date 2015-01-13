@@ -25,7 +25,6 @@ public class DBRecipes {
 		brewingList.put(s, itemstack);
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	public void addRecipe(String s, int metadata, ItemStack itemstack) {
 		metaBrewingList.put(Arrays.asList(s, metadata), itemstack);
 	}

@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class TileEntityRC extends TileEntity implements IInventory {
+	//0=input, 1=output
 	public ItemStack rainItemStacks[];
 	public int rainMeter;
 	public int internalBucket;
@@ -29,7 +30,7 @@ public class TileEntityRC extends TileEntity implements IInventory {
 			boolean flag = worldObj.getWorldInfo().isRaining();
 			boolean flag1 = canRainOn(xCoord, yCoord, zCoord, worldObj);
 			isActive = flag && flag1;
-			if ((isActive == true) && canFill()) {
+			if (isActive && canFill()) {
 				rainMeter++;
 				if (rainMeter == RCRecipes.getFillTimeFor(rainItemStacks[0].getItem().getUnlocalizedName())) {
 					rainMeter = 0;
@@ -206,12 +207,7 @@ public class TileEntityRC extends TileEntity implements IInventory {
 	}
 
 	public int getRainMeterScaled(int i) {
-		int fillTime;
-		if (rainItemStacks[0] != null) {
-			fillTime = RCRecipes.getFillTimeFor(rainItemStacks[0].getItem().getUnlocalizedName());
-		} else {
-			fillTime = 200;
-		}
+		int fillTime = rainItemStacks[0] != null ? RCRecipes.getFillTimeFor(rainItemStacks[0].getItem().getUnlocalizedName()) : 200;
 		return (rainMeter * i) / fillTime;
 	}
 

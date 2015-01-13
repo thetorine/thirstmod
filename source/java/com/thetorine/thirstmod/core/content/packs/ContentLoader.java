@@ -29,6 +29,7 @@ public class ContentLoader {
 	public HashMap<String, String> languageTable = new HashMap<String, String>();
 	public List<File> filesToLoad = new ArrayList<File>();
 	public String split;
+	public static ArrayList<Item> ADDED_DRINKS = new ArrayList<Item>();
 
 	public ContentLoader() {
 		try {
@@ -58,7 +59,7 @@ public class ContentLoader {
 			}
 		}
 		reader.close();
-		loadDrinks(new File(ThirstMod.mcDir(), "/thirstmod/content/"));
+		loadDrinks(new File(ThirstMod.getMinecraftDir(), "/thirstmod/content/"));
 	}
 	
 	public void loadDrinks(File dir) {
@@ -176,6 +177,7 @@ public class ContentLoader {
 			TileEntityDB.addRecipe(recipeItem.getUnlocalizedName(), new ItemStack(loadedDrink));
 			
 			languageTable.put(String.format("item.%s.name", shortname), name);
+			ADDED_DRINKS.add(loadedDrink);
 		}
 		injectLanguage();
 	}

@@ -3,7 +3,6 @@ package com.thetorine.thirstmod.core.content.temperature;
 import java.util.HashMap;
 
 import com.thetorine.thirstmod.core.player.ThirstLogic;
-import com.thetorine.thirstmod.core.utils.Constants;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -24,10 +23,6 @@ public class Temperature {
 	
 	public void onTick() {
 		airTemperture = getBiomeTemp() + getblockProximity() + getDepth() + getMisc();
-		
-		if(Constants.ECLIPSE_ENVIRONMENT) {
-			player.capabilities.disableDamage = true;
-		}
 	}
 	
 	public float getBiomeTemp() {

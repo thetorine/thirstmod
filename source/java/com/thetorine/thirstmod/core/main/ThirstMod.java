@@ -11,15 +11,14 @@ import com.thetorine.thirstmod.core.player.PlayerContainer;
 import com.thetorine.thirstmod.core.utils.Config;
 import com.thetorine.thirstmod.core.utils.Constants;
 
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.*;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -40,7 +39,12 @@ public class ThirstMod {
 		FMLCommonHandler.instance().bus().register(eventHook);
 		MinecraftForge.EVENT_BUS.register(eventHook);
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, eventHook);
-		loadNecessities();
+		loadMain();
+	}
+	
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+		new DrinkRegistry();
 	}
 	
 	@EventHandler
@@ -50,16 +54,15 @@ public class ThirstMod {
 		}
 	}
 	
-	public void loadNecessities() {
+	public void loadMain() {
 		new NetworkHandler();
-		new ContentLoader();
-		new DrinkRegistry();
 		new BlockLoader();
 		new ItemLoader(); 
+		new ContentLoader();
 	}
 	
-	public static String mcDir() {
-		File s = ObfuscationReflectionHelper.getPrivateValue(Loader.class, Loader.instance(), "minecraftDir");
+	public static String getMinecraftDir() {
+		File s = Minecraft.getMinecraft().mcDataDir;
 		return s.getAbsolutePath();
 	}
 	
