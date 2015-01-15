@@ -7,7 +7,8 @@ item
  always_drinkable boolean
 recipe
  item string
- metadata integer
+ item_mod_id string
+ item_metadata integer
 thirst_stats
  bar_heal integer
  saturation_heal float
@@ -19,7 +20,6 @@ hunger_stats
 potion_effect
  id integer
  duration integer
- amplifier integer
 
 //careful there is a space in there - add modifiers in brackets
-split_modifier [@:-=* ]
+split_modifier [:-= ]

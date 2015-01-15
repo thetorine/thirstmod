@@ -14,9 +14,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import com.thetorine.thirstmod.core.content.ItemDrink;
-import com.thetorine.thirstmod.core.content.blocks.TileEntityDB;
+import com.thetorine.thirstmod.core.content.blocks.DBRecipes;
 import com.thetorine.thirstmod.core.main.ThirstMod;
 
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.item.Item;
@@ -29,7 +30,6 @@ public class ContentLoader {
 	public HashMap<String, String> languageTable = new HashMap<String, String>();
 	public List<File> filesToLoad = new ArrayList<File>();
 	public String split;
-	public static ArrayList<Item> ADDED_DRINKS = new ArrayList<Item>();
 
 	public ContentLoader() {
 		try {
@@ -81,25 +81,22 @@ public class ContentLoader {
 				e.printStackTrace();
 			}
 		}
-		
 		addDrinks();
 	}
 	
-	public int readZip(File zip, int i) throws IOException {
-		int load = i;
-		ZipFile zf = new ZipFile(zip);
-		Enumeration<? extends ZipEntry> entries = zf.entries();
-		while(entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			if(entry.getName().endsWith(".txt") && !entry.getName().contains("__MACOSX/._")) {
-				BufferedReader reader = new BufferedReader(new InputStreamReader(zf.getInputStream(entry)));
-				parseDrink(reader, load);
-				reader.close();
-				load++;
-			}
-		}
-		zf.close();
-		return load;
+	public void findFiles(File root) {
+	    File[] files = root.listFiles(); 
+	    if(files != null) {
+	    	for (File file : files) {
+		        if (file.isFile()) {
+		            if(file.getName().endsWith(".txt") || file.getName().endsWith(".zip")) {
+		            	filesToLoad.add(file);
+		            }
+		        } else if (file.isDirectory()) {
+		            findFiles(file);
+		        }
+		    }
+	    }
 	}
 	
 	public void parseDrink(BufferedReader reader, int currentLoad) throws IOException {
@@ -127,10 +124,27 @@ public class ContentLoader {
 		reader.close();
 	}
 	
+	public int readZip(File zip, int i) throws IOException {
+		int load = i;
+		ZipFile zf = new ZipFile(zip);
+		Enumeration<? extends ZipEntry> entries = zf.entries();
+		while(entries.hasMoreElements()) {
+			ZipEntry entry = entries.nextElement();
+			if(entry.getName().endsWith(".txt") && !entry.getName().contains("__MACOSX/._")) {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(zf.getInputStream(entry)));
+				parseDrink(reader, load);
+				reader.close();
+				load++;
+			}
+		}
+		zf.close();
+		return load;
+	}
+	
 	public void addDrinks() {
 		for(int i = 0; i < drinkLoad.size(); i++) {
 			String name = "", shortname = "", item = "";
-			int color = 0, stacksize = 0, bar_heal = 0, bar_heal_hunger = 0, potionID = 0, duration = 0;
+			int color = 0, stacksize = 0, bar_heal = 0, bar_heal_hunger = 0, potionID = 0, duration = 0, itemMetadata = 0;
 			float sat_thirst = 0, sat_hunger = 0, poisonChance = 0;
 			boolean hasEffect = false, potion_cure = false, alwaysDrinkable = false;
 			
@@ -141,6 +155,10 @@ public class ContentLoader {
 					shortname = (String) dm.value;
 				if(dm.modifier.equals("item"))
 					item = (String) dm.value;
+				if(dm.modifier.equals("item_mod_id")) 
+					item = ((String) dm.value) + ":" + item; 
+				if(dm.modifier.equals("item_metadata"))
+					itemMetadata = (Integer) dm.value;
 				if(dm.modifier.equals("colour"))
 					color = (Integer) dm.value;
 				if(dm.modifier.equals("stacksize"))
@@ -172,12 +190,11 @@ public class ContentLoader {
 				.setPotionEffect(potionID, duration).setCuresPotions(potion_cure);
 			
 			GameRegistry.registerItem(loadedDrink, shortname);
-			DrinkLists.addDrink(new ItemStack(loadedDrink), bar_heal);
-			Item recipeItem = (Item) Item.itemRegistry.getObject(item);
-			TileEntityDB.addRecipe(recipeItem.getUnlocalizedName(), new ItemStack(loadedDrink));
+			DrinkLists.addDrink(new ItemStack(loadedDrink), bar_heal, sat_thirst);
+			ItemStack stack = new ItemStack(GameData.getItemRegistry().getObject(item), 0, itemMetadata);
+			DBRecipes.instance().addRecipe(stack.getUnlocalizedName(), itemMetadata, new ItemStack(loadedDrink));
 			
 			languageTable.put(String.format("item.%s.name", shortname), name);
-			ADDED_DRINKS.add(loadedDrink);
 		}
 		injectLanguage();
 	}
@@ -228,21 +245,6 @@ public class ContentLoader {
 			return Integer.parseInt(s, 16);
 		}
 		return null;
-	}
-	
-	public void findFiles(File root) {
-	    File[] files = root.listFiles(); 
-	    if(files != null) {
-	    	for (File file : files) {
-		        if (file.isFile()) {
-		            if(file.getName().endsWith(".txt") || file.getName().endsWith(".zip")) {
-		            	filesToLoad.add(file);
-		            }
-		        } else if (file.isDirectory()) {
-		            findFiles(file);
-		        }
-		    }
-	    }
 	}
 	
 	public void injectLanguage() {

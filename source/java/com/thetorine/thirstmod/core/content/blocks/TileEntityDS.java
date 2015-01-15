@@ -19,13 +19,13 @@ public class TileEntityDS extends TileEntity implements IInventory {
 	@Override
 	public void updateEntity() {
 		if (worldObj != null) {
-			if (!DrinkLists.drinkLists.isEmpty()) {
-				items[0] = DrinkLists.drinkLists.get(page).item;
+			if (!DrinkLists.LOADED_DRINKS.isEmpty()) {
+				items[0] = DrinkLists.LOADED_DRINKS.get(page).item;
 				if (canBuy == 1) {
 					if ((items[2] != null) && (items[1] == null)) {
 						if (items[2].getUnlocalizedName().equals(ItemLoader.gold_coin.getUnlocalizedName())) {
-							if ((DrinkLists.drinkLists.get(page).storeRecipe * amountToBuy) <= items[2].stackSize) {
-								decrStackSize(2, DrinkLists.drinkLists.get(page).storeRecipe * amountToBuy);
+							if ((DrinkLists.LOADED_DRINKS.get(page).storeRecipe * amountToBuy) <= items[2].stackSize) {
+								decrStackSize(2, DrinkLists.LOADED_DRINKS.get(page).storeRecipe * amountToBuy);
 								items[1] = new ItemStack(items[0].getItem(), amountToBuy);
 								amountToBuy = 1;
 								canBuy = 0;

@@ -4,44 +4,35 @@ import java.util.*;
 import net.minecraft.item.ItemStack;
 
 public class DrinkLists {
-	public static List<DrinkLists> drinkLists = new ArrayList<DrinkLists>();
-	public static List<DrinkLists> extraList = new ArrayList<DrinkLists>();
-
-	public ItemStack item;
-	public int replenish;
-	public float saturation;
-	public boolean poison;
-	public float poisonChance;
-	public boolean extra;
-
-	public int storeRecipe;
-
-	public DrinkLists(ItemStack item, int replenish, float saturation, boolean extra, boolean poison, float chance) {
-		this.item = item;
-		this.replenish = replenish;
-		this.saturation = saturation;
-		this.poison = poison;
-		this.poisonChance = chance;
-
-		this.storeRecipe = replenish + 5;
-
-		if (extra) {
-			extraList.add(this);
-			drinkLists.add(this);
-		} else {
-			drinkLists.add(this);
-		}
-	}
-
-	public static void addDrink(ItemStack item, int replenish) {
-		new DrinkLists(item, replenish, 0, false, false, 0f);
-	}
+	public static List<Drink> LOADED_DRINKS = new ArrayList<Drink>();
+	public static List<Drink> EXTERNAL_DRINKS = new ArrayList<Drink>();
 
 	public static void addDrink(ItemStack item, int replenish, float saturation) {
-		new DrinkLists(item, replenish, saturation, true, false, 0f);
+		Drink d = new Drink(item, replenish, saturation, false, 0f);
+		LOADED_DRINKS.add(d);
 	}
 
 	public static void addDrink(ItemStack item, int replenish, float saturation, boolean poison, float poisonChance) {
-		new DrinkLists(item, replenish, saturation, true, poison, poisonChance);
+		Drink d = new Drink(item, replenish, saturation, poison, poisonChance);
+		LOADED_DRINKS.add(d);
+		EXTERNAL_DRINKS.add(d);
+	}
+	
+	public static class Drink {
+		public ItemStack item;
+		public int replenish;
+		public float saturation;
+		public boolean poison;
+		public float poisonChance;
+		public int storeRecipe;
+		
+		public Drink(ItemStack item, int rep, float sat, boolean poisonable, float chance) {
+			this.item = item;
+			this.replenish = rep;
+			this.saturation = sat;
+			this.poison = poisonable;
+			this.poisonChance = chance;
+			this.storeRecipe = replenish + (int)sat;
+		}
 	}
 }

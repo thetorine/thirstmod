@@ -2,7 +2,7 @@ package com.thetorine.thirstmod.core.content.blocks;
 
 import java.util.Random;
 
-import com.thetorine.thirstmod.core.content.packs.ContentLoader;
+import com.thetorine.thirstmod.core.content.packs.DrinkLists;
 import com.thetorine.thirstmod.core.main.ThirstMod;
 import com.thetorine.thirstmod.core.utils.Constants;
 
@@ -41,7 +41,7 @@ public class BlockDB extends BlockContainer {
 	
 	@Override
 	public boolean onBlockActivated(World par1World, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
-		if(ContentLoader.ADDED_DRINKS.size() > 0) {
+		if(DrinkLists.LOADED_DRINKS.size() > 0) {
 			player.openGui(ThirstMod.instance, Constants.DRINKS_BREWER_ID, par1World, x, y, z);
 		} else {
 			if(player.worldObj.isRemote) {

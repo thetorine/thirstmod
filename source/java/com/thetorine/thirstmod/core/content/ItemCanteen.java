@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemCanteen extends Item {
-	private String[] canteenNames = { "canteen_0", "canteen_1", "canteen_2", "canteen_3", "canteen_4", "canteen_5", "canteen_6", "canteen_7", "canteen_8", "canteen_9", "canteen_10", };
+	private String[] canteenNames = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 
 	public ItemCanteen() {
 		super();
@@ -32,7 +32,7 @@ public class ItemCanteen extends Item {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return canteenNames[stack.getItemDamage()];
+		return "item.canteen." + canteenNames[stack.getItemDamage()];
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -247,8 +247,4 @@ public class TileEntityDB extends TileEntity implements IInventory {
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		return true;
 	}
-	
-	public static void addRecipe(String id, ItemStack return1) {
-		DBRecipes.instance().addRecipe(id, return1);
-	}
 }

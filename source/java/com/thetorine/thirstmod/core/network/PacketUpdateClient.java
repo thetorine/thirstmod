@@ -1,6 +1,7 @@
 package com.thetorine.thirstmod.core.network;
 
 import com.thetorine.thirstmod.core.client.player.ClientStats;
+import com.thetorine.thirstmod.core.player.ThirstLogic;
 import com.thetorine.thirstmod.core.utils.Constants;
 
 import cpw.mods.fml.common.network.simpleimpl.*;
@@ -16,13 +17,13 @@ public class PacketUpdateClient implements IMessage {
 	public PacketUpdateClient() {
 	}
 
-	public PacketUpdateClient(int level, float saturation, boolean poisoned, float temp) {
-		this.level = level;
-		this.saturation = saturation;
-		this.poisoned = poisoned;
+	public PacketUpdateClient(ThirstLogic stats) {
+		this.level = stats.thirstLevel;
+		this.saturation = stats.thirstSaturation;
+		this.poisoned = stats.poisonLogic.isPoisoned();
 		
 		if(Constants.ECLIPSE_ENVIRONMENT) {
-			this.temperature = temp;
+			this.temperature = stats.temperature.airTemperture;
 		}
 	}
 

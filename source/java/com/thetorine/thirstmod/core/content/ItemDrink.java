@@ -68,7 +68,7 @@ public class ItemDrink extends Item {
 			
 			PlayerContainer playerCon = PlayerContainer.getPlayer(player.getDisplayName());
 			playerCon.addStats(thirstHeal, saturationHeal);
-			if ((poisonChance > 0) && ThirstMod.config.POISON_ON) {
+			if (poisonChance > 0 && ThirstMod.config.POISON_ON) {
 				Random rand = new Random();
 				if (rand.nextFloat() < poisonChance) {
 					playerCon.getStats().poisonLogic.startPoison();
@@ -77,10 +77,10 @@ public class ItemDrink extends Item {
 			if (curesPotion) {
 				player.curePotionEffects(new ItemStack(Items.milk_bucket));
 			}
-			if ((hungerHeal > 0) && (hungerSatHeal > 0)) {
+			if (hungerHeal > 0 && hungerSatHeal > 0) {
 				player.getFoodStats().addStats(hungerHeal, hungerSatHeal);
 			}
-			if ((potionID > 0) && (world.rand.nextFloat() < 1)) {
+			if (potionID > 0) {
 				player.addPotionEffect(new PotionEffect(potionID, duration * 20, 1));
 			}
 			player.inventory.addItemStackToInventory(new ItemStack(returnItem));
@@ -92,8 +92,7 @@ public class ItemDrink extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean flag) {
 		super.addInformation(stack, player, list, flag);
-		String s = Integer.toString(thirstHeal);
-		float f = Float.parseFloat(s) / 2;
+		float f = Float.parseFloat(Integer.toString(thirstHeal)) / 2;
 		String s2 = Float.toString(f);
 
 		list.add("Heals " + (s2.endsWith(".0") ? s2.replace(".0", "") : s2) + " Droplets");
@@ -101,9 +100,7 @@ public class ItemDrink extends Item {
 	
 	@Override
 	public boolean hasEffect(ItemStack par1ItemStack, int pass) {
-		if(pass == 0) {
-			return specialEffect;
-		}
+		if(pass == 0) return specialEffect;
 		return false;
 	}
 	
@@ -172,7 +169,7 @@ public class ItemDrink extends Item {
 		switch(FMLCommonHandler.instance().getEffectiveSide()) {
 			case CLIENT: return ClientStats.getInstance().level < 20;
 			case SERVER: return PlayerContainer.getPlayer(player.getDisplayName()).stats.thirstLevel < 20;
+			default: return false;
 		}
-		return false;
 	}
 }

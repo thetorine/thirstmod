@@ -14,6 +14,7 @@ import com.thetorine.thirstmod.core.content.blocks.TileEntityDB;
 import com.thetorine.thirstmod.core.content.blocks.TileEntityDS;
 import com.thetorine.thirstmod.core.content.blocks.TileEntityRC;
 import com.thetorine.thirstmod.core.content.packs.DrinkLists;
+import com.thetorine.thirstmod.core.content.packs.DrinkLists.Drink;
 import com.thetorine.thirstmod.core.player.PlayerContainer;
 import com.thetorine.thirstmod.core.utils.Constants;
 
@@ -134,9 +135,9 @@ public class EventSystem implements IGuiHandler {
 	public void onFinishUsingItem(PlayerUseItemEvent.Finish event) {
 		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
 			String id = event.item.getUnlocalizedName();
-			for(DrinkLists d: DrinkLists.extraList) {
+			for(Drink d: DrinkLists.EXTERNAL_DRINKS) {
 				String possibleID = d.item.getUnlocalizedName();
-				if(id.equals(possibleID)) {
+				if(id.equals(possibleID) && event.item.getItemDamage() == d.item.getItemDamage()) {
 					PlayerContainer playCon = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
 					playCon.addStats(d.replenish, d.saturation);
 					break;

@@ -31,7 +31,7 @@ public class Config {
 		POISON_ON = Boolean.parseBoolean(get("Poisoning On", "General", true, "Allows you to turn the poison off or on.").getString());
 		PEACEFUL_ON = Boolean.parseBoolean(get("Peaceful On", "General", false, "Allows the thirst bar to dehydrate on peaceful mode.").getString());
 		METER_ON_LEFT = Boolean.parseBoolean(get("Meter on leftside", "General", false, "Moves the ThirstBar to be above the health bar.").getString());
-		DEATH_FROM_THIRST = Boolean.parseBoolean(get("Death from Thirst", "General", false, "Allows you to determine whether death from thirst is possible.").getString());
+		DEATH_FROM_THIRST = Boolean.parseBoolean(get("Death from Thirst", "General", false, "Allows you to determine whether death from thirst is possible. On HARD, the player will die regardless!").getString());
 
 		NIGHT_RATE = Float.parseFloat(get("Night", "Exhaustion Rates", 0.9d, "How fast the player is exhausted at night. 1 is daytime speed.").getString());
 		DESERT_RATE = Float.parseFloat(get("Desert", "Exhaustion Rates", 2d, "How fast the player is exhausted in the desert biome. 2 is 2x times faster.").getString());

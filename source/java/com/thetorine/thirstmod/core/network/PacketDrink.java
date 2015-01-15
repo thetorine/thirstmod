@@ -15,13 +15,13 @@ public class PacketDrink implements IMessage {
 	public PacketDrink() {
 	}
 
-	public PacketDrink(int page, int amount, int buy, int x, int y, int z) {
-		this.page = page;
-		this.amount = amount;
-		this.buy = buy;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public PacketDrink(TileEntityDS tile) {
+		this.page = tile.page;
+		this.amount = tile.amountToBuy;
+		this.buy = tile.canBuy;
+		this.x = tile.xCoord;
+		this.y = tile.yCoord;
+		this.z = tile.zCoord;
 	}
 
 	@Override

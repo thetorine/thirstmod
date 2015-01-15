@@ -14,7 +14,6 @@ import com.thetorine.thirstmod.core.network.NetworkHandler;
 import com.thetorine.thirstmod.core.network.PacketDrink;
 
 public class GuiDS extends GuiContainer {
-
 	private TileEntityDS tile;
 
 	public GuiDS(InventoryPlayer player, TileEntityDS tile) {
@@ -42,72 +41,41 @@ public class GuiDS extends GuiContainer {
 		buttonList.add(new GuiThirstButton(3, var5 + 137, var6 + 40, true));
 
 		// buy
-		buttonList.add(new GuiButton(4, var5 + 65, var6 + 60, 90, 20, "Buy! " + (DrinkLists.drinkLists.get(tile.page).storeRecipe * tile.amountToBuy) + " Coins!"));
+		buttonList.add(new GuiButton(4, var5 + 65, var6 + 60, 90, 20, "Buy! " + (DrinkLists.LOADED_DRINKS.get(tile.page).storeRecipe * tile.amountToBuy) + " Coins!"));
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton par1GuiButton) {
 		switch (par1GuiButton.id) {
+			//change page left
 			case 0: {
-				if (tile.page == 0) {
-					tile.page = DrinkLists.drinkLists.size() - 1;
-				} else {
-					tile.page--;
-				}
-				NetworkHandler.networkWrapper.sendToServer(new PacketDrink(tile.page, tile.amountToBuy, tile.canBuy, tile.xCoord, tile.yCoord, tile.zCoord));
+				changePage(false);
+				checkPurchaseAmount();
 				break;
 			}
+			//change page right
 			case 1: {
-				if (tile.page == (DrinkLists.drinkLists.size() - 1)) {
-					tile.page = 0;
-				} else {
-					tile.page++;
-				}
-				NetworkHandler.networkWrapper.sendToServer(new PacketDrink(tile.page, tile.amountToBuy, tile.canBuy, tile.xCoord, tile.yCoord, tile.zCoord));
+				changePage(true);
+				checkPurchaseAmount();
 				break;
 			}
+			//move amount counter left
 			case 2: {
-				int max = 1;
-				for (int i = 1; i <= 64; i++) {
-					if ((DrinkLists.drinkLists.get(tile.page).storeRecipe * i) <= 64) {
-						max = i;
-					}
-				}
-				if (max > DrinkLists.drinkLists.get(tile.page).item.getMaxStackSize()) {
-					max = DrinkLists.drinkLists.get(tile.page).item.getMaxStackSize();
-				}
-				if (tile.amountToBuy == 1) {
-					tile.amountToBuy = max;
-				} else {
-					tile.amountToBuy--;
-				}
-				NetworkHandler.networkWrapper.sendToServer(new PacketDrink(tile.page, tile.amountToBuy, tile.canBuy, tile.xCoord, tile.yCoord, tile.zCoord));
+				changeAmountToBuy(false);
 				break;
 			}
+			//move amount counter right
 			case 3: {
-				int max = 1;
-				for (int i = 1; i <= 64; i++) {
-					if ((DrinkLists.drinkLists.get(tile.page).storeRecipe * i) <= 64) {
-						max = i;
-					}
-				}
-				if (max > DrinkLists.drinkLists.get(tile.page).item.getMaxStackSize()) {
-					max = DrinkLists.drinkLists.get(tile.page).item.getMaxStackSize();
-				}
-				if (tile.amountToBuy == max) {
-					tile.amountToBuy = 1;
-				} else {
-					tile.amountToBuy++;
-				}
-				NetworkHandler.networkWrapper.sendToServer(new PacketDrink(tile.page, tile.amountToBuy, tile.canBuy, tile.xCoord, tile.yCoord, tile.zCoord));
+				changeAmountToBuy(true);
 				break;
 			}
+			//buy drink
 			case 4: {
-				tile.canBuy = 1;
-				NetworkHandler.networkWrapper.sendToServer(new PacketDrink(tile.page, tile.amountToBuy, tile.canBuy, tile.xCoord, tile.yCoord, tile.zCoord));
+				attemptPurchase();
 				break;
 			}
 		}
+		updateServer();
 	}
 
 	@Override
@@ -117,5 +85,52 @@ public class GuiDS extends GuiContainer {
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+	}
+	
+	private void attemptPurchase() {
+		tile.canBuy = 1;
+	}
+	
+	private void changePage(boolean direction) {
+		if(tile.page == (!direction ? 0: DrinkLists.LOADED_DRINKS.size()-1)) {
+			tile.page = (!direction ? DrinkLists.LOADED_DRINKS.size()-1 : 0);
+		} else {
+			tile.page = (!direction ? tile.page-1 : tile.page+1);
+		}
+	}
+	
+	private void changeAmountToBuy(boolean direction) {
+		int max = calculateMaxStack();
+		if(tile.amountToBuy == (!direction ? 1: max)) {
+			tile.amountToBuy = (!direction ? max : 1);
+		} else {
+			tile.amountToBuy = (!direction ? tile.amountToBuy-1 : tile.amountToBuy+1);
+		}
+	}
+	
+	private int calculateMaxStack() {
+		int max = 1;
+		for (int i = 1; i <= 64; i++) {
+			if(DrinkLists.LOADED_DRINKS.get(tile.page).storeRecipe * i <= 64) {
+				max = i;
+			} else {
+				break;
+			}
+		}
+		if (max > DrinkLists.LOADED_DRINKS.get(tile.page).item.getMaxStackSize()) {
+			max = DrinkLists.LOADED_DRINKS.get(tile.page).item.getMaxStackSize();
+		}
+		return max;
+	}
+	
+	private void checkPurchaseAmount() {
+		int max = calculateMaxStack();
+		if(tile.amountToBuy > max) {
+			tile.amountToBuy = max;
+		}
+	}
+	
+	private void updateServer() {
+		NetworkHandler.networkWrapper.sendToServer(new PacketDrink(tile));
 	}
 }

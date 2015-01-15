@@ -39,13 +39,13 @@ public class GuiDB extends GuiContainer {
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
 		if (tile.fuelLevel > 0) {
-			int m = tile.getFuelLevelScaled(24);
-			drawTexturedModalRect(188, 86, 176, 31, 9, m);
+			int m = tile.getFuelLevelScaled(13);
+			drawTexturedModalRect(188, 99-m, 176, 44-m, 9, m);
 		}
 
 		if (tile.brewTime > 0) {
 			int k1 = tile.getBrewTimeScaled(24);
-			drawTexturedModalRect(x + 79, y + 34, 176, 14, k1 + 1, 16);
+			drawTexturedModalRect(x + 79, y + 35, 176, 14, k1 + 1, 15);
 		}
 	}
 }

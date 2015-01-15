@@ -16,19 +16,19 @@ item.milk_bottle.name=Milk Bottle
 item.chocolate_milk.name=Chocolate Milk
 item.clean_bucket.name=Clean Water Bucket
 
-canteen_0.name=Empty Canteen
+item.canteen.0.name=Empty Canteen
 
-canteen_1.name=Canteen 1/5
-canteen_2.name=Canteen 2/5
-canteen_3.name=Canteen 3/5
-canteen_4.name=Canteen 4/5
-canteen_5.name=Canteen
+item.canteen.1.name=Canteen 1/5
+item.canteen.2.name=Canteen 2/5
+item.canteen.3.name=Canteen 3/5
+item.canteen.4.name=Canteen 4/5
+item.canteen.5.name=Canteen
 
-canteen_6.name=Clean Canteen 1/5
-canteen_7.name=Clean Canteen 2/5
-canteen_8.name=Clean Canteen 3/5
-canteen_9.name=Clean Canteen 4/5
-canteen_10.name=Clean Canteen
+item.canteen.6.name=Clean Canteen 1/5
+item.canteen.7.name=Clean Canteen 2/5
+item.canteen.8.name=Clean Canteen 3/5
+item.canteen.9.name=Clean Canteen 4/5
+item.canteen.10.name=Clean Canteen
 
 //other
 itemGroup.drinks=Thirst Mod

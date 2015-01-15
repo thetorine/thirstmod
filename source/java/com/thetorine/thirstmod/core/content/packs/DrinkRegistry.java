@@ -100,13 +100,11 @@ public class DrinkRegistry {
 	}
 
 	public void createDrinks(File file) throws Exception {
-		if (!file.exists()) {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			writer.write("mushroom_stew 7 1.2\n");
-			writer.write("milk_bucket 8 3.4\n");
-			writer.write("potion 3 1.4 true 0.4 0");
-			writer.close();
-		}
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		writer.write("minecraft:mushroom_stew 7 1.2\n");
+		writer.write("minecraft:milk_bucket 8 3.4\n");
+		writer.write("minecraft:potion 3 1.4 true 0.4 0");
+		writer.close();
 	}
 
 	public void createInstructions(File file) throws Exception {
