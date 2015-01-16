@@ -25,6 +25,7 @@ public class DrinkLists {
 		public boolean poison;
 		public float poisonChance;
 		public int storeRecipe;
+		public int brewTime;
 		
 		public Drink(ItemStack item, int rep, float sat, boolean poisonable, float chance) {
 			this.item = item;
@@ -33,6 +34,7 @@ public class DrinkLists {
 			this.poison = poisonable;
 			this.poisonChance = chance;
 			this.storeRecipe = replenish + (int)sat;
+			this.brewTime = replenish*30;
 		}
 	}
 }

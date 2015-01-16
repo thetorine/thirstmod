@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
@@ -15,6 +16,7 @@ public class ContainerDB extends Container {
 	private int lastFuelLevel;
 	private int lastBrewTime;
 	private int lastMaxFuelLevel;
+	private int lastMaxBrewTime;
 
 	public ContainerDB(InventoryPlayer inv, TileEntityDB tile) {
 		this.drinksBrewer = tile;
@@ -25,8 +27,8 @@ public class ContainerDB extends Container {
 		int i;
 
 		for (i = 0; i < 3; ++i) {
-			for (int var4 = 0; var4 < 9; ++var4) {
-				this.addSlotToContainer(new Slot(inv, var4 + (i * 9) + 9, 8 + (var4 * 18), 84 + (i * 18)));
+			for (int j = 0; j < 9; ++j) {
+				this.addSlotToContainer(new Slot(inv, j + (i * 9) + 9, 8 + (j * 18), 84 + (i * 18)));
 			}
 		}
 
@@ -41,61 +43,65 @@ public class ContainerDB extends Container {
 		for (int i = 0; i < this.crafters.size(); ++i) {
 			ICrafting craft = (ICrafting) this.crafters.get(i);
 			if(lastFuelLevel != drinksBrewer.fuelLevel) {
-				craft.sendProgressBarUpdate(this, drinksBrewer.fuelLevel, 0);
+				craft.sendProgressBarUpdate(this, 0, drinksBrewer.fuelLevel);
 			}
 			if(lastBrewTime != drinksBrewer.brewTime) {
-				craft.sendProgressBarUpdate(this, drinksBrewer.brewTime, 1);
+				craft.sendProgressBarUpdate(this, 1, drinksBrewer.brewTime);
 			}
 			if(lastMaxFuelLevel != drinksBrewer.maxFuelLevel) {
-				craft.sendProgressBarUpdate(this, drinksBrewer.maxFuelLevel, 2);
+				craft.sendProgressBarUpdate(this, 2, drinksBrewer.maxFuelLevel);
+			}
+			if(lastMaxBrewTime != drinksBrewer.maxBrewTime) {
+				craft.sendProgressBarUpdate(this, 3, drinksBrewer.maxBrewTime);
 			}
 		}
 		lastFuelLevel = drinksBrewer.fuelLevel;
 		lastBrewTime = drinksBrewer.brewTime;
 		lastMaxFuelLevel = drinksBrewer.maxFuelLevel;
+		lastMaxBrewTime = drinksBrewer.maxBrewTime;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar(int packet, int data) {
-		//TODO figure out why the variables are switched. THIS IS ONE SERIOUS ISSUE!!!! THEY DONT GET ANY SERIOUSER THAN THIS WHEN MC DECIDES TO PLAY: I WANNA MESS UP YOUR GAME!
-		switch(data) {
-			case 0: drinksBrewer.fuelLevel = packet; break;
-			case 1: drinksBrewer.brewTime = packet; break;
-			case 2: drinksBrewer.maxFuelLevel = packet; break;
+		switch(packet) {
+			case 0: drinksBrewer.fuelLevel = data; break;
+			case 1: drinksBrewer.brewTime = data; break;
+			case 2: drinksBrewer.maxFuelLevel = data; break;
+			case 3: drinksBrewer.maxBrewTime = data; break;
 		}
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int par1) {
-		super.transferStackInSlot(player, par1);
+	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+		super.transferStackInSlot(player, index);
+		Slot slot = (Slot) this.inventorySlots.get(index);
 		ItemStack stack = null;
-		Slot i = (Slot) this.inventorySlots.get(par1);
-
-		if ((i != null) && i.getHasStack()) {
-			ItemStack var4 = i.getStack();
-			stack = var4.copy();
-			if (par1 == 2) {
-				i.onSlotChange(var4, stack);
-			} else if ((par1 != 1) && (par1 != 0) && (par1 != 3)) {
-				if (DBRecipes.instance().getBrewingResult(var4) != null) {
-					if (!this.mergeItemStack(var4, 0, 1, false)) { return null; }
-				} else if (drinksBrewer.getItemFuelValue(var4) > 0) {
-					if (!this.mergeItemStack(var4, 3, 2, false)) { return null; }
-				} else if ((par1 >= 4) && (par1 < 30)) {
-					if (!this.mergeItemStack(var4, 30, 39, false)) { return null; }
-				} 
-			} else if (!this.mergeItemStack(var4, 4, 39, false)) { return null; }
-
-			if (var4.stackSize == 0) {
-				i.putStack((ItemStack) null);
-			} else {
-				i.onSlotChanged();
+		if(slot != null && slot.getHasStack()) {
+			stack = slot.getStack();
+			switch(index) {
+				case 0:
+				case 1:
+				case 2: 
+				case 3: {
+					if(!this.mergeItemStack(stack, 4, inventorySlots.size(), false)) return null;
+					break;
+				}
+				default: {
+					if(stack.getUnlocalizedName().equals(Items.glass_bottle.getUnlocalizedName())) {
+						if(!this.mergeItemStack(stack, 1, 2, true)) return null;
+					} else if(drinksBrewer.getBrewedDrink(stack) != null) {
+						if(!this.mergeItemStack(stack, 0, 1, false)) return null;
+					} else if(drinksBrewer.getItemFuelValue(stack) > 0) {
+						if(!this.mergeItemStack(stack, 2, 3, false)) return null;
+					} else {
+						return null;
+					}
+				}
 			}
-
-			if (var4.stackSize == stack.stackSize) { return null; }
-
-			i.onPickupFromSlot(player, var4);
+			if(stack.stackSize == 0) {
+				slot.putStack(null);
+			}
 		}
 		return stack;
 	}
@@ -103,9 +109,10 @@ public class ContainerDB extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting craft) {
 		super.addCraftingToCrafters(craft);
-		craft.sendProgressBarUpdate(this, drinksBrewer.fuelLevel, 0);
-		craft.sendProgressBarUpdate(this, drinksBrewer.brewTime, 1);
-		craft.sendProgressBarUpdate(this, drinksBrewer.maxFuelLevel, 2);
+		craft.sendProgressBarUpdate(this, 0, drinksBrewer.fuelLevel);
+		craft.sendProgressBarUpdate(this, 1, drinksBrewer.brewTime);
+		craft.sendProgressBarUpdate(this, 2, drinksBrewer.maxFuelLevel);
+		craft.sendProgressBarUpdate(this, 3, drinksBrewer.maxBrewTime);
 	}
 
 	@Override

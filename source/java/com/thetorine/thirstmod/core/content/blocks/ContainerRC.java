@@ -20,8 +20,8 @@ public class ContainerRC extends Container {
 
 		int i;
 		for (i = 0; i < 3; ++i) {
-			for (int var4 = 0; var4 < 9; ++var4) {
-				addSlotToContainer(new Slot(ip, var4 + (i * 9) + 9, 8 + (var4 * 18), 84 + (i * 18)));
+			for (int j = 0; j < 9; ++j) {
+				addSlotToContainer(new Slot(ip, j + (i * 9) + 9, 8 + (j * 18), 84 + (i * 18)));
 			}
 		}
 
@@ -31,30 +31,30 @@ public class ContainerRC extends Container {
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int par1) {
-		ItemStack var2 = null;
-		Slot slot = (Slot) inventorySlots.get(par1);
-		if ((slot != null) && slot.getHasStack()) {
-			ItemStack var4 = slot.getStack();
-			var2 = var4.copy();
-			if (par1 < 2) {
-				mergeItemStack(var4, 2, 38, false);
-			} else if ((par1 >= 2) && (par1 < 29)) {
-				mergeItemStack(var4, 0, 1, false);
-			} else if ((par1 >= 29) && (par1 < 38)) {
-				mergeItemStack(var4, 2, 29, false);
+	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+		ItemStack stack = null;
+		Slot slot = (Slot) inventorySlots.get(index);
+		if (slot != null && slot.getHasStack()) {
+			stack = slot.getStack();
+			switch(index) {
+				case 0:
+				case 1: {
+					if(!mergeItemStack(stack, 2, inventorySlots.size(), false)) return null;
+					break;
+				}
+				default: {
+					if(RCRecipes.getInputResult(stack.getUnlocalizedName()) != null) {
+						if(!mergeItemStack(stack, 0, 1, false)) return null;
+					} else {
+						return null;
+					}
+				}
 			}
-
-			if (var4.stackSize == 0) {
-				slot.putStack((ItemStack) null);
-			} else {
-				slot.onSlotChanged();
+			if(stack.stackSize == 0) {
+				slot.putStack(null);
 			}
-
-			if (var4.stackSize == var2.stackSize) { return null; }
-			slot.putStack(var4);
 		}
-		return var2;
+		return stack;
 	}
 
 	@Override

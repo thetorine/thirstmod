@@ -1,7 +1,6 @@
 package com.thetorine.thirstmod.core.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -32,10 +31,6 @@ public class GuiRC extends GuiContainer {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton par1GuiButton) {
-	}
-
-	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
 		World world = minecraft.theWorld;
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -52,7 +47,7 @@ public class GuiRC extends GuiContainer {
 		}
 
 		if (world.isRaining() && rcInv.canRainOn(rcInv.xCoord, rcInv.yCoord, rcInv.zCoord, world)) {
-			drawTexturedModalRect(x + 55, y + 15, 176, 31, 18, 20);
+			drawTexturedModalRect(x + 55, y + 14, 176, 31, 18, 20);
 		}
 	}
 }

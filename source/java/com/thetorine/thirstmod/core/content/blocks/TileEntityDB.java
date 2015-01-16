@@ -1,6 +1,8 @@
 package com.thetorine.thirstmod.core.content.blocks;
 
 import com.thetorine.thirstmod.core.content.BlockLoader;
+import com.thetorine.thirstmod.core.content.packs.DrinkLists;
+import com.thetorine.thirstmod.core.content.packs.DrinkLists.Drink;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -25,6 +27,7 @@ public class TileEntityDB extends TileEntity implements IInventory {
 	public int fuelLevel;
 	public int brewTime;
 	public int maxFuelLevel;
+	public int maxBrewTime;
 	
 	@Override
 	public void updateEntity() {
@@ -32,9 +35,13 @@ public class TileEntityDB extends TileEntity implements IInventory {
 			if(stacks[0] != null && stacks[1] != null && canBrew()) {
 				if(fuelLevel > 0) {
 					brewTime++;
-					if(brewTime >= 200) {
+					if(maxBrewTime <= 0) {
+						maxBrewTime = calculateMaxBrewTime();
+					}
+					if(brewTime >= maxBrewTime) {
 						createDrink(getBrewedDrink(stacks[0]));
 						brewTime = 0;
+						maxBrewTime = 0;
 					}
 				} else {
 					int tempValue = getItemFuelValue(stacks[2]);
@@ -46,6 +53,7 @@ public class TileEntityDB extends TileEntity implements IInventory {
 				}
 			} else {
 				brewTime = 0;
+				maxBrewTime = 0;
 			}
 			
 			if(fuelLevel > 0) {
@@ -81,44 +89,42 @@ public class TileEntityDB extends TileEntity implements IInventory {
 		return DBRecipes.instance().getBrewingResult(stack);
 	}
 	
+	private int calculateMaxBrewTime() {
+		ItemStack brewedDrink = getBrewedDrink(stacks[0]);
+		for(Drink d : DrinkLists.LOADED_DRINKS) {
+			String itemName = brewedDrink.getUnlocalizedName();
+			if(itemName.equals(d.item.getUnlocalizedName())) {
+				return Math.max(200, d.brewTime);
+			}
+		}
+		return 0;
+	}
+
+	
 	public int getItemFuelValue(ItemStack stack) {
 		if (stack == null) {
 			return 0;
 		} else {
 			Item item = stack.getItem();
-			if (item instanceof ItemBlock
-					&& Block.getBlockFromItem(item) != Blocks.air) {
+			if (item instanceof ItemBlock && Block.getBlockFromItem(item) != Blocks.air) {
 				Block block = Block.getBlockFromItem(item);
-
 				if (block == Blocks.wooden_slab) {
 					return 150;
-				}
-
-				if (block.getMaterial() == Material.wood) {
+				} else if (block.getMaterial() == Material.wood) {
 					return 300;
-				}
-
-				if (block == Blocks.coal_block) {
+				} else if (block == Blocks.coal_block) {
 					return 16000;
 				}
 			}
 
-			if (item instanceof ItemTool && ((ItemTool) item).getToolMaterialName().equals("WOOD"))
-				return 200;
-			if (item instanceof ItemSword && ((ItemSword) item).getToolMaterialName().equals("WOOD"))
-				return 200;
-			if (item instanceof ItemHoe && ((ItemHoe) item).getToolMaterialName().equals("WOOD"))
-				return 200;
-			if (item == Items.stick)
-				return 100;
-			if (item == Items.coal)
-				return 1600;
-			if (item == Items.lava_bucket)
-				return 20000;
-			if (item == Item.getItemFromBlock(Blocks.sapling))
-				return 100;
-			if (item == Items.blaze_rod)
-				return 2400;
+			if (item instanceof ItemTool && ((ItemTool) item).getToolMaterialName().equals("WOOD")) return 200;
+			if (item instanceof ItemSword && ((ItemSword) item).getToolMaterialName().equals("WOOD")) return 200;
+			if (item instanceof ItemHoe && ((ItemHoe) item).getToolMaterialName().equals("WOOD")) return 200;
+			if (item == Items.stick) return 100;
+			if (item == Items.coal) return 1600;
+			if (item == Items.lava_bucket) return 20000;
+			if (item == Item.getItemFromBlock(Blocks.sapling)) return 100;
+			if (item == Items.blaze_rod) return 2400;
 			return GameRegistry.getFuelValue(stack);
 		}
 	}
@@ -128,7 +134,7 @@ public class TileEntityDB extends TileEntity implements IInventory {
 	}
 	
 	public int getBrewTimeScaled(int limit) {
-		return (brewTime * limit) / 200;
+		return (brewTime * limit) / maxBrewTime;
 	}
 
 	@Override
