@@ -30,10 +30,9 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.*;
-import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
@@ -42,6 +41,8 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.*;
 
 public class EventSystem implements IGuiHandler {
+	private int thirstToRemove = 0;
+	
 	@SubscribeEvent
 	public void playerTick(PlayerTickEvent event) {
 		switch(event.side) {
@@ -61,13 +62,13 @@ public class EventSystem implements IGuiHandler {
 	
 	@SubscribeEvent
 	public void onLogin(PlayerLoggedInEvent event) {
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			PlayerContainer.addPlayer(event.player);
-		}
+		if(event.player.worldObj.isRemote) return;
+		PlayerContainer.addPlayer(event.player);
 	}
 	
 	@SubscribeEvent
 	public void onLogout(PlayerLoggedOutEvent event) {
+		if(event.player.worldObj.isRemote) return;
 		PlayerContainer.ALL_PLAYERS.remove(event.player.getDisplayName());
 	}
 	
@@ -78,100 +79,113 @@ public class EventSystem implements IGuiHandler {
 	    int height = event.resolution.getScaledHeight();
 		if(event.type != null) {
 			switch(event.type) {
-			case FOOD: {
-				if (!Minecraft.getMinecraft().thePlayer.isRidingHorse()) {
-					if(Constants.ECLIPSE_ENVIRONMENT) {
-						GuiRenderBar.drawTemperature(width, height);
+				case FOOD: {
+					if (!Minecraft.getMinecraft().thePlayer.isRidingHorse()) {
+						GuiRenderBar.renderThirst(width, height);
 					}
-					GuiRenderBar.renderThirst(width, height);
+					break;
 				}
-				break;
+				case AIR: {
+					event.setCanceled(true);
+					GuiRenderBar.left_height = GuiIngameForge.left_height;
+					GuiRenderBar.right_height = GuiIngameForge.right_height;
+					GuiRenderBar.renderAir(width, height);
+					break;
+				}
+				case ARMOR: {
+					event.setCanceled(true);
+					GuiRenderBar.renderArmor(width, height);
+					break;
+				}
+				default: break;
 			}
-			case AIR: {
-				event.setCanceled(true);
-			    GuiRenderBar.left_height = GuiIngameForge.left_height;
-			    GuiRenderBar.right_height = GuiIngameForge.right_height;
-				GuiRenderBar.renderAir(width, height);
-				break;
-			}
-			case ARMOR: {
-				event.setCanceled(true);
-				GuiRenderBar.renderArmor(width, height);
-				break;
-			}
-			default: break;
-		}
 		}
 	}
 	
 	@SubscribeEvent
 	public void onAttack(AttackEntityEvent attack) {
-		PlayerContainer player = PlayerContainer.getPlayer(attack.entityPlayer.getDisplayName());
-		if ((player != null) && (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)) {
-			player.addExhaustion(0.5f);
+		if(attack.entityPlayer.worldObj.isRemote) return;
+		PlayerContainer playerContainer = PlayerContainer.getPlayer(attack.entityPlayer.getDisplayName());
+		if (playerContainer != null) {
+			playerContainer.addExhaustion(0.5f);
 		}
 	}
 
 	@SubscribeEvent
 	public void onHurt(LivingHurtEvent hurt) {
+		if(hurt.entity.worldObj.isRemote) return;
 		if (hurt.entity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) hurt.entityLiving;
-			PlayerContainer.getPlayer(player.getDisplayName()).addExhaustion(0.4f);
+			PlayerContainer playerContainer = PlayerContainer.getPlayer(((EntityPlayer)hurt.entity).getDisplayName());
+			if(playerContainer != null) {
+				playerContainer.addExhaustion(0.4f);
+			}
 		}
 	}
 
 	@SubscribeEvent
 	public void onBlockBreak(BlockEvent.BreakEvent event) {
-		EntityPlayer player = event.getPlayer();
-		if(player != null) {
-			if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-				player.addExhaustion(0.03f);
-			}
+		if(event.getPlayer().worldObj.isRemote) return;
+		PlayerContainer container = PlayerContainer.getPlayer(event.getPlayer().getDisplayName());
+		if(container != null) {
+			container.addExhaustion(0.03f);
 		}
-		event.setResult(Result.DEFAULT);
 	}
 	
 	@SubscribeEvent 
 	public void onFinishUsingItem(PlayerUseItemEvent.Finish event) {
-		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			String id = event.item.getUnlocalizedName();
-			for(Drink d: DrinkLists.EXTERNAL_DRINKS) {
-				String possibleID = d.item.getUnlocalizedName();
-				if(id.equals(possibleID) && event.item.getItemDamage() == d.item.getItemDamage()) {
-					PlayerContainer playCon = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
-					playCon.addStats(d.replenish, d.saturation);
-					break;
-				}
+		if(event.entityPlayer.worldObj.isRemote) return;
+		String id = event.item.getUnlocalizedName();
+		for(Drink d: DrinkLists.EXTERNAL_DRINKS) {
+			String possibleID = d.item.getUnlocalizedName();
+			if(id.equals(possibleID) && event.item.getItemDamage() == d.item.getItemDamage()) {
+				PlayerContainer playCon = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
+				playCon.addStats(d.replenish, d.saturation);
+				break;
 			}
 		}
 	}
 	
 	@SubscribeEvent
 	public void playedCloned(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
-		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			if(event.wasDeath) {
-				EntityPlayer player = event.entityPlayer;
-				PlayerContainer.getPlayer(player.getDisplayName()).respawnPlayer();
-			}
+		if(event.entityPlayer.worldObj.isRemote) return;
+		if(event.wasDeath) {
+			EntityPlayer player = event.entityPlayer;
+			PlayerContainer.getPlayer(player.getDisplayName()).respawnPlayer();
 		}
 	}
 	
 	@SubscribeEvent
 	public void onSleep(PlayerSleepInBedEvent event) {
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
-			
-			long worldTime = event.entityPlayer.worldObj.getWorldTime() % 24000;
-			float sleepingTime = (float) (24000 - worldTime);
-			int thirstLoss = player.getStats().thirstLevel - Math.round(sleepingTime / 2000f);
-			if(player.getStats().isNight(player.player)) {
-				if ((thirstLoss) <= 8) {
-					player.player.addChatMessage(new ChatComponentText("You are too thirsty to sleep!"));
-					event.result = EntityPlayer.EnumStatus.OTHER_PROBLEM;
-				} else {
-					player.stats.setStats(thirstLoss, player.stats.thirstSaturation);
-				}
+		if(event.entityPlayer.worldObj.isRemote) return;
+		PlayerContainer playerContainer = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
+		EntityPlayer player = playerContainer.getContainerPlayer();
+		
+		//Only run the code below if the difficulty allows it!
+		if(!playerContainer.getStats().isThirstRunning()) return;
+		
+		int dayLength = 24000;
+		int thirstInterval = 2000;
+		int worldTime = (int) (event.entityPlayer.worldObj.getWorldTime() % dayLength);
+		int sleepingTime = dayLength - worldTime;
+		int thirstLoss = playerContainer.getStats().thirstLevel - (sleepingTime / thirstInterval);
+		
+		if(playerContainer.getStats().isNight()) {
+			if (thirstLoss <= 8) {
+				player.addChatMessage(new ChatComponentText("You are too thirsty to sleep!"));
+				event.result = EntityPlayer.EnumStatus.OTHER_PROBLEM;
+			} else {
+				thirstToRemove = thirstLoss;
 			}
+		}
+	}
+	
+
+	@SubscribeEvent
+	public void wakeUp(PlayerWakeUpEvent event) {
+		if(!event.entityPlayer.worldObj.isRemote) {
+			PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
+			player.getStats().setStats(thirstToRemove, player.getStats().thirstSaturation);
+			thirstToRemove = 0;
 		}
 	}
 	

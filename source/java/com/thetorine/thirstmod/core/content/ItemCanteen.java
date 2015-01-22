@@ -14,7 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -51,7 +50,7 @@ public class ItemCanteen extends Item {
 			if (itemstack.getItemDamage() > 0) {
 				playerT.getStats().addStats((itemstack.getItemDamage() < 6 ? 2 : 3), 1.2F);
 				if ((itemstack.getItemDamage() <= 5) && (world.rand.nextFloat() < 0.4f)) {
-					PlayerContainer.getPlayer(player.getDisplayName()).getStats().poisonLogic.startPoison();
+					PlayerContainer.getPlayer(player.getDisplayName()).getStats().poisonLogic.poisonPlayer();;
 				}
 				return new ItemStack(this, 1, getDecrementedDamage(itemstack.getItemDamage()));
 			}
@@ -91,7 +90,7 @@ public class ItemCanteen extends Item {
 		PlayerContainer playerT = PlayerContainer.getPlayer(player.getDisplayName());
 		MovingObjectPosition movingobjectposition = getMovingObjectPositionFromPlayer(world, player, true);
 		if (movingobjectposition == null) {
-			if ((itemstack.getItemDamage() > 0) && canDrink(player.getDisplayName())) {
+			if ((itemstack.getItemDamage() > 0) && canDrink(player)) {
 				player.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
 			}
 			return itemstack;
@@ -100,18 +99,22 @@ public class ItemCanteen extends Item {
 			int i = movingobjectposition.blockX;
 			int j = movingobjectposition.blockY;
 			int k = movingobjectposition.blockZ;
-			if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-				if (world.getBlock(i, j, k).getMaterial() == Material.water) {
-					if (itemstack.getItemDamage() < 5) { return new ItemStack(this, 1, 5); }
-				} else if ((itemstack.getItemDamage() > 0) && (playerT.getStats().thirstLevel < 20)) {
-					player.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
+			if (world.getBlock(i, j, k).getMaterial() == Material.water) {
+				if (itemstack.getItemDamage() < 5) { 
+					return new ItemStack(this, 1, 5); 
 				}
+			} else if ((itemstack.getItemDamage() > 0) && (playerT.getStats().thirstLevel < 20)) {
+				player.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
 			}
 		}
 		return itemstack;
 	}
 
-	public boolean canDrink(String username) {
-		return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER ? PlayerContainer.getPlayer(username).getStats().thirstLevel < 20 : ClientStats.getInstance().level < 20;
+	public boolean canDrink(EntityPlayer player) {
+		if(!player.worldObj.isRemote) {
+			return PlayerContainer.getPlayer(player.getDisplayName()).getStats().thirstLevel < 20;
+		} else {
+			return ClientStats.getInstance().level < 20;
+		}
 	}
 }

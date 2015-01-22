@@ -1,6 +1,5 @@
 package com.thetorine.thirstmod.core.player;
 
-import com.thetorine.thirstmod.core.content.temperature.Temperature;
 import com.thetorine.thirstmod.core.main.ThirstMod;
 import com.thetorine.thirstmod.core.network.NetworkHandler;
 import com.thetorine.thirstmod.core.network.PacketUpdateClient;
@@ -11,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.*;
+import net.minecraft.world.biome.BiomeGenBase;
 
 public class ThirstLogic {
 	public EntityPlayer player;
@@ -24,13 +24,10 @@ public class ThirstLogic {
 	private Config config = ThirstMod.config;
 	public PoisonLogic poisonLogic = new PoisonLogic();
 	
-	public Temperature temperature;
-	
 	public ThirstLogic(EntityPlayer player) {
 		this.thirstLevel = Constants.MAX_LEVEL;
 		this.thirstSaturation = Constants.MAX_SATURATION;
 		this.player = player;
-		this.temperature = new Temperature(player);
 		this.natRegen = player.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration");
 		
 		readData();
@@ -53,7 +50,7 @@ public class ThirstLogic {
 				timer++;
 				if (timer > 200) {
 					if ((player.getHealth() > 10) || (player.getHealth() > (ThirstMod.config.DEATH_FROM_THIRST ? 0 : (difSet == 3 ? 0 : 1)) && difSet >= 2)) {
-						//alt to attackEntityFrom(DamageSource, Float) which was not working
+						//alternative to attackEntityFrom(DamageSource, Float) which was not working
 						player.setHealth(player.getHealth()-1f); 
 						player.addPotionEffect(new PotionEffect(Potion.confusion.id, 15 * 20, 1));
 						player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", "false");
@@ -63,19 +60,20 @@ public class ThirstLogic {
 			} else {
 				player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
 			}
+		} else {
+			player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
 		}
 		
-		this.computeExhaustion(player);
+		this.computeExhaustion();
 		this.poisonLogic.onTick(player);
 		this.writeData();
-		
-		if(Constants.ECLIPSE_ENVIRONMENT) {
-			temperature.onTick();
-		}
 		
 		NetworkHandler.networkWrapper.sendTo(new PacketUpdateClient(this), (EntityPlayerMP) player);
 	}
 	
+	/**
+	 * Load the data associated with this EntityPlayer.
+	 */
 	public void readData() {
 		if (player != null) {
 			NBTTagCompound oldnbt = player.getEntityData();
@@ -85,13 +83,14 @@ public class ThirstLogic {
 				thirstExhaustion = nbt.getFloat("exhaustion");
 				thirstSaturation = nbt.getFloat("saturation");
 				timer = nbt.getInteger("timer");
-
-				poisonLogic.setPoisonedTo(nbt.getBoolean("poisoned"));
-				poisonLogic.setPoisonTime(nbt.getInteger("poisonTime"));
+				poisonLogic.changeValues(nbt.getBoolean("poisoned"), nbt.getInteger("poisonTime"));
 			}
 		}
 	}
 
+	/**
+	 * Writes the data associated with this EntityPlayer to the disk.
+	 */ 
 	public void writeData() {
 		if (player != null) {
 			NBTTagCompound oldNBT = player.getEntityData();
@@ -104,14 +103,18 @@ public class ThirstLogic {
 			nbt.setFloat("saturation", thirstSaturation);
 			nbt.setInteger("timer", timer);
 
-			nbt.setBoolean("poisoned", poisonLogic.isPoisoned());
-			nbt.setInteger("poisonTime", poisonLogic.poisonTimeRemain());
+			nbt.setBoolean("poisoned", poisonLogic.isPlayerPoisoned());
+			nbt.setInteger("poisonTime", poisonLogic.getPoisonTimeRemaining());
 		} 
 	}
 	
-	public void computeExhaustion(EntityPlayer player) {
+	/**
+	 * Calculates the exhaustion to be added to {@link #thirstExhaustion}
+	 * @param player
+	 */
+	public void computeExhaustion() {
 		int movement = player.isRiding() ? 0 : movementSpeed;
-		float exhaustAmplifier = isNight(player) ? config.NIGHT_RATE : 1;
+		float exhaustAmplifier = isNight() ? config.NIGHT_RATE : 1;
 		float multiplier = getCurrentBiome(player) == "Desert" ? config.DESERT_RATE : 1;
 		if (player.isInsideOfMaterial(Material.water)) {
 			if (movement > 0) {
@@ -138,11 +141,20 @@ public class ThirstLogic {
 		}
 	}
 
-	public boolean isNight(EntityPlayer player) {
+	/**
+	 * Checks whether it is currently night-time in the world.
+	 * @return Returns true for night.
+	 */
+	public boolean isNight() {
 		long worldTime = player.worldObj.getWorldTime() % 24000;
 		return worldTime >= 13000;
 	}
 	
+	/**
+	 * Get the current biome of the player as a string. See {@link BiomeGenBase#biomeName}
+	 * @param player The EntityPlayer with which to retrieve the current biome.
+	 * @return The string representation of the biome. 
+	 */
 	public static String getCurrentBiome(EntityPlayer player) {
 		return player.worldObj.getWorldChunkManager().getBiomeGenAt((int) player.posX, (int) player.posZ).biomeName;
 	}
@@ -159,6 +171,15 @@ public class ThirstLogic {
 	public void setStats(int level, float sat) {
 		this.thirstLevel = level;
 		this.thirstSaturation = sat;
+	}
+	
+	/**
+	 * Checks whether the current difficulty setting of the world allows the thirst to drain.
+	 * @return Whether the thirst bar can drain.
+	 */
+	public boolean isThirstRunning() {
+		if(ThirstMod.config.PEACEFUL_ON) return true;
+		else return player.worldObj.difficultySetting.getDifficultyId() > 0;
 	}
 	
 	@Override

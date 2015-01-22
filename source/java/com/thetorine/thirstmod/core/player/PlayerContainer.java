@@ -10,8 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 public class PlayerContainer {
 	public static final Map<String, PlayerContainer> ALL_PLAYERS = new HashMap<String, PlayerContainer>();
 
-	public EntityPlayer player;
-	public ThirstLogic stats;
+	private EntityPlayer player;
+	private ThirstLogic stats;
 
 	public PlayerContainer(EntityPlayer player, ThirstLogic stats) {
 		this.player = player;
@@ -30,8 +30,7 @@ public class PlayerContainer {
 		getStats().thirstExhaustion = 0f;
 		getStats().thirstSaturation = Constants.MAX_SATURATION;
 		getStats().timer = 0;
-		getStats().poisonLogic.setPoisonedTo(false);
-		getStats().poisonLogic.setPoisonTime(0);
+		getStats().poisonLogic.changeValues(false, 800);
 	}
 
 	public static PlayerContainer getPlayer(String username) {
@@ -40,6 +39,10 @@ public class PlayerContainer {
 
 	public ThirstLogic getStats() {
 		return stats;
+	}
+	
+	public EntityPlayer getContainerPlayer() {
+		return player;
 	}
 
 	public void addStats(int level, float saturation) {

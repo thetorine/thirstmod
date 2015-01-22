@@ -150,5 +150,4 @@ public class BlockDB extends BlockContainer {
 		} 
 		return topSide;
 	}
-
 }

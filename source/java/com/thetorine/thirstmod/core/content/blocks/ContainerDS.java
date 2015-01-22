@@ -9,8 +9,6 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotFurnace;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 
 public class ContainerDS extends Container {
 	private TileEntityDS tile;
@@ -40,12 +38,12 @@ public class ContainerDS extends Container {
 
 	@Override
 	public void onContainerClosed(EntityPlayer player) {
-		if ((tile.items[2] != null) && (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)) {
+		if (tile.items[2] != null && !player.worldObj.isRemote) {
 			player.dropItem(tile.items[2].getItem(), tile.items[2].stackSize);
 			tile.items[2] = null;
 		}
 
-		if ((tile.items[1] != null) && (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)) {
+		if (tile.items[1] != null && !player.worldObj.isRemote) {
 			player.dropItem(tile.items[1].getItem(), tile.items[1].stackSize);
 			tile.items[1] = null;
 		}

@@ -7,7 +7,6 @@ import com.thetorine.thirstmod.core.client.player.ClientStats;
 import com.thetorine.thirstmod.core.main.ThirstMod;
 import com.thetorine.thirstmod.core.player.PlayerContainer;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -71,7 +70,7 @@ public class ItemDrink extends Item {
 			if (poisonChance > 0 && ThirstMod.config.POISON_ON) {
 				Random rand = new Random();
 				if (rand.nextFloat() < poisonChance) {
-					playerCon.getStats().poisonLogic.startPoison();
+					playerCon.getStats().poisonLogic.poisonPlayer();
 				}
 			}
 			if (curesPotion) {
@@ -166,10 +165,10 @@ public class ItemDrink extends Item {
 	}
 	
 	public boolean canDrink(EntityPlayer player) {
-		switch(FMLCommonHandler.instance().getEffectiveSide()) {
-			case CLIENT: return ClientStats.getInstance().level < 20;
-			case SERVER: return PlayerContainer.getPlayer(player.getDisplayName()).stats.thirstLevel < 20;
-			default: return false;
+		if(!player.worldObj.isRemote) {
+			return PlayerContainer.getPlayer(player.getDisplayName()).getStats().thirstLevel < 20;
+		} else {
+			return ClientStats.getInstance().level < 20;
 		}
 	}
 }

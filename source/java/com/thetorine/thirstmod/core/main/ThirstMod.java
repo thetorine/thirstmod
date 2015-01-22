@@ -24,7 +24,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.*;
 
-@Mod(modid = Constants.MODID, version = Constants.VERSION)
+@Mod(modid = Constants.MODID, version = Constants.VERSION, name = Constants.NAME)
 public class ThirstMod {
 	@Instance(Constants.MODID)
 	public static ThirstMod instance;
@@ -49,7 +49,7 @@ public class ThirstMod {
 	
 	@EventHandler
 	public void serverClosed(FMLServerStoppedEvent event) {
-		if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+		if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			PlayerContainer.ALL_PLAYERS.clear();
 		}
 	}

@@ -11,7 +11,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 public class Config {
-	private Configuration config = new Configuration(new File(ThirstMod.getMinecraftDir(), "/config/thirstmod.txt"));
+	private Configuration config = new Configuration(new File(ThirstMod.getMinecraftDir(), "/config/thirstmod.cfg"));
 
 	public boolean POISON_ON = setupConfig();
 	public boolean PEACEFUL_ON;

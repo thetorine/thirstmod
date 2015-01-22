@@ -8,7 +8,7 @@ import com.thetorine.thirstmod.core.main.ThirstMod;
 import com.thetorine.thirstmod.core.player.PlayerContainer;
 import com.thetorine.thirstmod.core.utils.Constants;
 
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -16,6 +16,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenJungle;
 
@@ -60,31 +61,32 @@ public class ItemInternalDrink extends Item {
 				int y = mop.blockY;
 				int z = mop.blockZ;
 				
-				
-				if(!world.isRemote) {
-					if (world.getBlock(x, y, z) == Blocks.water) {
-						addItem = true;
-					} else if (world.getBlock(x, y, z) == Blocks.leaves) {
-						Random random = new Random();
-						if (world.getBiomeGenForCoords(x, z) instanceof BiomeGenJungle) {
-							world.setBlockMetadataWithNotify(x, y, z, 0, 0x02);
-							if (random.nextFloat() < 0.3f) {
-								addItem = true;
+				if(mop.typeOfHit == MovingObjectType.BLOCK) {
+					if(!world.isRemote) {
+						if (world.getBlock(x, y, z).getMaterial() == Material.water) {
+							addItem = true;
+						} else if (world.getBlock(x, y, z) == Blocks.leaves) {
+							Random random = new Random();
+							if (world.getBiomeGenForCoords(x, z) instanceof BiomeGenJungle) {
+								world.setBlockMetadataWithNotify(x, y, z, 0, 0x02);
+								if (random.nextFloat() < 0.3f) {
+									addItem = true;
+								}
 							}
 						}
+						
+						if(addItem) {
+							 --stack.stackSize;
+							 if(stack.stackSize <= 0) {
+								 return new ItemStack(returnItem);
+							 }
+							 if(!player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.water_cup))) {
+								 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.water_cup)));
+					         }
+						}
 					}
-					
-					if(addItem) {
-						 --stack.stackSize;
-						 if(stack.stackSize <= 0) {
-							 return new ItemStack(returnItem);
-						 }
-						 if(!player.inventory.addItemStackToInventory(new ItemStack(returnItem))) {
-							 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.water_cup)));
-				         }
-					}
+					addItem = false;
 				}
-				addItem = false;
 			}
 		} else if(canDrink(player) || player.capabilities.isCreativeMode) {
 			player.setItemInUse(stack, getMaxItemUseDuration(stack));
@@ -102,7 +104,7 @@ public class ItemInternalDrink extends Item {
 			if ((thirstPoison > 0) && ThirstMod.config.POISON_ON) {
 				Random rand = new Random();
 				if (rand.nextFloat() < thirstPoison) {
-					playerCon.getStats().poisonLogic.startPoison();
+					playerCon.getStats().poisonLogic.poisonPlayer();
 				}
 			}
 			player.inventory.addItemStackToInventory(new ItemStack(returnItem));
@@ -136,10 +138,10 @@ public class ItemInternalDrink extends Item {
 	}
 	
 	public boolean canDrink(EntityPlayer player) {
-		switch(FMLCommonHandler.instance().getEffectiveSide()) {
-			case CLIENT: return ClientStats.getInstance().level < 20;
-			case SERVER: return PlayerContainer.getPlayer(player.getDisplayName()).stats.thirstLevel < 20;
+		if(!player.worldObj.isRemote) {
+			return PlayerContainer.getPlayer(player.getDisplayName()).getStats().thirstLevel < 20;
+		} else {
+			return ClientStats.getInstance().level < 20;
 		}
-		return false;
 	}
 }
