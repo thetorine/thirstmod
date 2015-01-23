@@ -9,23 +9,22 @@ import net.minecraft.inventory.SlotFurnace;
 import net.minecraft.item.ItemStack;
 
 public class ContainerRC extends Container {
-	private TileEntityRC rc;
+	private TileEntityRC tileEntity;
 	private int lastRainMeter = 0;
 	private int lastInternalBucket = 0;
 
 	public ContainerRC(InventoryPlayer ip, TileEntityRC tile) {
-		rc = tile;
+		tileEntity = tile;
 		addSlotToContainer(new Slot(tile, 0, 56, 53));
 		addSlotToContainer(new SlotFurnace(ip.player, tile, 1, 116, 35));
 
-		int i;
-		for (i = 0; i < 3; ++i) {
+		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				addSlotToContainer(new Slot(ip, j + (i * 9) + 9, 8 + (j * 18), 84 + (i * 18)));
 			}
 		}
 
-		for (i = 0; i < 9; ++i) {
+		for (int i = 0; i < 9; ++i) {
 			addSlotToContainer(new Slot(ip, i, 8 + (i * 18), 142));
 		}
 	}
@@ -63,17 +62,17 @@ public class ContainerRC extends Container {
 
 		for (int var1 = 0; var1 < crafters.size(); ++var1) {
 			ICrafting var2 = (ICrafting) crafters.get(var1);
-			if (lastRainMeter != rc.rainMeter) {
-				var2.sendProgressBarUpdate(this, 0, rc.rainMeter);
+			if (lastRainMeter != tileEntity.rainMeter) {
+				var2.sendProgressBarUpdate(this, 0, tileEntity.rainMeter);
 			}
 
-			if (lastInternalBucket != rc.internalBucket) {
-				var2.sendProgressBarUpdate(this, 1, rc.internalBucket);
+			if (lastInternalBucket != tileEntity.internalBucket) {
+				var2.sendProgressBarUpdate(this, 1, tileEntity.internalBucket);
 			}
 		}
 
-		lastRainMeter = rc.rainMeter;
-		lastInternalBucket = rc.internalBucket;
+		lastRainMeter = tileEntity.rainMeter;
+		lastInternalBucket = tileEntity.internalBucket;
 	}
 
 	@Override
@@ -81,10 +80,10 @@ public class ContainerRC extends Container {
 		super.updateProgressBar(i, j);
 		switch (i) {
 			case 0:
-				rc.rainMeter = j;
+				tileEntity.rainMeter = j;
 				return;
 			case 1:
-				rc.internalBucket = j;
+				tileEntity.internalBucket = j;
 				return;
 			default:
 		}
@@ -94,12 +93,12 @@ public class ContainerRC extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting par1ICrafting) {
 		crafters.add(par1ICrafting);
-		par1ICrafting.sendProgressBarUpdate(this, 0, this.rc.rainMeter);
-		par1ICrafting.sendProgressBarUpdate(this, 1, this.rc.internalBucket);
+		par1ICrafting.sendProgressBarUpdate(this, 0, this.tileEntity.rainMeter);
+		par1ICrafting.sendProgressBarUpdate(this, 1, this.tileEntity.internalBucket);
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return rc.isUseableByPlayer(entityplayer);
+		return tileEntity.isUseableByPlayer(entityplayer);
 	}
 }

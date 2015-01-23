@@ -46,7 +46,7 @@ public class PoisonLogic {
 	}
 	
 	public void increaseExhaustion(EntityPlayer player) {
-		PlayerContainer container = PlayerContainer.getPlayer(player.getDisplayName());
+		PlayerContainer container = PlayerContainer.getPlayer(player);
 		if(container != null) {
 			container.addExhaustion(0.061f);
 		}

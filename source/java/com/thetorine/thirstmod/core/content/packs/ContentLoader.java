@@ -189,12 +189,20 @@ public class ContentLoader {
 				.healFood(bar_heal_hunger, sat_hunger).setPoisoningChance(poisonChance)
 				.setPotionEffect(potionID, duration).setCuresPotions(potion_cure);
 			
-			GameRegistry.registerItem(loadedDrink, shortname);
-			DrinkLists.addDrink(new ItemStack(loadedDrink), bar_heal, sat_thirst);
-			ItemStack stack = new ItemStack(GameData.getItemRegistry().getObject(item), 0, itemMetadata);
-			DBRecipes.instance().addRecipe(stack.getUnlocalizedName(), itemMetadata, new ItemStack(loadedDrink));
-			
-			languageTable.put(String.format("item.%s.name", shortname), name);
+			if(shortname.length() > 0) {
+				Item recipeItem = GameData.getItemRegistry().getObject(item);
+				if(recipeItem != null) {
+					GameRegistry.registerItem(loadedDrink, shortname);
+					DrinkLists.addDrink(new ItemStack(loadedDrink), bar_heal, sat_thirst);
+					ItemStack tempRecipeStack = new ItemStack(recipeItem, 0, itemMetadata);
+					DBRecipes.instance().addRecipe(tempRecipeStack.getUnlocalizedName(), itemMetadata, new ItemStack(loadedDrink));
+					languageTable.put(String.format("item.%s.name", shortname), name);
+				} else {
+					ThirstMod.print(
+						"Content Loader: Unable to aquire recipe for item id: " + item 
+					  + "/n Item not added: " + name);
+				}
+			} 
 		}
 		injectLanguage();
 	}

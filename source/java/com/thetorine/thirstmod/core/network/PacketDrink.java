@@ -9,11 +9,9 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketDrink implements IMessage {
-
 	private int page, amount, buy, x, y, z;
 	
-	public PacketDrink() {
-	}
+	public PacketDrink() {}
 
 	public PacketDrink(TileEntityDS tile) {
 		this.page = tile.page;

@@ -26,7 +26,7 @@ public class ItemCanteen extends Item {
 		setMaxDamage(0);
 		setHasSubtypes(true);
 		setTextureName("thirstmod:canteen");
-		setCreativeTab(ThirstMod.thirst);
+		setCreativeTab(ThirstMod.thirstCreativeTab);
 	}
 
 	@Override
@@ -46,11 +46,11 @@ public class ItemCanteen extends Item {
 	@Override
 	public ItemStack onEaten(ItemStack itemstack, World world, EntityPlayer player) {
 		if (!world.isRemote) {
-			PlayerContainer playerT = PlayerContainer.getPlayer(player.getDisplayName());
+			PlayerContainer playerContainer = PlayerContainer.getPlayer(player);
 			if (itemstack.getItemDamage() > 0) {
-				playerT.getStats().addStats((itemstack.getItemDamage() < 6 ? 2 : 3), 1.2F);
-				if ((itemstack.getItemDamage() <= 5) && (world.rand.nextFloat() < 0.4f)) {
-					PlayerContainer.getPlayer(player.getDisplayName()).getStats().poisonLogic.poisonPlayer();;
+				playerContainer.getStats().addStats((itemstack.getItemDamage() < 6 ? 2 : 3), 1.2F);
+				if (itemstack.getItemDamage() <= 5 && world.rand.nextFloat() < 0.4f) {
+					PlayerContainer.getPlayer(player).getStats().poisonLogic.poisonPlayer();;
 				}
 				return new ItemStack(this, 1, getDecrementedDamage(itemstack.getItemDamage()));
 			}
@@ -87,10 +87,10 @@ public class ItemCanteen extends Item {
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer player) {
-		PlayerContainer playerT = PlayerContainer.getPlayer(player.getDisplayName());
+		PlayerContainer playerT = PlayerContainer.getPlayer(player);
 		MovingObjectPosition movingobjectposition = getMovingObjectPositionFromPlayer(world, player, true);
 		if (movingobjectposition == null) {
-			if ((itemstack.getItemDamage() > 0) && canDrink(player)) {
+			if (itemstack.getItemDamage() > 0 && canDrink(player)) {
 				player.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
 			}
 			return itemstack;
@@ -103,7 +103,7 @@ public class ItemCanteen extends Item {
 				if (itemstack.getItemDamage() < 5) { 
 					return new ItemStack(this, 1, 5); 
 				}
-			} else if ((itemstack.getItemDamage() > 0) && (playerT.getStats().thirstLevel < 20)) {
+			} else if (itemstack.getItemDamage() > 0 && playerT.getStats().thirstLevel < 20) {
 				player.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
 			}
 		}
@@ -112,7 +112,7 @@ public class ItemCanteen extends Item {
 
 	public boolean canDrink(EntityPlayer player) {
 		if(!player.worldObj.isRemote) {
-			return PlayerContainer.getPlayer(player.getDisplayName()).getStats().thirstLevel < 20;
+			return PlayerContainer.getPlayer(player).getStats().thirstLevel < 20;
 		} else {
 			return ClientStats.getInstance().level < 20;
 		}

@@ -15,5 +15,5 @@ public class Constants {
 	
 	public static final int DRINKS_STACKSIZE = 4;
 	
-	public static final boolean ECLIPSE_ENVIRONMENT = true;
+	public static final boolean ECLIPSE_ENVIRONMENT = false;
 }

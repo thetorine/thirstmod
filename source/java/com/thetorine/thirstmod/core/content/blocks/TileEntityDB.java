@@ -219,7 +219,7 @@ public class TileEntityDB extends TileEntity implements IInventory {
 
 	@Override
 	public String getInventoryName() {
-		return BlockLoader.drinks_brewer.getUnlocalizedName();
+		return BlockLoader.drinksBrewer.getUnlocalizedName();
 	}
 
 	@Override

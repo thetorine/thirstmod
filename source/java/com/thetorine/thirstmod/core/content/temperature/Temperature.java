@@ -22,7 +22,7 @@ public class Temperature {
 	}
 	
 	public void onTick() {
-		airTemperture = getBiomeTemp() + getblockProximity() + getDepth() + getMisc();
+		airTemperture = getBiomeTemp() + getBlockProximity() + getDepth() + getMisc();
 	}
 	
 	public float getBiomeTemp() {
@@ -34,7 +34,7 @@ public class Temperature {
 		return 25f;
 	}
 	
-	public float getblockProximity() {
+	public float getBlockProximity() {
 		float temp = 0f;
 		for(String blockName : specialBlocks.keySet()) {
 			Block block = (Block) Block.blockRegistry.getObject(blockName.replace("tile.", ""));

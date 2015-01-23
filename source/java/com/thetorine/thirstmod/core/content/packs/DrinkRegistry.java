@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
+import com.thetorine.thirstmod.core.content.blocks.DBRecipes;
 import com.thetorine.thirstmod.core.main.ThirstMod;
 
 import cpw.mods.fml.common.registry.GameData;
@@ -73,30 +74,46 @@ public class DrinkRegistry {
 				}
 			}
 		} catch(Exception e) {
-			System.out.println("Couldn't load external drinks.");
+			ThirstMod.print("Couldn't load external drinks.");
 		}
 	}
 
-	public void readFiles(String[] colon) {
-		String id = colon[0];
-		int level = Integer.parseInt(colon[1]);
-		float saturation = Float.parseFloat(colon[2]);
+	public void readFiles(String[] elements) {
+		String id = null;
+		int level = 0;
+		float saturation = 0f;
 		boolean poison = false;
 		float chance = 0.0f;
 		int metadata = 0;
-
-		if (colon.length == 5) {
-			poison = Boolean.parseBoolean(colon[3]);
-			chance = Float.parseFloat(colon[4]);
-		} else if (colon.length == 6) {
-			poison = Boolean.parseBoolean(colon[3]);
-			chance = Float.parseFloat(colon[4]);
-			metadata = Integer.parseInt(colon[5]);
+		String drinkRecipeID = null;
+		
+		for(int i = 0; i < elements.length; i++) {
+			switch(i) {
+				case 0: id = elements[i]; break;
+				case 1: level = Integer.parseInt(elements[i]); break;
+				case 2: saturation = Float.parseFloat(elements[i]); break;
+				case 3: poison = Boolean.parseBoolean(elements[i]); break;
+				case 4: chance = Float.parseFloat(elements[i]); break;
+				case 5: metadata = Integer.parseInt(elements[i]); break;
+				case 6: drinkRecipeID = elements[i]; break;
+			}
 		}
 
 		Item item = (Item) GameData.getItemRegistry().getObject(id);
-		DrinkLists.addDrink(new ItemStack(item, 0, metadata), level, saturation, poison, chance);
-		ThirstMod.print("Added: " + id + " at " + item);
+		if(item != null) {
+			DrinkLists.addDrink(new ItemStack(item, 0, metadata), level, saturation, poison, chance);
+			if(drinkRecipeID != null) {
+				Item recipeItem = (Item) GameData.getItemRegistry().getObject(drinkRecipeID);
+				if(recipeItem != null) {
+					DBRecipes.instance().addRecipe(recipeItem.getUnlocalizedName(), new ItemStack(item));
+				} else {
+					ThirstMod.print("External Drink Loader: Failed to load recipe " + drinkRecipeID + " for " + id);
+				}
+			}
+			ThirstMod.print("External Drink Loader: Added: " + id + " at " + item);
+		} else {
+			ThirstMod.print("External Drink Loader: No such item for id: " + id);
+		}
 	}
 
 	public void createDrinks(File file) throws Exception {
@@ -111,14 +128,15 @@ public class DrinkRegistry {
 		if (!file.exists()) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 			writer.write("Lets hope you're not an idiot. :D\n\n");
-			writer.write("item_id thirst_replenish thirst_saturation causes_poison poison_chance metadata\n\n");
+			writer.write("item_id thirst_replenish thirst_saturation causes_poison poison_chance metadata recipe_id\n\n");
 			writer.write("Copy and paste this in a new [.txt] file. Replace all of the above with the correct values.\n");
 			writer.write("    item_id = String (consult wiki or mod author for item id)\n"
 					   + "    thirst_replenish = Integer (one to twenty)\n"
 					   + "    thirst_saturation = Decimal (consult food wiki page for details)\n"
 					   + "    causes_poison = Boolean\n"
 					   + "    poison_chance = Decimal (0.1 to 0.9)\n"
-					   + "    metadata = Integer (consult wiki or mod author for item metadata)\n\n");
+					   + "    metadata = Integer (consult wiki or mod author for item metadata)\n"
+					   + "    recipe_id = String (adds a recipe for this drink to be brewed in the Drinks Brewer), (consult wiki or mod author for item id)\n\n");
 			writer.write("Use the exact format displayed. Do NOT misplace the values or the game WILL crash.\n\n");
 			writer.write("Don't forget the spaces between each value!\n\n");
 			writer.write("One item per line in a [.txt] file in this folder. Ask tarun1998 on the forums about any issues.");

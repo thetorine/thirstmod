@@ -47,7 +47,7 @@ public class ItemInternalDrink extends Item {
 	}
 	
 	public void register(String texture) {
-		this.setCreativeTab(ThirstMod.thirst); 
+		this.setCreativeTab(ThirstMod.thirstCreativeTab); 
 		this.setTextureName(texture);
 	}
 	
@@ -80,8 +80,8 @@ public class ItemInternalDrink extends Item {
 							 if(stack.stackSize <= 0) {
 								 return new ItemStack(returnItem);
 							 }
-							 if(!player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.water_cup))) {
-								 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.water_cup)));
+							 if(!player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.waterCup))) {
+								 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.waterCup)));
 					         }
 						}
 					}
@@ -99,7 +99,7 @@ public class ItemInternalDrink extends Item {
 		if(!world.isRemote) {
 			stack.stackSize--;
 			
-			PlayerContainer playerCon = PlayerContainer.getPlayer(player.getDisplayName());
+			PlayerContainer playerCon = PlayerContainer.getPlayer(player);
 			playerCon.addStats(thirstHeal, thirstSaturation);
 			if ((thirstPoison > 0) && ThirstMod.config.POISON_ON) {
 				Random rand = new Random();
@@ -116,7 +116,6 @@ public class ItemInternalDrink extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean flag) {
 		super.addInformation(stack, player, list, flag);
-		
 		float f = Float.parseFloat(Integer.toString(thirstHeal)) / 2;
 		String s2 = Float.toString(f);
 		list.add("Heals " + (s2.endsWith(".0") ? s2.replace(".0", "") : s2) + " Droplets");
@@ -139,7 +138,7 @@ public class ItemInternalDrink extends Item {
 	
 	public boolean canDrink(EntityPlayer player) {
 		if(!player.worldObj.isRemote) {
-			return PlayerContainer.getPlayer(player.getDisplayName()).getStats().thirstLevel < 20;
+			return PlayerContainer.getPlayer(player).getStats().thirstLevel < 20;
 		} else {
 			return ClientStats.getInstance().level < 20;
 		}

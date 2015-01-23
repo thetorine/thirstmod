@@ -11,8 +11,7 @@ public class PacketUpdateClient implements IMessage {
 	private float saturation;
 	private boolean poisoned;
 	
-	public PacketUpdateClient() {
-	}
+	public PacketUpdateClient() {}
 
 	public PacketUpdateClient(ThirstLogic stats) {
 		this.level = stats.thirstLevel;

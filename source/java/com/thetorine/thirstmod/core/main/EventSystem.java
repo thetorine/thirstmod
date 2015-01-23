@@ -1,7 +1,5 @@
 package com.thetorine.thirstmod.core.main;
 
-import org.lwjgl.input.Keyboard;
-
 import com.thetorine.thirstmod.core.client.gui.GuiDB;
 import com.thetorine.thirstmod.core.client.gui.GuiDS;
 import com.thetorine.thirstmod.core.client.gui.GuiRC;
@@ -48,9 +46,6 @@ public class EventSystem implements IGuiHandler {
 		switch(event.side) {
 			case SERVER: {
 				ThirstMod.commonProxy.serverTick(event.player); 
-				if(Constants.ECLIPSE_ENVIRONMENT) {
-					debugCode(event.player);
-				}
 				break;
 			}
 			case CLIENT: {
@@ -69,7 +64,7 @@ public class EventSystem implements IGuiHandler {
 	@SubscribeEvent
 	public void onLogout(PlayerLoggedOutEvent event) {
 		if(event.player.worldObj.isRemote) return;
-		PlayerContainer.ALL_PLAYERS.remove(event.player.getDisplayName());
+		PlayerContainer.ALL_PLAYERS.remove(event.player);
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -105,7 +100,7 @@ public class EventSystem implements IGuiHandler {
 	@SubscribeEvent
 	public void onAttack(AttackEntityEvent attack) {
 		if(attack.entityPlayer.worldObj.isRemote) return;
-		PlayerContainer playerContainer = PlayerContainer.getPlayer(attack.entityPlayer.getDisplayName());
+		PlayerContainer playerContainer = PlayerContainer.getPlayer(attack.entityPlayer);
 		if (playerContainer != null) {
 			playerContainer.addExhaustion(0.5f);
 		}
@@ -115,7 +110,7 @@ public class EventSystem implements IGuiHandler {
 	public void onHurt(LivingHurtEvent hurt) {
 		if(hurt.entity.worldObj.isRemote) return;
 		if (hurt.entity instanceof EntityPlayer) {
-			PlayerContainer playerContainer = PlayerContainer.getPlayer(((EntityPlayer)hurt.entity).getDisplayName());
+			PlayerContainer playerContainer = PlayerContainer.getPlayer(((EntityPlayer)hurt.entity));
 			if(playerContainer != null) {
 				playerContainer.addExhaustion(0.4f);
 			}
@@ -125,7 +120,7 @@ public class EventSystem implements IGuiHandler {
 	@SubscribeEvent
 	public void onBlockBreak(BlockEvent.BreakEvent event) {
 		if(event.getPlayer().worldObj.isRemote) return;
-		PlayerContainer container = PlayerContainer.getPlayer(event.getPlayer().getDisplayName());
+		PlayerContainer container = PlayerContainer.getPlayer(event.getPlayer());
 		if(container != null) {
 			container.addExhaustion(0.03f);
 		}
@@ -138,7 +133,7 @@ public class EventSystem implements IGuiHandler {
 		for(Drink d: DrinkLists.EXTERNAL_DRINKS) {
 			String possibleID = d.item.getUnlocalizedName();
 			if(id.equals(possibleID) && event.item.getItemDamage() == d.item.getItemDamage()) {
-				PlayerContainer playCon = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
+				PlayerContainer playCon = PlayerContainer.getPlayer(event.entityPlayer);
 				playCon.addStats(d.replenish, d.saturation);
 				break;
 			}
@@ -150,14 +145,14 @@ public class EventSystem implements IGuiHandler {
 		if(event.entityPlayer.worldObj.isRemote) return;
 		if(event.wasDeath) {
 			EntityPlayer player = event.entityPlayer;
-			PlayerContainer.getPlayer(player.getDisplayName()).respawnPlayer();
+			PlayerContainer.getPlayer(player).respawnPlayer();
 		}
 	}
 	
 	@SubscribeEvent
 	public void onSleep(PlayerSleepInBedEvent event) {
 		if(event.entityPlayer.worldObj.isRemote) return;
-		PlayerContainer playerContainer = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
+		PlayerContainer playerContainer = PlayerContainer.getPlayer(event.entityPlayer);
 		EntityPlayer player = playerContainer.getContainerPlayer();
 		
 		//Only run the code below if the difficulty allows it!
@@ -181,9 +176,9 @@ public class EventSystem implements IGuiHandler {
 	
 
 	@SubscribeEvent
-	public void wakeUp(PlayerWakeUpEvent event) {
+	public void onPlayerWakeUp(PlayerWakeUpEvent event) {
 		if(!event.entityPlayer.worldObj.isRemote) {
-			PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer.getDisplayName());
+			PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer);
 			player.getStats().setStats(thirstToRemove, player.getStats().thirstSaturation);
 			thirstToRemove = 0;
 		}
@@ -199,11 +194,11 @@ public class EventSystem implements IGuiHandler {
 					if(item.getItemDamage() != 4) {
 						event.player.inventory.addItemStackToInventory(filter);
 					} else {
-						event.player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.dirty_filter, 1));
+						event.player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.dirtyFilter, 1));
 					}
 				}
 				
-				ItemStack charcoal_filter = new ItemStack(ItemLoader.charcoal_filter, 1, item.getItemDamage() + 1);
+				ItemStack charcoal_filter = new ItemStack(ItemLoader.charcoalFilter, 1, item.getItemDamage() + 1);
 				if(item.getUnlocalizedName().equals(charcoal_filter.getUnlocalizedName())) {
 					if(item.getItemDamage() != 4) {
 						event.player.inventory.addItemStackToInventory(charcoal_filter);
@@ -223,8 +218,8 @@ public class EventSystem implements IGuiHandler {
 				return new ContainerDB(player.inventory, (TileEntityDB) tile);
 			case Constants.RAIN_COLLECTOR_ID:
 				return new ContainerRC(player.inventory, (TileEntityRC) tile);
+			default: return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -237,16 +232,7 @@ public class EventSystem implements IGuiHandler {
 				return new GuiDB(player.inventory, (TileEntityDB) tile);
 			case Constants.RAIN_COLLECTOR_ID:
 				return new GuiRC(player.inventory, (TileEntityRC) tile);
-		}
-		return null;
-	}
-	
-	public void debugCode(EntityPlayer player) {
-		PlayerContainer container = PlayerContainer.getPlayer(player.getDisplayName());
-		if(Keyboard.isKeyDown(Keyboard.KEY_B)) {
-			container.addStats(-1, -1);
-		} else if(Keyboard.isKeyDown(Keyboard.KEY_N)) {
-			container.addStats(1, 1);
+			default: return null;
 		}
 	}
 }

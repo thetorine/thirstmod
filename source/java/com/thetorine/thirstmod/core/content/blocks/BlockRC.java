@@ -25,7 +25,7 @@ public class BlockRC extends BlockContainer {
 		super(Material.rock);
 		setResistance(5f);
 		setHardness(4f);
-		setCreativeTab(ThirstMod.thirst);
+		setCreativeTab(ThirstMod.thirstCreativeTab);
 	}
 
 	@Override

@@ -11,10 +11,10 @@ import net.minecraft.inventory.SlotFurnace;
 import net.minecraft.item.ItemStack;
 
 public class ContainerDS extends Container {
-	private TileEntityDS tile;
+	private TileEntityDS tileEntity;
 	
 	public ContainerDS(InventoryPlayer inv, TileEntityDS tile) {
-		this.tile = tile;
+		this.tileEntity = tile;
 
 		// 0=drink, 1=coins, 2=return
 		addSlotToContainer(new SlotDS(tile, 0, 34, 28));
@@ -33,19 +33,19 @@ public class ContainerDS extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
-		return tile.isUseableByPlayer(player);
+		return tileEntity.isUseableByPlayer(player);
 	}
 
 	@Override
 	public void onContainerClosed(EntityPlayer player) {
-		if (tile.items[2] != null && !player.worldObj.isRemote) {
-			player.dropItem(tile.items[2].getItem(), tile.items[2].stackSize);
-			tile.items[2] = null;
+		if (tileEntity.items[2] != null && !player.worldObj.isRemote) {
+			player.dropItem(tileEntity.items[2].getItem(), tileEntity.items[2].stackSize);
+			tileEntity.items[2] = null;
 		}
 
-		if (tile.items[1] != null && !player.worldObj.isRemote) {
-			player.dropItem(tile.items[1].getItem(), tile.items[1].stackSize);
-			tile.items[1] = null;
+		if (tileEntity.items[1] != null && !player.worldObj.isRemote) {
+			player.dropItem(tileEntity.items[1].getItem(), tileEntity.items[1].stackSize);
+			tileEntity.items[1] = null;
 		}
 	}
 
@@ -64,7 +64,7 @@ public class ContainerDS extends Container {
 					break;
 				}
 				default: {
-					if(stack.getUnlocalizedName().equals(ItemLoader.gold_coin.getUnlocalizedName())) {
+					if(stack.getUnlocalizedName().equals(ItemLoader.goldCoin.getUnlocalizedName())) {
 						if(!this.mergeItemStack(stack, 2, 3, false)) return null;
 					} else {
 						return null;

@@ -7,7 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public class NetworkHandler {
 	public static SimpleNetworkWrapper networkWrapper;
-	private int register = -1;
+	private int registerID = -1;
 	
 	public NetworkHandler() {
 		networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("thirstmod");
@@ -18,7 +18,7 @@ public class NetworkHandler {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void registerPacket(Class<? extends IMessage> c1, Class c2, Side side) {
-		register++;
-		networkWrapper.registerMessage(c2, c1, register, side);
+		registerID++;
+		networkWrapper.registerMessage(c2, c1, registerID, side);
 	}
 }

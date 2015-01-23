@@ -12,11 +12,11 @@ import com.thetorine.thirstmod.core.content.blocks.TileEntityDB;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class GuiDB extends GuiContainer {
-	private TileEntityDB tile;
+	private TileEntityDB tileEntity;
 
 	public GuiDB(InventoryPlayer inventoryplayer, TileEntityDB tile) {
 		super(new ContainerDB(inventoryplayer, tile));
-		this.tile = tile;
+		this.tileEntity = tile;
 		this.mc = FMLClientHandler.instance().getClient();
 	}
 
@@ -38,13 +38,13 @@ public class GuiDB extends GuiContainer {
 		int y = (height - ySize) / 2;
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-		if (tile.fuelLevel > 0) {
-			int m = tile.getFuelLevelScaled(13);
+		if (tileEntity.fuelLevel > 0) {
+			int m = tileEntity.getFuelLevelScaled(13);
 			drawTexturedModalRect(188, 99-m, 176, 44-m, 9, m);
 		}
 
-		if (tile.brewTime > 0) {
-			int k1 = tile.getBrewTimeScaled(24);
+		if (tileEntity.brewTime > 0) {
+			int k1 = tileEntity.getBrewTimeScaled(24);
 			drawTexturedModalRect(x + 79, y + 35, 176, 14, k1 + 1, 15);
 		}
 	}

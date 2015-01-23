@@ -20,7 +20,6 @@ import cpw.mods.fml.common.*;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.*;
 
@@ -70,10 +69,10 @@ public class ThirstMod {
 		System.out.println("[ThirstMod] " + s);
 	}
 	
-	public static CreativeTabs thirst = new CreativeTabs("drinks") {
+	public static CreativeTabs thirstCreativeTab = new CreativeTabs("drinks") {
 		@Override
 		public Item getTabIconItem() {
-			return Items.potionitem;
+			return ItemLoader.chocolateMilk;
 		}
 	};
 }

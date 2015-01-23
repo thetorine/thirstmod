@@ -104,7 +104,7 @@ public class TileEntityRC extends TileEntity implements IInventory {
 
 	@Override
 	public String getInventoryName() {
-		return BlockLoader.rain_collector.getUnlocalizedName();
+		return BlockLoader.rainCollector.getUnlocalizedName();
 	}
 
 	@Override

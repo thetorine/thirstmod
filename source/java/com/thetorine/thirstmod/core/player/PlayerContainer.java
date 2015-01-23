@@ -33,6 +33,10 @@ public class PlayerContainer {
 		getStats().poisonLogic.changeValues(false, 800);
 	}
 
+	public static PlayerContainer getPlayer(EntityPlayer player) {
+		return ALL_PLAYERS.get(player.getDisplayName());
+	}
+	
 	public static PlayerContainer getPlayer(String username) {
 		return ALL_PLAYERS.get(username);
 	}

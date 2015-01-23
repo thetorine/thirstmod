@@ -23,7 +23,7 @@ public class TileEntityDS extends TileEntity implements IInventory {
 				items[0] = DrinkLists.LOADED_DRINKS.get(page).item;
 				if (canBuy == 1) {
 					if ((items[2] != null) && (items[1] == null)) {
-						if (items[2].getUnlocalizedName().equals(ItemLoader.gold_coin.getUnlocalizedName())) {
+						if (items[2].getUnlocalizedName().equals(ItemLoader.goldCoin.getUnlocalizedName())) {
 							if ((DrinkLists.LOADED_DRINKS.get(page).storeRecipe * amountToBuy) <= items[2].stackSize) {
 								decrStackSize(2, DrinkLists.LOADED_DRINKS.get(page).storeRecipe * amountToBuy);
 								items[1] = new ItemStack(items[0].getItem(), amountToBuy);

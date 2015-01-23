@@ -12,14 +12,14 @@ import net.minecraft.inventory.SlotFurnace;
 import net.minecraft.item.ItemStack;
 
 public class ContainerDB extends Container {
-	private TileEntityDB drinksBrewer;
+	private TileEntityDB tileEntity;
 	private int lastFuelLevel;
 	private int lastBrewTime;
 	private int lastMaxFuelLevel;
 	private int lastMaxBrewTime;
 
 	public ContainerDB(InventoryPlayer inv, TileEntityDB tile) {
-		this.drinksBrewer = tile;
+		this.tileEntity = tile;
 		this.addSlotToContainer(new Slot(tile, 0, 58, 24)); // brewing item
 		this.addSlotToContainer(new Slot(tile, 1, 30, 24)); // glass
 		this.addSlotToContainer(new Slot(tile, 2, 44, 47)); // fuel
@@ -42,33 +42,33 @@ public class ContainerDB extends Container {
 		super.detectAndSendChanges();
 		for (int i = 0; i < this.crafters.size(); ++i) {
 			ICrafting craft = (ICrafting) this.crafters.get(i);
-			if(lastFuelLevel != drinksBrewer.fuelLevel) {
-				craft.sendProgressBarUpdate(this, 0, drinksBrewer.fuelLevel);
+			if(lastFuelLevel != tileEntity.fuelLevel) {
+				craft.sendProgressBarUpdate(this, 0, tileEntity.fuelLevel);
 			}
-			if(lastBrewTime != drinksBrewer.brewTime) {
-				craft.sendProgressBarUpdate(this, 1, drinksBrewer.brewTime);
+			if(lastBrewTime != tileEntity.brewTime) {
+				craft.sendProgressBarUpdate(this, 1, tileEntity.brewTime);
 			}
-			if(lastMaxFuelLevel != drinksBrewer.maxFuelLevel) {
-				craft.sendProgressBarUpdate(this, 2, drinksBrewer.maxFuelLevel);
+			if(lastMaxFuelLevel != tileEntity.maxFuelLevel) {
+				craft.sendProgressBarUpdate(this, 2, tileEntity.maxFuelLevel);
 			}
-			if(lastMaxBrewTime != drinksBrewer.maxBrewTime) {
-				craft.sendProgressBarUpdate(this, 3, drinksBrewer.maxBrewTime);
+			if(lastMaxBrewTime != tileEntity.maxBrewTime) {
+				craft.sendProgressBarUpdate(this, 3, tileEntity.maxBrewTime);
 			}
 		}
-		lastFuelLevel = drinksBrewer.fuelLevel;
-		lastBrewTime = drinksBrewer.brewTime;
-		lastMaxFuelLevel = drinksBrewer.maxFuelLevel;
-		lastMaxBrewTime = drinksBrewer.maxBrewTime;
+		lastFuelLevel = tileEntity.fuelLevel;
+		lastBrewTime = tileEntity.brewTime;
+		lastMaxFuelLevel = tileEntity.maxFuelLevel;
+		lastMaxBrewTime = tileEntity.maxBrewTime;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar(int packet, int data) {
 		switch(packet) {
-			case 0: drinksBrewer.fuelLevel = data; break;
-			case 1: drinksBrewer.brewTime = data; break;
-			case 2: drinksBrewer.maxFuelLevel = data; break;
-			case 3: drinksBrewer.maxBrewTime = data; break;
+			case 0: tileEntity.fuelLevel = data; break;
+			case 1: tileEntity.brewTime = data; break;
+			case 2: tileEntity.maxFuelLevel = data; break;
+			case 3: tileEntity.maxBrewTime = data; break;
 		}
 	}
 
@@ -90,9 +90,9 @@ public class ContainerDB extends Container {
 				default: {
 					if(stack.getUnlocalizedName().equals(Items.glass_bottle.getUnlocalizedName())) {
 						if(!this.mergeItemStack(stack, 1, 2, true)) return null;
-					} else if(drinksBrewer.getBrewedDrink(stack) != null) {
+					} else if(tileEntity.getBrewedDrink(stack) != null) {
 						if(!this.mergeItemStack(stack, 0, 1, false)) return null;
-					} else if(drinksBrewer.getItemFuelValue(stack) > 0) {
+					} else if(tileEntity.getItemFuelValue(stack) > 0) {
 						if(!this.mergeItemStack(stack, 2, 3, false)) return null;
 					} else {
 						return null;
@@ -109,14 +109,14 @@ public class ContainerDB extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting craft) {
 		super.addCraftingToCrafters(craft);
-		craft.sendProgressBarUpdate(this, 0, drinksBrewer.fuelLevel);
-		craft.sendProgressBarUpdate(this, 1, drinksBrewer.brewTime);
-		craft.sendProgressBarUpdate(this, 2, drinksBrewer.maxFuelLevel);
-		craft.sendProgressBarUpdate(this, 3, drinksBrewer.maxBrewTime);
+		craft.sendProgressBarUpdate(this, 0, tileEntity.fuelLevel);
+		craft.sendProgressBarUpdate(this, 1, tileEntity.brewTime);
+		craft.sendProgressBarUpdate(this, 2, tileEntity.maxFuelLevel);
+		craft.sendProgressBarUpdate(this, 3, tileEntity.maxBrewTime);
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return this.drinksBrewer.isUseableByPlayer(entityplayer);
+		return this.tileEntity.isUseableByPlayer(entityplayer);
 	}
 }

@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 public class CommonProxy {
 	
 	public void serverTick(EntityPlayer player) {
-		PlayerContainer handler = PlayerContainer.getPlayer(player.getDisplayName());
+		PlayerContainer handler = PlayerContainer.getPlayer(player);
 		if (handler != null) {
 			if (!player.capabilities.isCreativeMode) {
 				handler.getStats().onTick();

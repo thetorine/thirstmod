@@ -124,12 +124,6 @@ public class GuiRenderBar {
 		bind(Gui.icons);
 	}
     
-    public static void drawTemperature(int w, int h) {
-    	float temp = ClientStats.getInstance().temperature;
-    	GuiIngame ingameGUI = mc.ingameGUI;
-    	ingameGUI.drawCenteredString(mc.fontRenderer, Float.toString(temp), 200, 100, 0xffffff);
-    }
-
 	private static void bind(ResourceLocation res) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(res);
 	}

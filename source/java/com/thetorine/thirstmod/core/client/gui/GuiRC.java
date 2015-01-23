@@ -11,16 +11,13 @@ import org.lwjgl.opengl.GL11;
 import com.thetorine.thirstmod.core.content.blocks.ContainerRC;
 import com.thetorine.thirstmod.core.content.blocks.TileEntityRC;
 
-import cpw.mods.fml.client.FMLClientHandler;
-
 public class GuiRC extends GuiContainer {
-	private TileEntityRC rcInv;
-	private Minecraft minecraft = FMLClientHandler.instance().getClient();
+	private TileEntityRC tileEntity;
 
 	public GuiRC(InventoryPlayer var1, TileEntityRC var2) {
 		super(new ContainerRC(var1, var2));
-		rcInv = var2;
-		mc = minecraft;
+		tileEntity = var2;
+		mc = Minecraft.getMinecraft();
 	}
 
 	@Override
@@ -32,21 +29,21 @@ public class GuiRC extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
-		World world = minecraft.theWorld;
+		World world = mc.theWorld;
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		minecraft.getTextureManager().bindTexture(new ResourceLocation("thirstmod:textures/gui/waterCollector.png"));
+		mc.getTextureManager().bindTexture(new ResourceLocation("thirstmod:textures/gui/waterCollector.png"));
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
-		int bucketScaled = rcInv.getInternalBucketScaled(24);
-		int meterScaled = rcInv.getRainMeterScaled(24);
+		int bucketScaled = tileEntity.getInternalBucketScaled(24);
+		int meterScaled = tileEntity.getRainMeterScaled(24);
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 		drawTexturedModalRect(x + 79, y + 34, 176, 16, meterScaled + 1, 17);
 		
-		if(rcInv.internalBucket > 0) {
+		if(tileEntity.internalBucket > 0) {
 			drawTexturedModalRect(x + 60, y + 51 - bucketScaled, 179, 16-bucketScaled, 8, bucketScaled);
 		}
 
-		if (world.isRaining() && rcInv.canRainOn(rcInv.xCoord, rcInv.yCoord, rcInv.zCoord, world)) {
+		if (world.isRaining() && tileEntity.canRainOn(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, world)) {
 			drawTexturedModalRect(x + 55, y + 14, 176, 31, 18, 20);
 		}
 	}

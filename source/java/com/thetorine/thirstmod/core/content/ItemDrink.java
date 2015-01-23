@@ -48,7 +48,7 @@ public class ItemDrink extends Item {
 		this.alwaysDrinkable = drinkable;
 		
 		this.setUnlocalizedName(name);
-		this.setCreativeTab(ThirstMod.thirst);
+		this.setCreativeTab(ThirstMod.thirstCreativeTab);
 		this.setMaxStackSize(stacksize);
 	}
 	
@@ -65,12 +65,12 @@ public class ItemDrink extends Item {
 		if(!world.isRemote) {
 			stack.stackSize--;
 			
-			PlayerContainer playerCon = PlayerContainer.getPlayer(player.getDisplayName());
-			playerCon.addStats(thirstHeal, saturationHeal);
+			PlayerContainer playerContainer = PlayerContainer.getPlayer(player);
+			playerContainer.addStats(thirstHeal, saturationHeal);
 			if (poisonChance > 0 && ThirstMod.config.POISON_ON) {
 				Random rand = new Random();
 				if (rand.nextFloat() < poisonChance) {
-					playerCon.getStats().poisonLogic.poisonPlayer();
+					playerContainer.getStats().poisonLogic.poisonPlayer();
 				}
 			}
 			if (curesPotion) {
@@ -166,7 +166,7 @@ public class ItemDrink extends Item {
 	
 	public boolean canDrink(EntityPlayer player) {
 		if(!player.worldObj.isRemote) {
-			return PlayerContainer.getPlayer(player.getDisplayName()).getStats().thirstLevel < 20;
+			return PlayerContainer.getPlayer(player).getStats().thirstLevel < 20;
 		} else {
 			return ClientStats.getInstance().level < 20;
 		}

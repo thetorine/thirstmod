@@ -21,8 +21,7 @@ public class RCRecipes {
 	public static int getFillTimeFor(String s) {
 		if (fillTime.get(s) != null) {
 			return fillTime.get(s);
-		} else {
-			return 200;
-		}
+		} 
+		return 200;
 	}
 }
