@@ -17,6 +17,7 @@ import com.thetorine.thirstmod.core.player.PlayerContainer;
 import com.thetorine.thirstmod.core.utils.Constants;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -56,6 +57,13 @@ public class EventSystem implements IGuiHandler {
 	}
 	
 	@SubscribeEvent
+	public void clientTick(ClientTickEvent event) {
+		if(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) {
+			PlayerContainer.ALL_PLAYERS.clear();
+		}
+	}
+	
+	@SubscribeEvent
 	public void onLogin(PlayerLoggedInEvent event) {
 		if(event.player.worldObj.isRemote) return;
 		PlayerContainer.addPlayer(event.player);
@@ -64,7 +72,7 @@ public class EventSystem implements IGuiHandler {
 	@SubscribeEvent
 	public void onLogout(PlayerLoggedOutEvent event) {
 		if(event.player.worldObj.isRemote) return;
-		PlayerContainer.ALL_PLAYERS.remove(event.player);
+		PlayerContainer.removePlayer(event.player);
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -110,7 +118,7 @@ public class EventSystem implements IGuiHandler {
 	public void onHurt(LivingHurtEvent hurt) {
 		if(hurt.entity.worldObj.isRemote) return;
 		if (hurt.entity instanceof EntityPlayer) {
-			PlayerContainer playerContainer = PlayerContainer.getPlayer(((EntityPlayer)hurt.entity));
+			PlayerContainer playerContainer = PlayerContainer.getPlayer((EntityPlayer)hurt.entity);
 			if(playerContainer != null) {
 				playerContainer.addExhaustion(0.4f);
 			}
@@ -156,7 +164,7 @@ public class EventSystem implements IGuiHandler {
 		EntityPlayer player = playerContainer.getContainerPlayer();
 		
 		//Only run the code below if the difficulty allows it!
-		if(!playerContainer.getStats().isThirstRunning()) return;
+		if(!playerContainer.getStats().isThirstAllowedByDifficulty()) return;
 		
 		int dayLength = 24000;
 		int thirstInterval = 2000;
@@ -177,11 +185,10 @@ public class EventSystem implements IGuiHandler {
 
 	@SubscribeEvent
 	public void onPlayerWakeUp(PlayerWakeUpEvent event) {
-		if(!event.entityPlayer.worldObj.isRemote) {
-			PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer);
-			player.getStats().setStats(thirstToRemove, player.getStats().thirstSaturation);
-			thirstToRemove = 0;
-		}
+		if(event.entityPlayer.worldObj.isRemote) return;
+		PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer);
+		player.getStats().setStats(thirstToRemove, player.getStats().thirstSaturation);
+		thirstToRemove = 0;
 	}
 	
 	@SubscribeEvent

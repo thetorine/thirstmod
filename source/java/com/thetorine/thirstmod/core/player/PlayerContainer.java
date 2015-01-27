@@ -25,6 +25,10 @@ public class PlayerContainer {
 		}
 	}
 	
+	public static void removePlayer(EntityPlayer player) {
+		ALL_PLAYERS.remove(player.getDisplayName());
+	}
+	
 	public void respawnPlayer() {
 		getStats().thirstLevel = Constants.MAX_LEVEL;
 		getStats().thirstExhaustion = 0f;

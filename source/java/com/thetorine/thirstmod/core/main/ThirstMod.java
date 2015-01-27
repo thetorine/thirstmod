@@ -1,6 +1,7 @@
 package com.thetorine.thirstmod.core.main;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 import com.thetorine.thirstmod.core.content.BlockLoader;
 import com.thetorine.thirstmod.core.content.ItemLoader;
@@ -18,7 +19,6 @@ import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.*;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.*;
@@ -61,8 +61,17 @@ public class ThirstMod {
 	}
 	
 	public static String getMinecraftDir() {
-		File s = Minecraft.getMinecraft().mcDataDir;
-		return s.getAbsolutePath();
+		try {
+			Field mcDataDir = Loader.class.getDeclaredField("minecraftDir");
+			if(mcDataDir != null) {
+				mcDataDir.setAccessible(true);
+				return ((File)mcDataDir.get(null)).getAbsolutePath();
+			}
+			throw new Exception();
+		} catch(Exception e) {
+			print("Unable to retrieve Minecraft Directory.");
+			return null;
+		}
 	}
 	
 	public static void print(String s) {

@@ -19,7 +19,7 @@ public class ThirstLogic {
 	public float thirstExhaustion;
 	public int movementSpeed; 
 	public int timer; 
-	public boolean natRegen = true;
+	public boolean natRegen;
 	
 	private Config config = ThirstMod.config;
 	public PoisonLogic poisonLogic = new PoisonLogic();
@@ -177,7 +177,7 @@ public class ThirstLogic {
 	 * Checks whether the current difficulty setting of the world allows the thirst to drain.
 	 * @return Whether the thirst bar can drain.
 	 */
-	public boolean isThirstRunning() {
+	public boolean isThirstAllowedByDifficulty() {
 		if(ThirstMod.config.PEACEFUL_ON) return true;
 		else return player.worldObj.difficultySetting.getDifficultyId() > 0;
 	}
