@@ -1,0 +1,22 @@
+item
+ name:
+ internal_name:
+ colour:
+ stacksize:
+ effect:
+ always_drinkable:
+recipe
+ item:
+ item_mod_id:
+ item_metadata:
+thirst_stats
+ bar_heal:
+ saturation_heal:
+ poison_chance:
+ potion_cure:
+hunger_stats
+ bar_heal_hunger:
+ saturation_heal_hunger:
+potion_effect
+ id:
+ duration:
