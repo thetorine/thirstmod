@@ -1,8 +1,10 @@
 # Thirst Mod 
-
 The Mod that makes you thirsty. 
 
-This repository will be updated with documentation as they are made.
+# Creating New Drinks
+1. Open your prefered text editor. Examples include Notepad++ for Windows and TextEdit for Mac OSX.
+2. Copy and paste the following: 
+
 
 # Credits
 tarun1998 - For the initial mod. 
