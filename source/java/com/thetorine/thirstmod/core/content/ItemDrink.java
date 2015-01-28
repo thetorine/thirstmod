@@ -25,6 +25,7 @@ public class ItemDrink extends Item {
 	public boolean specialEffect;
 	public boolean alwaysDrinkable;
 	public Item returnItem = Items.glass_bottle;
+	public ItemStack recipeItem;
 	
 	private IIcon drinkable;
 	private IIcon overlay;
@@ -89,12 +90,14 @@ public class ItemDrink extends Item {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean flag) {
-		super.addInformation(stack, player, list, flag);
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advancedItemTooltip) {
+		super.addInformation(stack, player, list, advancedItemTooltip);
 		float f = Float.parseFloat(Integer.toString(thirstHeal)) / 2;
 		String s2 = Float.toString(f);
-
 		list.add("Heals " + (s2.endsWith(".0") ? s2.replace(".0", "") : s2) + " Droplets");
+		if(recipeItem != null) {
+			list.add("Ingredient: " + recipeItem.getDisplayName());
+		}
 	}
 	
 	@Override
@@ -109,8 +112,8 @@ public class ItemDrink extends Item {
 	}
 	
 	@Override
-	public IIcon getIconFromDamageForRenderPass(int par1, int par2) {
-		return par2 == 0 ? this.overlay : this.drinkable;
+	public IIcon getIconFromDamageForRenderPass(int damageValue, int currentPass) {
+		return currentPass == 0 ? this.overlay : this.drinkable;
 	}
 
 	@Override
@@ -121,8 +124,8 @@ public class ItemDrink extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getColorFromItemStack(ItemStack par1ItemStack, int par2) {
-		return par2 > 0 ? 16777215 : itemColour;
+	public int getColorFromItemStack(ItemStack stack, int currentPass) {
+		return currentPass > 0 ? 16777215 : itemColour;
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -161,6 +164,11 @@ public class ItemDrink extends Item {
 	
 	public ItemDrink setCuresPotions(boolean b) {
 		curesPotion = b;
+		return this;
+	}
+	
+	public ItemDrink setRecipeItem(Item i) {
+		recipeItem = new ItemStack(i);
 		return this;
 	}
 	

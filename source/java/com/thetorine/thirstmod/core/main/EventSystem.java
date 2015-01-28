@@ -35,6 +35,7 @@ import cpw.mods.fml.common.eventhandler.*;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.*;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.*;
@@ -106,19 +107,19 @@ public class EventSystem implements IGuiHandler {
 	}
 	
 	@SubscribeEvent
-	public void onAttack(AttackEntityEvent attack) {
-		if(attack.entityPlayer.worldObj.isRemote) return;
-		PlayerContainer playerContainer = PlayerContainer.getPlayer(attack.entityPlayer);
+	public void onAttack(AttackEntityEvent event) {
+		if(event.entityPlayer.worldObj.isRemote) return;
+		PlayerContainer playerContainer = PlayerContainer.getPlayer(event.entityPlayer);
 		if (playerContainer != null) {
 			playerContainer.addExhaustion(0.5f);
 		}
 	}
 
 	@SubscribeEvent
-	public void onHurt(LivingHurtEvent hurt) {
-		if(hurt.entity.worldObj.isRemote) return;
-		if (hurt.entity instanceof EntityPlayer) {
-			PlayerContainer playerContainer = PlayerContainer.getPlayer((EntityPlayer)hurt.entity);
+	public void onHurt(LivingHurtEvent event) {
+		if(event.entity.worldObj.isRemote) return;
+		if (event.entity instanceof EntityPlayer) {
+			PlayerContainer playerContainer = PlayerContainer.getPlayer((EntityPlayer)event.entity);
 			if(playerContainer != null) {
 				playerContainer.addExhaustion(0.4f);
 			}
@@ -149,12 +150,9 @@ public class EventSystem implements IGuiHandler {
 	}
 	
 	@SubscribeEvent
-	public void playedCloned(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
-		if(event.entityPlayer.worldObj.isRemote) return;
-		if(event.wasDeath) {
-			EntityPlayer player = event.entityPlayer;
-			PlayerContainer.getPlayer(player).respawnPlayer();
-		}
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		if(event.player.worldObj.isRemote) return;
+		PlayerContainer.getPlayer(event.player).respawnPlayer();
 	}
 	
 	@SubscribeEvent

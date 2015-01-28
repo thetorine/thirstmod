@@ -37,12 +37,13 @@ public class ItemCanteen extends Item {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
-		for (int j = 0; j < 11; ++j) {
-			par3List.add(new ItemStack(par1, 1, j));
+	public void getSubItems(Item item, CreativeTabs itemCreativeTab, List tabItemList) {
+		for (int j = 0; j < 11; j+=5) {
+			ItemStack stack = new ItemStack(item, 1, j);
+			tabItemList.add(stack);
 		}
 	}
-
+	
 	@Override
 	public ItemStack onEaten(ItemStack itemstack, World world, EntityPlayer player) {
 		if (!world.isRemote) {
@@ -73,8 +74,8 @@ public class ItemCanteen extends Item {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean flag) {
-		super.addInformation(stack, player, list, flag);
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advancedItemTooltip) {
+		super.addInformation(stack, player, list, advancedItemTooltip);
 		if(stack.getItemDamage() > 0) {
 			if(stack.getItemDamage() < 6) {
 				list.add("Heals 1 Droplet");
@@ -87,7 +88,6 @@ public class ItemCanteen extends Item {
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer player) {
-		PlayerContainer playerT = PlayerContainer.getPlayer(player);
 		MovingObjectPosition movingobjectposition = getMovingObjectPositionFromPlayer(world, player, true);
 		if (movingobjectposition == null) {
 			if (itemstack.getItemDamage() > 0 && canDrink(player)) {
@@ -103,7 +103,7 @@ public class ItemCanteen extends Item {
 				if (itemstack.getItemDamage() < 5) { 
 					return new ItemStack(this, 1, 5); 
 				}
-			} else if (itemstack.getItemDamage() > 0 && playerT.getStats().thirstLevel < 20) {
+			} else if (itemstack.getItemDamage() > 0 && canDrink(player)) {
 				player.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
 			}
 		}

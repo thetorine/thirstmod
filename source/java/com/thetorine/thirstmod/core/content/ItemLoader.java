@@ -24,7 +24,7 @@ public class ItemLoader {
 	public static Item milk = new ItemDrink(6, 1.8f, 0xF0E8DF, Constants.DRINKS_STACKSIZE, false, false, "milk");
 	public static Item chocolateMilk = new ItemDrink(7, 2f, 0x6E440D, Constants.DRINKS_STACKSIZE, false, false, "chocolate_milk");
 	public static Item freshWaterBucket = new ItemInternalDrink(10, 4f, 0f, "thirstmod:clean_bucket", 1).setReturnItem(Items.bucket).setUnlocalizedName("clean_bucket");
-	public static Item canteen = new ItemCanteen().setCreativeTab(ThirstMod.thirstCreativeTab).setUnlocalizedName("canteen");
+	public static Item canteen = new ItemCanteen().setUnlocalizedName("canteen");
 	
 	public ItemLoader() {
 		registerItem(goldCoin);

@@ -185,13 +185,14 @@ public class ContentLoader {
 					alwaysDrinkable = (Boolean) dm.value;
 			}
 			
-			Item loadedDrink = new ItemDrink(bar_heal, sat_thirst, color, stacksize, hasEffect, alwaysDrinkable, shortname)
+			ItemDrink loadedDrink = new ItemDrink(bar_heal, sat_thirst, color, stacksize, hasEffect, alwaysDrinkable, shortname)
 				.healFood(bar_heal_hunger, sat_hunger).setPoisoningChance(poisonChance)
 				.setPotionEffect(potionID, duration).setCuresPotions(potion_cure);
 			
 			if(shortname.length() > 0) {
 				Item recipeItem = GameData.getItemRegistry().getObject(item);
 				if(recipeItem != null) {
+					loadedDrink.setRecipeItem(recipeItem);
 					GameRegistry.registerItem(loadedDrink, shortname);
 					DrinkLists.addDrink(new ItemStack(loadedDrink), bar_heal, sat_thirst);
 					ItemStack tempRecipeStack = new ItemStack(recipeItem, 0, itemMetadata);

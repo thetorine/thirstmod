@@ -53,6 +53,7 @@ public class ThirstLogic {
 						//alternative to attackEntityFrom(DamageSource, Float) which was not working
 						player.setHealth(player.getHealth()-1f); 
 						player.addPotionEffect(new PotionEffect(Potion.confusion.id, 15 * 20, 1));
+						//disables regeneration to allow health loss.
 						player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", "false");
 						timer = 0;
 					}
@@ -184,6 +185,6 @@ public class ThirstLogic {
 	
 	@Override
 	public String toString() {
-		return String.format("%s, Level = %d, Saturation = %f, Exhaustion = %f", player.getDisplayName(), thirstLevel, thirstSaturation, thirstExhaustion);
+		return String.format("%s, Level = %d, Saturation = %.2f, Exhaustion = %.2f", player.getDisplayName(), thirstLevel, thirstSaturation, thirstExhaustion);
 	}
 }
