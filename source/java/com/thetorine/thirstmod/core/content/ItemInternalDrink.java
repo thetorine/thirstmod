@@ -62,28 +62,27 @@ public class ItemInternalDrink extends Item {
 				int z = mop.blockZ;
 				
 				if(mop.typeOfHit == MovingObjectType.BLOCK) {
-					if(!world.isRemote) {
-						if (world.getBlock(x, y, z).getMaterial() == Material.water) {
-							addItem = true;
-						} else if (world.getBlock(x, y, z) == Blocks.leaves) {
-							Random random = new Random();
-							if (world.getBiomeGenForCoords(x, z) instanceof BiomeGenJungle) {
-								world.setBlockMetadataWithNotify(x, y, z, 0, 0x02);
-								if (random.nextFloat() < 0.3f) {
-									addItem = true;
-								}
+					if (world.getBlock(x, y, z).getMaterial() == Material.water) {
+						returnItem = ItemLoader.waterCup;
+						addItem = true;
+					} else if (world.getBlock(x, y, z) == Blocks.leaves) {
+						Random random = new Random();
+						if (world.getBiomeGenForCoords(x, z) instanceof BiomeGenJungle) {
+							world.setBlockMetadataWithNotify(x, y, z, 0, 0x02);
+							if (random.nextFloat() < 0.3f) {
+								addItem = true;
 							}
 						}
-						
-						if(addItem) {
-							 --stack.stackSize;
-							 if(stack.stackSize <= 0) {
-								 return new ItemStack(returnItem);
-							 }
-							 if(!player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.waterCup))) {
-								 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.waterCup)));
-					         }
-						}
+					}
+					
+					if(addItem) {
+						 --stack.stackSize;
+						 if(stack.stackSize <= 0) {
+							 return new ItemStack(returnItem);
+						 }
+						 if(!player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.waterCup))) {
+							 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.waterCup)));
+				         }
 					}
 					addItem = false;
 				}

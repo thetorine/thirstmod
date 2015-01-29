@@ -3,7 +3,7 @@ package com.thetorine.thirstmod.core.utils;
 public class Constants {
 	public static final String NAME = "Thirst Mod";
 	public static final String MODID = "thirstmod";
-	public static final String VERSION = "1.8.10";
+	public static final String VERSION = "1.8.11";
 	public static final String PACKAGE = "com.thetorine.thirstmod";
 	
 	public static final int MAX_LEVEL = 20;
