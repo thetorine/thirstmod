@@ -1,0 +1,34 @@
+//blocks
+tile.rain_collector.name=Coletor de Chuva
+tile.drinks_brewer.name=Fermentador de Bebidas
+tile.drinks_store.name=Loja de Bebidas
+
+//items
+item.dirty_filter.name=Filtro Sujo
+item.filter.name=Filtro
+item.gold_coin.name=Moeda de Ouro
+item.charcoal_filter.name=Filtro de Carvão Vegetal
+item.cup.name=Copo de Madeira
+item.water_cup.name=Copo d'Água
+item.filtered_water_cup.name=Copo de Água Potável
+item.fresh_water.name=Água Fresca
+item.milk_bottle.name=Garrafa de Leite
+item.chocolate_milk.name=Leite Achocolatado
+item.clean_bucket.name=Balde de Água Potável
+
+item.canteen.0.name=Cantil Vazio
+
+item.canteen.1.name=Cantil 1/5
+item.canteen.2.name=Cantil 2/5
+item.canteen.3.name=Cantil 3/5
+item.canteen.4.name=Cantil 4/5
+item.canteen.5.name=Cantil
+
+item.canteen.6.name=Cantil Limpo 1/5
+item.canteen.7.name=Cantil Limpo 2/5
+item.canteen.8.name=Cantil Limpo 3/5
+item.canteen.9.name=Cantil Limpo 4/5
+item.canteen.10.name=Cantil Limpo
+
+//other
+itemGroup.drinks=Mod da Sede
