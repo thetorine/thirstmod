@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 
 public class TileEntityRC extends TileEntity implements IInventory {
 	//0=input, 1=output
@@ -200,6 +201,9 @@ public class TileEntityRC extends TileEntity implements IInventory {
 	}
 
 	public boolean canRainOn(int i, int j, int k, World world) {
+		BiomeGenBase biome = world.getBiomeGenForCoords(i, k);
+		//don't turn rain collector on if there is no rain (rain disabled or snowing)
+		if(!biome.canSpawnLightningBolt() || biome.getFloatTemperature(i, j, k) < 0.15f) return false;
 		for (int l = j + 1; l < world.getHeight(); l++) {
 			if (world.getBlock(i, l, k) != Blocks.air) { return false; }
 		}

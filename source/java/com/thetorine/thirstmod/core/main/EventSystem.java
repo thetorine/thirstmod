@@ -21,7 +21,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -41,19 +41,14 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.*;
 
 public class EventSystem implements IGuiHandler {
-	private int thirstToRemove = 0;
+	private int thirstToSet = 0;
 	
 	@SubscribeEvent
 	public void playerTick(PlayerTickEvent event) {
-		switch(event.side) {
-			case SERVER: {
-				ThirstMod.commonProxy.serverTick(event.player); 
-				break;
-			}
-			case CLIENT: {
-				ThirstMod.commonProxy.clientTick(event.player);
-				break;
-			}
+		if(event.side == Side.SERVER) {
+			ThirstMod.commonProxy.serverTick(event.player); 
+		} else if(event.side == Side.CLIENT) {
+			ThirstMod.commonProxy.clientTick(event.player);
 		}
 	}
 	
@@ -168,25 +163,23 @@ public class EventSystem implements IGuiHandler {
 		int thirstInterval = 2000;
 		int worldTime = (int) (event.entityPlayer.worldObj.getWorldTime() % dayLength);
 		int sleepingTime = dayLength - worldTime;
-		int thirstLoss = playerContainer.getStats().thirstLevel - (sleepingTime / thirstInterval);
+		int newThirst = playerContainer.getStats().thirstLevel - (sleepingTime / thirstInterval);
 		
-		if(playerContainer.getStats().isNight()) {
-			if (thirstLoss <= 8) {
-				player.addChatMessage(new ChatComponentText("You are too thirsty to sleep!"));
+		if(!player.worldObj.isDaytime()) {
+			if (newThirst <= 8) {
+				player.addChatMessage(new ChatComponentTranslation("thirstmod.toothirsty", new Object[0]));
 				event.result = EntityPlayer.EnumStatus.OTHER_PROBLEM;
 			} else {
-				thirstToRemove = thirstLoss;
+				thirstToSet = newThirst;
 			}
 		}
 	}
-	
 
 	@SubscribeEvent
 	public void onPlayerWakeUp(PlayerWakeUpEvent event) {
 		if(event.entityPlayer.worldObj.isRemote) return;
 		PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer);
-		player.getStats().setStats(thirstToRemove, player.getStats().thirstSaturation);
-		thirstToRemove = 0;
+		player.getStats().setStats(thirstToSet, player.getStats().thirstSaturation);
 	}
 	
 	@SubscribeEvent

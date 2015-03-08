@@ -40,7 +40,7 @@ public class GuiDB extends GuiContainer {
 
 		if (tileEntity.fuelLevel > 0) {
 			int m = tileEntity.getFuelLevelScaled(13);
-			drawTexturedModalRect(188, 99-m, 176, 44-m, 9, m);
+			drawTexturedModalRect(x+63, y+62-m, 176, 44-m, 9, m);
 		}
 
 		if (tileEntity.brewTime > 0) {

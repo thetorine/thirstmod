@@ -19,7 +19,8 @@ public class ThirstLogic {
 	public float thirstExhaustion;
 	public int movementSpeed; 
 	public int timer; 
-	public boolean natRegen;
+	//Broken. On servers, this is applied globally and prevents other players from healing as well. 
+	//public boolean natRegen;
 	
 	private Config config = ThirstMod.config;
 	public PoisonLogic poisonLogic = new PoisonLogic();
@@ -28,7 +29,7 @@ public class ThirstLogic {
 		this.thirstLevel = Constants.MAX_LEVEL;
 		this.thirstSaturation = Constants.MAX_SATURATION;
 		this.player = player;
-		this.natRegen = player.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration");
+		//this.natRegen = player.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration");
 		
 		readData();
 	}
@@ -54,15 +55,15 @@ public class ThirstLogic {
 						player.setHealth(player.getHealth()-1f); 
 						player.addPotionEffect(new PotionEffect(Potion.confusion.id, 15 * 20, 1));
 						//disables regeneration to allow health loss.
-						player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", "false");
+						//player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", "false");
 						timer = 0;
 					}
 				}
 			} else {
-				player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
+				//player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
 			}
 		} else {
-			player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
+			//player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
 		}
 		
 		this.computeExhaustion();
@@ -116,7 +117,7 @@ public class ThirstLogic {
 	public void computeExhaustion() {
 		int movement = player.isRiding() ? 0 : movementSpeed;
 		float exhaustAmplifier = isNight() ? config.NIGHT_RATE : 1;
-		float multiplier = getCurrentBiome(player) == "Desert" ? config.DESERT_RATE : 1;
+		float multiplier = getCurrentBiome(player).equals("Desert") ? config.DESERT_RATE : 1;
 		if (player.isInsideOfMaterial(Material.water)) {
 			if (movement > 0) {
 				addExhaustion(config.IN_WATER_RATE * movement * 0.003F * exhaustAmplifier);
@@ -147,8 +148,7 @@ public class ThirstLogic {
 	 * @return Returns true for night.
 	 */
 	public boolean isNight() {
-		long worldTime = player.worldObj.getWorldTime() % 24000;
-		return worldTime >= 13000;
+		return !player.worldObj.isDaytime();
 	}
 	
 	/**

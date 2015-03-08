@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -45,8 +46,8 @@ public class BlockDB extends BlockContainer {
 			player.openGui(ThirstMod.instance, Constants.DRINKS_BREWER_ID, par1World, x, y, z);
 		} else {
 			if(player.worldObj.isRemote) {
-				player.addChatComponentMessage(new ChatComponentText("There are no drink packs installed!"));
-				player.addChatComponentMessage(new ChatComponentText("Download from Thirst Mod post on Minecraft Forums and place in [minecraft-dir]/thirstmod/content"));
+				player.addChatComponentMessage(new ChatComponentTranslation("thirstmod.db.nopacks", new Object[0]));
+				player.addChatComponentMessage(new ChatComponentTranslation("thirstmod.db.download", new Object[0]));
 			}
 		}
 		return true;

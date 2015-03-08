@@ -32,3 +32,6 @@ item.canteen.10.name=Clean Canteen
 
 //other
 itemGroup.drinks=Thirst Mod
+thirstmod.toothirsty=You are too thirsty to sleep!
+thirstmod.db.nopacks=There are no drink packs installed!
+thirstmod.db.download=Download from Thirst Mod post on Minecraft Forums and place in [minecraft-dir]/thirstmod/content
