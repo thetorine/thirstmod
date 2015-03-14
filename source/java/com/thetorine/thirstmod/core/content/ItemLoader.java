@@ -21,7 +21,7 @@ public class ItemLoader {
 	public static Item filteredWaterCup = new ItemInternalDrink(5, 1.6f, 0f, "thirstmod:filtered_water", 0).setUnlocalizedName("filtered_water_cup");
 	
 	public static Item freshWater = new ItemDrink(7, 2f, 0x11DEF5, Constants.DRINKS_STACKSIZE, false, false, "fresh_water");
-	public static Item milk = new ItemDrink(6, 1.8f, 0xF0E8DF, Constants.DRINKS_STACKSIZE, false, false, "milk");
+	public static Item milk = new ItemDrink(6, 1.8f, 0xF0E8DF, Constants.DRINKS_STACKSIZE, false, false, "milk_bottle");
 	public static Item chocolateMilk = new ItemDrink(7, 2f, 0x6E440D, Constants.DRINKS_STACKSIZE, false, false, "chocolate_milk");
 	public static Item freshWaterBucket = new ItemInternalDrink(10, 4f, 0f, "thirstmod:clean_bucket", 1).setReturnItem(Items.bucket).setUnlocalizedName("clean_bucket");
 	public static Item canteen = new ItemCanteen().setUnlocalizedName("canteen");

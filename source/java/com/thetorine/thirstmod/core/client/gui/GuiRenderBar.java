@@ -102,8 +102,8 @@ public class GuiRenderBar {
 			int yEnd = 9;
 			int xEnd = 7;
 
-			if (stats.saturation <= 0.0F && updateCounter % (stats.level * 3 + 1) == 0) {
-				height += rand.nextInt(3) - 1;
+			if (stats.saturation <= 0.0F && updateCounter % ((stats.level+1) * 3 + 1) == 0) {
+				height += rand.nextInt(3)-1;
 			}
 			
 			ingameGUI.drawTexturedModalRect(width, height, xStart, yStart, xEnd, yEnd);

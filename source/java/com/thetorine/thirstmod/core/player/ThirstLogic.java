@@ -7,9 +7,13 @@ import com.thetorine.thirstmod.core.utils.Config;
 import com.thetorine.thirstmod.core.utils.Constants;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.*;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class ThirstLogic {
@@ -19,9 +23,8 @@ public class ThirstLogic {
 	public float thirstExhaustion;
 	public int movementSpeed; 
 	public int timer; 
-	//Broken. On servers, this is applied globally and prevents other players from healing as well. 
-	//public boolean natRegen;
 	
+	public DamageThirst thirst;
 	private Config config = ThirstMod.config;
 	public PoisonLogic poisonLogic = new PoisonLogic();
 	
@@ -29,7 +32,7 @@ public class ThirstLogic {
 		this.thirstLevel = Constants.MAX_LEVEL;
 		this.thirstSaturation = Constants.MAX_SATURATION;
 		this.player = player;
-		//this.natRegen = player.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration");
+		this.thirst = new DamageThirst();
 		
 		readData();
 	}
@@ -51,19 +54,12 @@ public class ThirstLogic {
 				timer++;
 				if (timer > 200) {
 					if ((player.getHealth() > 10) || (player.getHealth() > (ThirstMod.config.DEATH_FROM_THIRST ? 0 : (difSet == 3 ? 0 : 1)) && difSet >= 2)) {
-						//alternative to attackEntityFrom(DamageSource, Float) which was not working
-						player.setHealth(player.getHealth()-1f); 
+						player.attackEntityFrom(this.thirst, 1f);
 						player.addPotionEffect(new PotionEffect(Potion.confusion.id, 15 * 20, 1));
-						//disables regeneration to allow health loss.
-						//player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", "false");
 						timer = 0;
 					}
 				}
-			} else {
-				//player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
-			}
-		} else {
-			//player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", Boolean.toString(natRegen));
+			} 
 		}
 		
 		this.computeExhaustion();
@@ -186,5 +182,22 @@ public class ThirstLogic {
 	@Override
 	public String toString() {
 		return String.format("%s, Level = %d, Saturation = %.2f, Exhaustion = %.2f", player.getDisplayName(), thirstLevel, thirstSaturation, thirstExhaustion);
+	}
+	
+	public static class DamageThirst extends DamageSource {
+		public DamageThirst() {
+			super("thirst");
+			setDamageBypassesArmor();
+			setDamageIsAbsolute();
+		}
+		
+		@Override
+		public IChatComponent func_151519_b(EntityLivingBase entity) {
+			if(entity instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer)entity;
+				return new ChatComponentText(player.getDisplayName() + "'s body is now made up of 0% water!");
+			}
+			return super.func_151519_b(entity);
+		}
 	}
 }

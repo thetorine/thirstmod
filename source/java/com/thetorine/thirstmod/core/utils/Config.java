@@ -17,6 +17,7 @@ public class Config {
 	public boolean PEACEFUL_ON;
 	public boolean METER_ON_LEFT;
 	public boolean DEATH_FROM_THIRST;
+	public boolean DISABLE_THIRST_LOSS_FROM_SLEEP;
 
 	public float NIGHT_RATE;
 	public float IN_WATER_RATE;
@@ -32,6 +33,7 @@ public class Config {
 		PEACEFUL_ON = Boolean.parseBoolean(get("Peaceful On", "General", false, "Allows the thirst bar to dehydrate on peaceful mode.").getString());
 		METER_ON_LEFT = Boolean.parseBoolean(get("Meter on leftside", "General", false, "Moves the ThirstBar to be above the health bar.").getString());
 		DEATH_FROM_THIRST = Boolean.parseBoolean(get("Death from Thirst", "General", false, "Allows you to determine whether death from thirst is possible. On HARD, the player will die regardless!").getString());
+		DISABLE_THIRST_LOSS_FROM_SLEEP = Boolean.parseBoolean(get("Sleeping Thirst Loss", "General", false, "Allows you to disable any loss of thirst while sleeping.").getString());
 
 		NIGHT_RATE = Float.parseFloat(get("Night", "Exhaustion Rates", 0.9d, "How fast the player is exhausted at night. 1 is daytime speed.").getString());
 		DESERT_RATE = Float.parseFloat(get("Desert", "Exhaustion Rates", 2d, "How fast the player is exhausted in the desert biome. 2 is 2x times faster.").getString());

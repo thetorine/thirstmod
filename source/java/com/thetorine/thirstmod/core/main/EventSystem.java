@@ -158,6 +158,7 @@ public class EventSystem implements IGuiHandler {
 		
 		//Only run the code below if the difficulty allows it!
 		if(!playerContainer.getStats().isThirstAllowedByDifficulty()) return;
+		if(ThirstMod.config.DISABLE_THIRST_LOSS_FROM_SLEEP) return;
 		
 		int dayLength = 24000;
 		int thirstInterval = 2000;
@@ -178,6 +179,10 @@ public class EventSystem implements IGuiHandler {
 	@SubscribeEvent
 	public void onPlayerWakeUp(PlayerWakeUpEvent event) {
 		if(event.entityPlayer.worldObj.isRemote) return;
+		PlayerContainer playerContainer = PlayerContainer.getPlayer(event.entityPlayer);
+		if(!playerContainer.getStats().isThirstAllowedByDifficulty()) return;
+		if(ThirstMod.config.DISABLE_THIRST_LOSS_FROM_SLEEP) return;
+		
 		PlayerContainer player = PlayerContainer.getPlayer(event.entityPlayer);
 		player.getStats().setStats(thirstToSet, player.getStats().thirstSaturation);
 	}
