@@ -2,6 +2,7 @@ package com.thetorine.thirstmod.core.content.blocks;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -21,7 +22,8 @@ public class RCRecipes {
 	public static int getFillTimeFor(String s) {
 		if (fillTime.get(s) != null) {
 			return fillTime.get(s);
-		} 
-		return 200;
+		} else {
+			return 200;
+		}
 	}
 }

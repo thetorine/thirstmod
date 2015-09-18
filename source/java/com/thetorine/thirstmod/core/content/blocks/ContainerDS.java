@@ -7,45 +7,47 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotFurnace;
+import net.minecraft.inventory.SlotFurnaceOutput;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class ContainerDS extends Container {
-	private TileEntityDS tileEntity;
+	private TileEntityDS tile;
 	
 	public ContainerDS(InventoryPlayer inv, TileEntityDS tile) {
-		this.tileEntity = tile;
+		this.tile = tile;
 
-		// 0=drink, 1=coins, 2=return
-		addSlotToContainer(new SlotDS(tile, 0, 34, 28));
-		addSlotToContainer(new SlotFurnace(inv.player, tile, 1, 34, 56));
-		addSlotToContainer(new Slot(tile, 2, 8, 41));
+		addSlotToContainer(new SlotDS(tile, 0, 34, 28)); // drink
+		addSlotToContainer(new SlotFurnaceOutput(inv.player, tile, 1, 34, 56)); //return
+		addSlotToContainer(new Slot(tile, 2, 8, 41)); //coins
 
-		for (int i = 0; i < 3; ++i) {
+		for(int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				addSlotToContainer(new Slot(inv, j + (i * 9) + 9, 8 + (j * 18), 84 + (i * 18)));
 			}
 		}
-		for (int i = 0; i < 9; ++i) {
+
+		for(int i = 0; i < 9; ++i) {
 			addSlotToContainer(new Slot(inv, i, 8 + (i * 18), 142));
 		}
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
-		return tileEntity.isUseableByPlayer(player);
+		return tile.isUseableByPlayer(player);
 	}
 
 	@Override
 	public void onContainerClosed(EntityPlayer player) {
-		if (tileEntity.items[2] != null && !player.worldObj.isRemote) {
-			player.dropItem(tileEntity.items[2].getItem(), tileEntity.items[2].stackSize);
-			tileEntity.items[2] = null;
+		if ((tile.items[2] != null) && (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)) {
+			player.dropItem(tile.items[2].getItem(), tile.items[2].stackSize);
+			tile.items[2] = null;
 		}
 
-		if (tileEntity.items[1] != null && !player.worldObj.isRemote) {
-			player.dropItem(tileEntity.items[1].getItem(), tileEntity.items[1].stackSize);
-			tileEntity.items[1] = null;
+		if ((tile.items[1] != null) && (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)) {
+			player.dropItem(tile.items[1].getItem(), tile.items[1].stackSize);
+			tile.items[1] = null;
 		}
 	}
 
@@ -64,7 +66,7 @@ public class ContainerDS extends Container {
 					break;
 				}
 				default: {
-					if(stack.getUnlocalizedName().equals(ItemLoader.goldCoin.getUnlocalizedName())) {
+					if(stack.getUnlocalizedName().equals(ItemLoader.gold_coin.getUnlocalizedName())) {
 						if(!this.mergeItemStack(stack, 2, 3, false)) return null;
 					} else {
 						return null;
@@ -81,5 +83,6 @@ public class ContainerDS extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting craft) {
 		super.addCraftingToCrafters(craft);
+		craft.func_175173_a(this, tile);
 	}
 }

@@ -3,11 +3,6 @@ package com.thetorine.thirstmod.core.content;
 import java.util.List;
 import java.util.Random;
 
-import com.thetorine.thirstmod.core.client.player.ClientStats;
-import com.thetorine.thirstmod.core.main.ThirstMod;
-import com.thetorine.thirstmod.core.player.PlayerContainer;
-import com.thetorine.thirstmod.core.utils.Constants;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,6 +14,12 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenJungle;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import com.thetorine.thirstmod.core.client.player.ClientStats;
+import com.thetorine.thirstmod.core.main.ThirstMod;
+import com.thetorine.thirstmod.core.player.PlayerContainer;
+import com.thetorine.thirstmod.core.utils.Constants;
 
 public class ItemInternalDrink extends Item {
 	public boolean addItem;
@@ -47,28 +48,22 @@ public class ItemInternalDrink extends Item {
 	}
 	
 	public void register(String texture) {
-		this.setCreativeTab(ThirstMod.thirstCreativeTab); 
-		this.setTextureName(texture);
+		this.setCreativeTab(ThirstMod.thirst); 
 	}
 	
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if(id == 0) {
 			MovingObjectPosition mop = this.getMovingObjectPositionFromPlayer(world, player, true);
-
 			if (mop != null) {
-				int x = mop.blockX;
-				int y = mop.blockY;
-				int z = mop.blockZ;
-				
 				if(mop.typeOfHit == MovingObjectType.BLOCK) {
-					if (world.getBlock(x, y, z).getMaterial() == Material.water) {
-						returnItem = ItemLoader.waterCup;
+					if (world.getBlockState(mop.getBlockPos()).getBlock().getMaterial() == Material.water) {
+						returnItem = ItemLoader.water_cup;
 						addItem = true;
-					} else if (world.getBlock(x, y, z) == Blocks.leaves) {
+					} else if (world.getBlockState(mop.getBlockPos()).getBlock() == Blocks.leaves) {
 						Random random = new Random();
-						if (world.getBiomeGenForCoords(x, z) instanceof BiomeGenJungle) {
-							world.setBlockMetadataWithNotify(x, y, z, 0, 0x02);
+						if (world.getBiomeGenForCoords(mop.getBlockPos()) instanceof BiomeGenJungle) {
+							world.setBlockToAir(mop.getBlockPos());
 							if (random.nextFloat() < 0.3f) {
 								addItem = true;
 							}
@@ -80,8 +75,8 @@ public class ItemInternalDrink extends Item {
 						 if(stack.stackSize <= 0) {
 							 return new ItemStack(returnItem);
 						 }
-						 if(!player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.waterCup))) {
-							 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.waterCup)));
+						 if(!player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.water_cup))) {
+							 world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(ItemLoader.water_cup)));
 				         }
 					}
 					addItem = false;
@@ -94,7 +89,7 @@ public class ItemInternalDrink extends Item {
 	}
 	
 	@Override
-	public ItemStack onEaten(ItemStack stack, World world, EntityPlayer player) {
+	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityPlayer player) {
 		if(!world.isRemote) {
 			stack.stackSize--;
 			
@@ -115,6 +110,7 @@ public class ItemInternalDrink extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean flag) {
 		super.addInformation(stack, player, list, flag);
+		
 		float f = Float.parseFloat(Integer.toString(thirstHeal)) / 2;
 		String s2 = Float.toString(f);
 		list.add("Heals " + (s2.endsWith(".0") ? s2.replace(".0", "") : s2) + " Droplets");
@@ -127,7 +123,7 @@ public class ItemInternalDrink extends Item {
 	
 	@Override
 	public EnumAction getItemUseAction(ItemStack itemstack) {
-		return EnumAction.drink;
+		return EnumAction.DRINK;
 	}
 	
 	@Override
@@ -136,10 +132,10 @@ public class ItemInternalDrink extends Item {
 	}
 	
 	public boolean canDrink(EntityPlayer player) {
-		if(!player.worldObj.isRemote) {
-			return PlayerContainer.getPlayer(player).getStats().thirstLevel < 20;
-		} else {
-			return ClientStats.getInstance().level < 20;
+		switch(FMLCommonHandler.instance().getEffectiveSide()) {
+			case CLIENT: return ClientStats.getInstance().level < 20;
+			case SERVER: return PlayerContainer.getPlayer(player).stats.thirstLevel < 20;
 		}
+		return false;
 	}
 }

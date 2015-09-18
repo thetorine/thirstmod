@@ -1,6 +1,8 @@
 package com.thetorine.thirstmod.core.content.packs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 
 public class DrinkLists {

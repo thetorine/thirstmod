@@ -1,17 +1,23 @@
 package com.thetorine.thirstmod.core.network;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
 import com.thetorine.thirstmod.core.client.player.ClientStats;
 import com.thetorine.thirstmod.core.player.ThirstLogic;
-
-import cpw.mods.fml.common.network.simpleimpl.*;
-import io.netty.buffer.ByteBuf;
+import com.thetorine.thirstmod.core.utils.Constants;
 
 public class PacketUpdateClient implements IMessage {
+
 	private int level;
 	private float saturation;
 	private boolean poisoned;
+	private float temperature;
 	
-	public PacketUpdateClient() {}
+	public PacketUpdateClient() {
+	}
 
 	public PacketUpdateClient(ThirstLogic stats) {
 		this.level = stats.thirstLevel;
@@ -24,6 +30,10 @@ public class PacketUpdateClient implements IMessage {
 		level = buffer.readInt();
 		saturation = buffer.readFloat();
 		poisoned = buffer.readBoolean();
+		
+		if(Constants.ECLIPSE_ENVIRONMENT) {
+			temperature = buffer.readFloat();
+		}
 	}
 
 	@Override
@@ -31,12 +41,20 @@ public class PacketUpdateClient implements IMessage {
 		buffer.writeInt(level);
 		buffer.writeFloat(saturation);
 		buffer.writeBoolean(poisoned);		
+		
+		if(Constants.ECLIPSE_ENVIRONMENT) {
+			buffer.writeFloat(temperature);
+		}
 	}
 
 	public void handleClientSide() {
 		ClientStats.getInstance().level = level;
 		ClientStats.getInstance().saturation = saturation;
 		ClientStats.getInstance().isPoisoned = poisoned;
+		
+		if(Constants.ECLIPSE_ENVIRONMENT) {
+			ClientStats.getInstance().temperature = temperature;
+		}
 	}
 	
 	public static class Handler implements IMessageHandler<PacketUpdateClient, IMessage> {

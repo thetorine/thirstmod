@@ -1,25 +1,28 @@
 package com.thetorine.thirstmod.core.network;
 
-import com.thetorine.thirstmod.core.content.blocks.TileEntityDS;
-
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import com.thetorine.thirstmod.core.content.blocks.TileEntityDS;
 
 public class PacketDrink implements IMessage {
+
 	private int page, amount, buy, x, y, z;
 	
-	public PacketDrink() {}
+	public PacketDrink() {
+	}
 
 	public PacketDrink(TileEntityDS tile) {
 		this.page = tile.page;
 		this.amount = tile.amountToBuy;
 		this.buy = tile.canBuy;
-		this.x = tile.xCoord;
-		this.y = tile.yCoord;
-		this.z = tile.zCoord;
+		this.x = tile.getPos().getX();
+		this.y = tile.getPos().getY();
+		this.z = tile.getPos().getZ();
 	}
 
 	@Override
@@ -43,7 +46,7 @@ public class PacketDrink implements IMessage {
 	}
 
 	public void handleServerSide(EntityPlayer player) {
-		TileEntityDS tile = (TileEntityDS) player.worldObj.getTileEntity(x, y, z);
+		TileEntityDS tile = (TileEntityDS) player.worldObj.getTileEntity(new BlockPos(x, y, z));
 		if (tile != null) {
 			tile.page = page;
 			tile.amountToBuy = amount;

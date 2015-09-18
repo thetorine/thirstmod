@@ -1,6 +1,6 @@
 Lets hope you're not an idiot. :D
 
-item_id thirst_replenish thirst_saturation causes_poison poison_chance metadata
+item_id thirst_replenish thirst_saturation causes_poison poison_chance metadata recipe_id
 
 Copy and paste this in a new [.txt] file. Replace all of the above with the correct values.
     item_id = String (consult wiki or mod author for item id)
@@ -9,6 +9,7 @@ Copy and paste this in a new [.txt] file. Replace all of the above with the corr
     causes_poison = Boolean
     poison_chance = Decimal (0.1 to 0.9)
     metadata = Integer (consult wiki or mod author for item metadata)
+    recipe_id = String (adds a recipe for this drink to be brewed in the Drinks Brewer), (consult wiki or mod author for item id)
 
 Use the exact format displayed. Do NOT misplace the values or the game WILL crash.
 

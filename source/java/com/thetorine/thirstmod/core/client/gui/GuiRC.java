@@ -5,6 +5,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
 
 import org.lwjgl.opengl.GL11;
 
@@ -12,12 +13,13 @@ import com.thetorine.thirstmod.core.content.blocks.ContainerRC;
 import com.thetorine.thirstmod.core.content.blocks.TileEntityRC;
 
 public class GuiRC extends GuiContainer {
-	private TileEntityRC tileEntity;
+	private TileEntityRC rcInv;
+	private Minecraft minecraft = FMLClientHandler.instance().getClient();
 
 	public GuiRC(InventoryPlayer var1, TileEntityRC var2) {
 		super(new ContainerRC(var1, var2));
-		tileEntity = var2;
-		mc = Minecraft.getMinecraft();
+		rcInv = var2;
+		mc = minecraft;
 	}
 
 	@Override
@@ -29,21 +31,21 @@ public class GuiRC extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
-		World world = mc.theWorld;
+		World world = minecraft.theWorld;
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.getTextureManager().bindTexture(new ResourceLocation("thirstmod:textures/gui/waterCollector.png"));
+		minecraft.getTextureManager().bindTexture(new ResourceLocation("thirstmod:textures/gui/waterCollector.png"));
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
-		int bucketScaled = tileEntity.getInternalBucketScaled(24);
-		int meterScaled = tileEntity.getRainMeterScaled(24);
+		int bucketScaled = rcInv.getInternalBucketScaled(16);
+		int meterScaled = rcInv.getRainMeterScaled(24);
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 		drawTexturedModalRect(x + 79, y + 34, 176, 16, meterScaled + 1, 17);
 		
-		if(tileEntity.internalBucket > 0) {
+		if(rcInv.internalBucket > 0) {
 			drawTexturedModalRect(x + 60, y + 51 - bucketScaled, 179, 16-bucketScaled, 8, bucketScaled);
 		}
 
-		if (world.isRaining() && tileEntity.canRainOn(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, world)) {
+		if (world.isRaining() && rcInv.canRainOn(rcInv.getPos(), world)) {
 			drawTexturedModalRect(x + 55, y + 14, 176, 31, 18, 20);
 		}
 	}

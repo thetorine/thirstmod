@@ -4,9 +4,10 @@
   "name": "Thirst Mod",
   "description": "The nasty mod that makes you wanna drink!",
   "credits": "LexManos, cpw",
-  "version": "1.8.14",
-  "mcversion": "1.7.10",
+  "version": "1.8.15",
+  "mcversion": "1.8",
   "url": "http://www.minecraftforum.net/topic/1143097-",
-  "authorList": [ "tarun1998" ]
+  "authorList": [ "tarun1998" ],
+  "dependencies": [ "mod_MinecraftForge" ]
 }
 ]

@@ -1,13 +1,13 @@
 package com.thetorine.thirstmod.core.network;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class NetworkHandler {
 	public static SimpleNetworkWrapper networkWrapper;
-	private int registerID = -1;
+	private int register = -1;
 	
 	public NetworkHandler() {
 		networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("thirstmod");
@@ -18,7 +18,7 @@ public class NetworkHandler {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void registerPacket(Class<? extends IMessage> c1, Class c2, Side side) {
-		registerID++;
-		networkWrapper.registerMessage(c2, c1, registerID, side);
+		register++;
+		networkWrapper.registerMessage(c2, c1, register, side);
 	}
 }

@@ -1,18 +1,21 @@
 package com.thetorine.thirstmod.core.content.blocks;
 
-import com.thetorine.thirstmod.core.content.BlockLoader;
-
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
+import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
-public class TileEntityRC extends TileEntity implements IInventory {
+import com.thetorine.thirstmod.core.content.BlockLoader;
+
+public class TileEntityRC extends TileEntityLockable implements IUpdatePlayerListBox {
 	//0=input, 1=output
 	public ItemStack rainItemStacks[];
 	public int rainMeter;
@@ -26,10 +29,10 @@ public class TileEntityRC extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (worldObj != null) {
 			boolean flag = worldObj.getWorldInfo().isRaining();
-			boolean flag1 = canRainOn(xCoord, yCoord, zCoord, worldObj);
+			boolean flag1 = canRainOn(getPos(), worldObj);
 			isActive = flag && flag1;
 			if (isActive && canFill()) {
 				rainMeter++;
@@ -54,7 +57,6 @@ public class TileEntityRC extends TileEntity implements IInventory {
 			}
 		}
 	}
-
 
 	@Override
 	public int getSizeInventory() {
@@ -87,9 +89,9 @@ public class TileEntityRC extends TileEntity implements IInventory {
 	@Override
 	public ItemStack getStackInSlotOnClosing(int i) {
 		if (this.rainItemStacks[i] != null) {
-			ItemStack var2 = this.rainItemStacks[i];
+			ItemStack stack = this.rainItemStacks[i];
 			this.rainItemStacks[i] = null;
-			return var2;
+			return stack;
 		} else {
 			return null;
 		}
@@ -104,29 +106,18 @@ public class TileEntityRC extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
-		return BlockLoader.rainCollector.getUnlocalizedName();
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 64;
 	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
+		if (worldObj.getTileEntity(getPos()) != this) {
 			return false;
 		} else {
-			return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
+			return entityplayer.getDistanceSq(getPos().getX() + 0.5D, getPos().getY() + 0.5D, getPos().getZ() + 0.5D) <= 64D;
 		}
 	}
-
-	@Override
-	public void openInventory() {}
-
-	@Override
-	public void closeInventory() {}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -140,7 +131,6 @@ public class TileEntityRC extends TileEntity implements IInventory {
                 this.rainItemStacks[b0] = ItemStack.loadItemStackFromNBT(nbt2);
             }
 		}
-
 		rainMeter = nbttagcompound.getShort("RainMeter");
 		internalBucket = nbttagcompound.getShort("InternalBucket");
 	}
@@ -200,12 +190,12 @@ public class TileEntityRC extends TileEntity implements IInventory {
 		return rainItemStacks[1].stackSize < itemstack.getMaxStackSize();
 	}
 
-	public boolean canRainOn(int i, int j, int k, World world) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(i, k);
+	public boolean canRainOn(BlockPos pos, World world) {
+		BiomeGenBase biome = world.getBiomeGenForCoords(pos);
 		//don't turn rain collector on if there is no rain (rain disabled or snowing)
-		if(!biome.canSpawnLightningBolt() || biome.getFloatTemperature(i, j, k) < 0.15f) return false;
-		for (int l = j + 1; l < world.getHeight(); l++) {
-			if (world.getBlock(i, l, k) != Blocks.air) { return false; }
+		if(!biome.canSpawnLightningBolt() || biome.getFloatTemperature(pos) < 0.15f) return false;
+		for (int l = pos.getY() + 1; l < world.getHeight(); l++) {
+			if (world.getBlockState(new BlockPos(pos.getX(), l, pos.getZ())).getBlock() != Blocks.air) { return false; }
 		}
 		return true;
 	}
@@ -225,7 +215,55 @@ public class TileEntityRC extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
+		return new ContainerRC(playerInventory, this);
+	}
+
+	@Override
+	public String getGuiID() {
+		return BlockLoader.rain_collector.getUnlocalizedName();
+	}
+
+	@Override
+	public String getName() {
+		return BlockLoader.rain_collector.getUnlocalizedName();
+	}
+
+	@Override
+	public boolean hasCustomName() {
 		return false;
+	}
+
+	@Override
+	public void openInventory(EntityPlayer playerIn) {}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {}
+
+	@Override
+	public int getField(int id) {
+		switch(id) {
+			case 0: return rainMeter;
+			case 1: return internalBucket;
+			default: return 0;
+		}
+	}
+
+	@Override
+	public void setField(int id, int value) {
+		switch(id) {
+			case 0: rainMeter = value; break;
+			case 1: internalBucket = value; break;
+		}
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 2;
+	}
+
+	@Override
+	public void clear() {
+		rainItemStacks = new ItemStack[2];
 	}
 }

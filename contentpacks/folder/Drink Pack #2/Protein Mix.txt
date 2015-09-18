@@ -4,7 +4,7 @@ item
  colour:EEF0AF
  stacksize:4
 recipe
- item:nether_wart
+ item:egg
 thirst_stats
  bar_heal:4
  saturation_heal:1.3

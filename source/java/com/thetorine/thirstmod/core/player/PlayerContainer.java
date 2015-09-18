@@ -2,16 +2,13 @@ package com.thetorine.thirstmod.core.player;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.thetorine.thirstmod.core.utils.Constants;
-
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PlayerContainer {
 	public static final Map<String, PlayerContainer> ALL_PLAYERS = new HashMap<String, PlayerContainer>();
 
-	private EntityPlayer player;
-	private ThirstLogic stats;
+	public EntityPlayer player;
+	public ThirstLogic stats;
 
 	public PlayerContainer(EntityPlayer player, ThirstLogic stats) {
 		this.player = player;
@@ -19,38 +16,31 @@ public class PlayerContainer {
 	}
 
 	public static void addPlayer(EntityPlayer player) {
-		if (!ALL_PLAYERS.containsKey(player.getDisplayName())) {
+		if (!ALL_PLAYERS.containsKey(player.getDisplayNameString())) {
 			PlayerContainer container = new PlayerContainer(player, new ThirstLogic(player));
-			ALL_PLAYERS.put(player.getDisplayName(), container);
+			ALL_PLAYERS.put(player.getDisplayNameString(), container);
 		}
 	}
 	
-	public static void removePlayer(EntityPlayer player) {
-		ALL_PLAYERS.remove(player.getDisplayName());
-	}
-	
-	public void respawnPlayer() {
-		getStats().thirstLevel = Constants.MAX_LEVEL;
-		getStats().thirstExhaustion = 0f;
-		getStats().thirstSaturation = Constants.MAX_SATURATION;
-		getStats().timer = 0;
-		getStats().poisonLogic.changeValues(false, 800);
+	public static void respawnPlayer(EntityPlayer newPlayer) {
+		ALL_PLAYERS.remove(newPlayer.getDisplayNameString());
+		addPlayer(newPlayer);
 	}
 
 	public static PlayerContainer getPlayer(EntityPlayer player) {
-		return ALL_PLAYERS.get(player.getDisplayName());
+		return ALL_PLAYERS.get(player.getDisplayNameString());
 	}
 	
 	public static PlayerContainer getPlayer(String username) {
 		return ALL_PLAYERS.get(username);
 	}
-
-	public ThirstLogic getStats() {
-		return stats;
-	}
 	
 	public EntityPlayer getContainerPlayer() {
 		return player;
+	}
+
+	public ThirstLogic getStats() {
+		return stats;
 	}
 
 	public void addStats(int level, float saturation) {

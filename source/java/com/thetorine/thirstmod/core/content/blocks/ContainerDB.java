@@ -1,31 +1,31 @@
 package com.thetorine.thirstmod.core.content.blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotFurnace;
+import net.minecraft.inventory.SlotFurnaceOutput;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ContainerDB extends Container {
-	private TileEntityDB tileEntity;
+	private TileEntityDB drinksBrewer;
 	private int lastFuelLevel;
 	private int lastBrewTime;
 	private int lastMaxFuelLevel;
 	private int lastMaxBrewTime;
 
 	public ContainerDB(InventoryPlayer inv, TileEntityDB tile) {
-		this.tileEntity = tile;
+		this.drinksBrewer = tile;
 		this.addSlotToContainer(new Slot(tile, 0, 58, 24)); // brewing item
 		this.addSlotToContainer(new Slot(tile, 1, 30, 24)); // glass
 		this.addSlotToContainer(new Slot(tile, 2, 44, 47)); // fuel
-		this.addSlotToContainer(new SlotFurnace(inv.player, tile, 3, 116, 35)); // return
+		this.addSlotToContainer(new SlotFurnaceOutput(inv.player, tile, 3, 116, 35)); // return
+		
 		int i;
-
 		for (i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(inv, j + (i * 9) + 9, 8 + (j * 18), 84 + (i * 18)));
@@ -42,34 +42,29 @@ public class ContainerDB extends Container {
 		super.detectAndSendChanges();
 		for (int i = 0; i < this.crafters.size(); ++i) {
 			ICrafting craft = (ICrafting) this.crafters.get(i);
-			if(lastFuelLevel != tileEntity.fuelLevel) {
-				craft.sendProgressBarUpdate(this, 0, tileEntity.fuelLevel);
+			if(lastFuelLevel != drinksBrewer.getField(0)) {
+				craft.sendProgressBarUpdate(this, 0, drinksBrewer.getField(0));
 			}
-			if(lastBrewTime != tileEntity.brewTime) {
-				craft.sendProgressBarUpdate(this, 1, tileEntity.brewTime);
+			if(lastBrewTime != drinksBrewer.getField(1)) {
+				craft.sendProgressBarUpdate(this, 1, drinksBrewer.getField(1));
 			}
-			if(lastMaxFuelLevel != tileEntity.maxFuelLevel) {
-				craft.sendProgressBarUpdate(this, 2, tileEntity.maxFuelLevel);
+			if(lastMaxFuelLevel != drinksBrewer.getField(2)) {
+				craft.sendProgressBarUpdate(this, 2, drinksBrewer.getField(2));
 			}
-			if(lastMaxBrewTime != tileEntity.maxBrewTime) {
-				craft.sendProgressBarUpdate(this, 3, tileEntity.maxBrewTime);
+			if(lastMaxBrewTime != drinksBrewer.getField(3)) {
+				craft.sendProgressBarUpdate(this, 3, drinksBrewer.getField(3));
 			}
 		}
-		lastFuelLevel = tileEntity.fuelLevel;
-		lastBrewTime = tileEntity.brewTime;
-		lastMaxFuelLevel = tileEntity.maxFuelLevel;
-		lastMaxBrewTime = tileEntity.maxBrewTime;
+		lastFuelLevel = drinksBrewer.getField(0);
+		lastBrewTime = drinksBrewer.getField(1);
+		lastMaxFuelLevel = drinksBrewer.getField(2);
+		lastMaxBrewTime = drinksBrewer.getField(3);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar(int packet, int data) {
-		switch(packet) {
-			case 0: tileEntity.fuelLevel = data; break;
-			case 1: tileEntity.brewTime = data; break;
-			case 2: tileEntity.maxFuelLevel = data; break;
-			case 3: tileEntity.maxBrewTime = data; break;
-		}
+		drinksBrewer.setField(packet, data);
 	}
 
 	@Override
@@ -90,9 +85,9 @@ public class ContainerDB extends Container {
 				default: {
 					if(stack.getUnlocalizedName().equals(Items.glass_bottle.getUnlocalizedName())) {
 						if(!this.mergeItemStack(stack, 1, 2, true)) return null;
-					} else if(tileEntity.getBrewedDrink(stack) != null) {
+					} else if(drinksBrewer.getBrewedDrink(stack) != null) {
 						if(!this.mergeItemStack(stack, 0, 1, false)) return null;
-					} else if(tileEntity.getItemFuelValue(stack) > 0) {
+					} else if(drinksBrewer.getItemFuelValue(stack) > 0) {
 						if(!this.mergeItemStack(stack, 2, 3, false)) return null;
 					} else {
 						return null;
@@ -109,14 +104,11 @@ public class ContainerDB extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting craft) {
 		super.addCraftingToCrafters(craft);
-		craft.sendProgressBarUpdate(this, 0, tileEntity.fuelLevel);
-		craft.sendProgressBarUpdate(this, 1, tileEntity.brewTime);
-		craft.sendProgressBarUpdate(this, 2, tileEntity.maxFuelLevel);
-		craft.sendProgressBarUpdate(this, 3, tileEntity.maxBrewTime);
+		craft.func_175173_a(this, drinksBrewer);
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return this.tileEntity.isUseableByPlayer(entityplayer);
+		return this.drinksBrewer.isUseableByPlayer(entityplayer);
 	}
 }

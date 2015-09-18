@@ -1,29 +1,32 @@
 package com.thetorine.thirstmod.core.content.blocks;
 
-import com.thetorine.thirstmod.core.content.ItemLoader;
-import com.thetorine.thirstmod.core.content.packs.DrinkLists;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
+import net.minecraft.tileentity.TileEntityLockable;
 
-public class TileEntityDS extends TileEntity implements IInventory {
+import com.thetorine.thirstmod.core.content.BlockLoader;
+import com.thetorine.thirstmod.core.content.ItemLoader;
+import com.thetorine.thirstmod.core.content.packs.DrinkLists;
+
+public class TileEntityDS extends TileEntityLockable implements IUpdatePlayerListBox {
 	public ItemStack[] items = new ItemStack[3];
 	public int amountToBuy = 1;
 	public int canBuy;
 	public int page;
 
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (worldObj != null) {
 			if (!DrinkLists.LOADED_DRINKS.isEmpty()) {
-				items[0] = DrinkLists.LOADED_DRINKS.get(page).item;
+				items[0] = new ItemStack(DrinkLists.LOADED_DRINKS.get(page).item.getItem(), amountToBuy);
 				if (canBuy == 1) {
 					if ((items[2] != null) && (items[1] == null)) {
-						if (items[2].getUnlocalizedName().equals(ItemLoader.goldCoin.getUnlocalizedName())) {
+						if (items[2].getUnlocalizedName().equals(ItemLoader.gold_coin.getUnlocalizedName())) {
 							if ((DrinkLists.LOADED_DRINKS.get(page).storeRecipe * amountToBuy) <= items[2].stackSize) {
 								decrStackSize(2, DrinkLists.LOADED_DRINKS.get(page).storeRecipe * amountToBuy);
 								items[1] = new ItemStack(items[0].getItem(), amountToBuy);
@@ -119,11 +122,6 @@ public class TileEntityDS extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
-		return "DrinksShop";
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 64;
 	}
@@ -139,15 +137,44 @@ public class TileEntityDS extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
+		return new ContainerDS(playerInventory, this);
+	}
+
+	@Override
+	public String getGuiID() {
+		return BlockLoader.drinks_store.getUnlocalizedName();
+	}
+
+	@Override
+	public String getName() {
+		return BlockLoader.drinks_store.getUnlocalizedName();
+	}
+
+	@Override
+	public boolean hasCustomName() {
 		return false;
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer playerIn) {}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {}
+
+	@Override
+	public int getField(int id) { return 0; }
+
+	@Override
+	public void setField(int id, int value) {}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
 	}
 
 	@Override
-	public void closeInventory() {
+	public void clear() {
+		items = new ItemStack[3];
 	}
 }

@@ -1,27 +1,34 @@
 package com.thetorine.thirstmod.core.main;
 
 import java.io.File;
-import java.lang.reflect.Field;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import com.thetorine.thirstmod.core.content.BlockLoader;
+import com.thetorine.thirstmod.core.content.ItemDrink;
 import com.thetorine.thirstmod.core.content.ItemLoader;
 import com.thetorine.thirstmod.core.content.packs.ContentLoader;
 import com.thetorine.thirstmod.core.content.packs.DrinkRegistry;
-import com.thetorine.thirstmod.core.network.*;
+import com.thetorine.thirstmod.core.network.NetworkHandler;
 import com.thetorine.thirstmod.core.player.PlayerContainer;
 import com.thetorine.thirstmod.core.utils.Config;
 import com.thetorine.thirstmod.core.utils.Constants;
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.*;
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.relauncher.Side;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraftforge.common.*;
 
 @Mod(modid = Constants.MODID, version = Constants.VERSION, name = Constants.NAME)
 public class ThirstMod {
@@ -44,6 +51,7 @@ public class ThirstMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		new DrinkRegistry();
+		renderIcons();
 	}
 	
 	@EventHandler
@@ -60,28 +68,37 @@ public class ThirstMod {
 		new ContentLoader();
 	}
 	
-	public static String getMinecraftDir() {
-		try {
-			Field mcDataDir = Loader.class.getDeclaredField("minecraftDir");
-			if(mcDataDir != null) {
-				mcDataDir.setAccessible(true);
-				return ((File)mcDataDir.get(null)).getAbsolutePath();
+	private void renderIcons() {
+		if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			for(Item item : ItemLoader.ALL_ITEMS) {
+				if(item.getHasSubtypes()) {
+					for(int i = 0; i < 11; i++) {
+						Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, i, new ModelResourceLocation("thirstmod:canteen", "inventory"));
+					}
+				} else {
+					if(item instanceof ItemDrink) {
+						Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation("thirstmod:content_drink", "inventory"));
+					} else {
+						Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation("thirstmod:" + item.getUnlocalizedName().replaceAll("item.", "").replaceAll("tile.", ""), "inventory"));
+					}
+				}
 			}
-			throw new Exception();
-		} catch(Exception e) {
-			print("Unable to retrieve Minecraft Directory.");
-			return null;
 		}
+	}
+	
+	public static String getMinecraftDir() {
+		File s = FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? Minecraft.getMinecraft().mcDataDir : MinecraftServer.getServer().getDataDirectory();
+		return s.getAbsolutePath();
 	}
 	
 	public static void print(String s) {
 		System.out.println("[ThirstMod] " + s);
 	}
 	
-	public static CreativeTabs thirstCreativeTab = new CreativeTabs("drinks") {
+	public static CreativeTabs thirst = new CreativeTabs("drinks") {
 		@Override
 		public Item getTabIconItem() {
-			return ItemLoader.chocolateMilk;
+			return Items.potionitem;
 		}
 	};
 }

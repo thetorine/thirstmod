@@ -1,7 +1,7 @@
 item
  name:Diamond Drink
  internal_name:diamond_drink
- colour:6F00FF
+ colour:006B5B
  stacksize:1
  effect:true
  always_drinkable:true

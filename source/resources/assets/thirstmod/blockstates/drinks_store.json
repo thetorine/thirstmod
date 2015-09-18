@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "thirstmod:drinks_store" },
+        "facing=south": { "model": "thirstmod:drinks_store", "y": 180 },
+        "facing=west":  { "model": "thirstmod:drinks_store", "y": 270 },
+        "facing=east":  { "model": "thirstmod:drinks_store", "y": 90 }
+    }
+}

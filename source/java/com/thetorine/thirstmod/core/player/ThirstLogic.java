@@ -1,20 +1,21 @@
 package com.thetorine.thirstmod.core.player;
 
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.IChatComponent;
+
 import com.thetorine.thirstmod.core.main.ThirstMod;
 import com.thetorine.thirstmod.core.network.NetworkHandler;
 import com.thetorine.thirstmod.core.network.PacketUpdateClient;
 import com.thetorine.thirstmod.core.utils.Config;
 import com.thetorine.thirstmod.core.utils.Constants;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.*;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.*;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.world.biome.BiomeGenBase;
 
 public class ThirstLogic {
 	public EntityPlayer player;
@@ -23,8 +24,8 @@ public class ThirstLogic {
 	public float thirstExhaustion;
 	public int movementSpeed; 
 	public int timer; 
+	public DamageSource thirstSource;
 	
-	public DamageThirst thirst;
 	private Config config = ThirstMod.config;
 	public PoisonLogic poisonLogic = new PoisonLogic();
 	
@@ -32,13 +33,13 @@ public class ThirstLogic {
 		this.thirstLevel = Constants.MAX_LEVEL;
 		this.thirstSaturation = Constants.MAX_SATURATION;
 		this.player = player;
-		this.thirst = new DamageThirst();
+		this.thirstSource = new DamageThirst();
 		
 		readData();
 	}
 	
 	public void onTick( ) {
-		int difSet = ThirstMod.config.PEACEFUL_ON ? 1 : player.worldObj.difficultySetting.getDifficultyId();
+		int difSet = ThirstMod.config.PEACEFUL_ON ? 1 : player.worldObj.getDifficulty().getDifficultyId();
 		if (thirstExhaustion > 5f) {
 			thirstExhaustion = 0f;
 			if (thirstSaturation > 0f) {
@@ -54,24 +55,22 @@ public class ThirstLogic {
 				timer++;
 				if (timer > 200) {
 					if ((player.getHealth() > 10) || (player.getHealth() > (ThirstMod.config.DEATH_FROM_THIRST ? 0 : (difSet == 3 ? 0 : 1)) && difSet >= 2)) {
-						player.attackEntityFrom(this.thirst, 1f);
+						player.attackEntityFrom(this.thirstSource, 1);
 						player.addPotionEffect(new PotionEffect(Potion.confusion.id, 15 * 20, 1));
+						player.worldObj.getGameRules().setOrCreateGameRule("naturalRegeneration", "false");
 						timer = 0;
 					}
 				}
 			} 
-		}
+		} 
 		
-		this.computeExhaustion();
+		this.computeExhaustion(player);
 		this.poisonLogic.onTick(player);
 		this.writeData();
 		
 		NetworkHandler.networkWrapper.sendTo(new PacketUpdateClient(this), (EntityPlayerMP) player);
 	}
 	
-	/**
-	 * Load the data associated with this EntityPlayer.
-	 */
 	public void readData() {
 		if (player != null) {
 			NBTTagCompound oldnbt = player.getEntityData();
@@ -81,14 +80,12 @@ public class ThirstLogic {
 				thirstExhaustion = nbt.getFloat("exhaustion");
 				thirstSaturation = nbt.getFloat("saturation");
 				timer = nbt.getInteger("timer");
+				
 				poisonLogic.changeValues(nbt.getBoolean("poisoned"), nbt.getInteger("poisonTime"));
 			}
 		}
 	}
 
-	/**
-	 * Writes the data associated with this EntityPlayer to the disk.
-	 */ 
 	public void writeData() {
 		if (player != null) {
 			NBTTagCompound oldNBT = player.getEntityData();
@@ -106,13 +103,9 @@ public class ThirstLogic {
 		} 
 	}
 	
-	/**
-	 * Calculates the exhaustion to be added to {@link #thirstExhaustion}
-	 * @param player
-	 */
-	public void computeExhaustion() {
+	public void computeExhaustion(EntityPlayer player) {
 		int movement = player.isRiding() ? 0 : movementSpeed;
-		float exhaustAmplifier = isNight() ? config.NIGHT_RATE : 1;
+		float exhaustAmplifier = isNight(player) ? config.NIGHT_RATE : 1;
 		float multiplier = getCurrentBiome(player).equals("Desert") ? config.DESERT_RATE : 1;
 		if (player.isInsideOfMaterial(Material.water)) {
 			if (movement > 0) {
@@ -139,21 +132,13 @@ public class ThirstLogic {
 		}
 	}
 
-	/**
-	 * Checks whether it is currently night-time in the world.
-	 * @return Returns true for night.
-	 */
-	public boolean isNight() {
-		return !player.worldObj.isDaytime();
+	public boolean isNight(EntityPlayer player) {
+		long worldTime = player.worldObj.getWorldTime() % 24000;
+		return worldTime >= 13000;
 	}
 	
-	/**
-	 * Get the current biome of the player as a string. See {@link BiomeGenBase#biomeName}
-	 * @param player The EntityPlayer with which to retrieve the current biome.
-	 * @return The string representation of the biome. 
-	 */
 	public static String getCurrentBiome(EntityPlayer player) {
-		return player.worldObj.getWorldChunkManager().getBiomeGenAt((int) player.posX, (int) player.posZ).biomeName;
+		return player.worldObj.getBiomeGenForCoords(player.getPosition()).biomeName;
 	}
 	
 	public void addStats(int thirst, float sat) {
@@ -170,18 +155,14 @@ public class ThirstLogic {
 		this.thirstSaturation = sat;
 	}
 	
-	/**
-	 * Checks whether the current difficulty setting of the world allows the thirst to drain.
-	 * @return Whether the thirst bar can drain.
-	 */
 	public boolean isThirstAllowedByDifficulty() {
 		if(ThirstMod.config.PEACEFUL_ON) return true;
-		else return player.worldObj.difficultySetting.getDifficultyId() > 0;
+		else return player.worldObj.getDifficulty().getDifficultyId() > 0;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("%s, Level = %d, Saturation = %.2f, Exhaustion = %.2f", player.getDisplayName(), thirstLevel, thirstSaturation, thirstExhaustion);
+		return String.format("%s, Level = %d, Saturation = %f, Exhaustion = %f", player.getDisplayName(), thirstLevel, thirstSaturation, thirstExhaustion);
 	}
 	
 	public static class DamageThirst extends DamageSource {
@@ -192,12 +173,12 @@ public class ThirstLogic {
 		}
 		
 		@Override
-		public IChatComponent func_151519_b(EntityLivingBase entity) {
+		public IChatComponent getDeathMessage(EntityLivingBase entity) {
 			if(entity instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer)entity;
 				return new ChatComponentText(player.getDisplayName() + "'s body is now made up of 0% water!");
 			}
-			return super.func_151519_b(entity);
+			return super.getDeathMessage(entity);
 		}
 	}
 }

@@ -1,20 +1,22 @@
 package com.thetorine.thirstmod.core.network;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
 import com.thetorine.thirstmod.core.client.player.ClientStats;
 import com.thetorine.thirstmod.core.player.PlayerContainer;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import io.netty.buffer.ByteBuf;
-
 public class PacketMovement implements IMessage {
+
 	private String username;
 	private int movementSpeed;
 	
-	public PacketMovement() {}
+	public PacketMovement() {
+	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -24,7 +26,7 @@ public class PacketMovement implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeUTF8String(buf, FMLClientHandler.instance().getClientPlayerEntity().getDisplayName());
+		ByteBufUtils.writeUTF8String(buf, FMLClientHandler.instance().getClientPlayerEntity().getDisplayNameString());
 		buf.writeInt(ClientStats.getInstance().movementSpeed);	
 	}
 	

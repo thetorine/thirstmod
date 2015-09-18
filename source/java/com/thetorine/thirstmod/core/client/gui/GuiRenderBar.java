@@ -2,9 +2,6 @@ package com.thetorine.thirstmod.core.client.gui;
 
 import java.util.Random;
 
-import com.thetorine.thirstmod.core.client.player.ClientStats;
-import com.thetorine.thirstmod.core.main.ThirstMod;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -12,6 +9,9 @@ import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeHooks;
+
+import com.thetorine.thirstmod.core.client.player.ClientStats;
+import com.thetorine.thirstmod.core.main.ThirstMod;
 
 public class GuiRenderBar {
 	public static Minecraft mc = Minecraft.getMinecraft();
@@ -102,8 +102,8 @@ public class GuiRenderBar {
 			int yEnd = 9;
 			int xEnd = 7;
 
-			if (stats.saturation <= 0.0F && updateCounter % ((stats.level+1) * 3 + 1) == 0) {
-				height += rand.nextInt(3)-1;
+			if (stats.saturation <= 0.0F && updateCounter % (stats.level * 3 + 1) == 0) {
+				height += rand.nextInt(3) - 1;
 			}
 			
 			ingameGUI.drawTexturedModalRect(width, height, xStart, yStart, xEnd, yEnd);
@@ -124,6 +124,12 @@ public class GuiRenderBar {
 		bind(Gui.icons);
 	}
     
+    public static void drawTemperature(int w, int h) {
+    	float temp = ClientStats.getInstance().temperature;
+    	GuiIngame ingameGUI = mc.ingameGUI;
+    	ingameGUI.drawCenteredString(mc.fontRendererObj, Float.toString(temp), 200, 100, 0xffffff);
+    }
+
 	private static void bind(ResourceLocation res) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(res);
 	}

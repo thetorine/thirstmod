@@ -14,14 +14,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import com.thetorine.thirstmod.core.content.ItemDrink;
+import com.thetorine.thirstmod.core.content.ItemLoader;
 import com.thetorine.thirstmod.core.content.blocks.DBRecipes;
 import com.thetorine.thirstmod.core.main.ThirstMod;
 
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class ContentLoader {
 	public List<String> categories = new ArrayList<String>();
@@ -188,6 +192,11 @@ public class ContentLoader {
 			ItemDrink loadedDrink = new ItemDrink(bar_heal, sat_thirst, color, stacksize, hasEffect, alwaysDrinkable, shortname)
 				.healFood(bar_heal_hunger, sat_hunger).setPoisoningChance(poisonChance)
 				.setPotionEffect(potionID, duration).setCuresPotions(potion_cure);
+
+			if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+				ModelBakery.addVariantName(loadedDrink, "thirstmod:content_drink");
+				ItemLoader.ALL_ITEMS.add(loadedDrink);
+			}
 			
 			if(shortname.length() > 0) {
 				Item recipeItem = GameData.getItemRegistry().getObject(item);

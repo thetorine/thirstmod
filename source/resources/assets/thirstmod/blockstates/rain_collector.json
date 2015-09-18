@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "thirstmod:rain_collector" },
+        "facing=south": { "model": "thirstmod:rain_collector", "y": 180 },
+        "facing=west":  { "model": "thirstmod:rain_collector", "y": 270 },
+        "facing=east":  { "model": "thirstmod:rain_collector", "y": 90 }
+    }
+}

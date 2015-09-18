@@ -13,11 +13,9 @@ public class ItemFilter extends Item {
 				this.setMaxDamage(4);
 				break;
 			}
-			case 1: break;
 			case 2: {
 				this.setMaxStackSize(1);
 				this.setMaxDamage(4);
-				break;
 			}
 		}
 	}

@@ -2,13 +2,14 @@ package com.thetorine.thirstmod.core.content.temperature;
 
 import java.util.HashMap;
 
-import com.thetorine.thirstmod.core.player.ThirstLogic;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.biome.BiomeGenBase;
+
+import com.thetorine.thirstmod.core.player.ThirstLogic;
 
 public class Temperature {
 	public float airTemperture;
@@ -22,7 +23,7 @@ public class Temperature {
 	}
 	
 	public void onTick() {
-		airTemperture = getBiomeTemp() + getBlockProximity() + getDepth() + getMisc();
+		airTemperture = getBiomeTemp() + getblockProximity() + getDepth() + getMisc();
 	}
 	
 	public float getBiomeTemp() {
@@ -34,7 +35,7 @@ public class Temperature {
 		return 25f;
 	}
 	
-	public float getBlockProximity() {
+	public float getblockProximity() {
 		float temp = 0f;
 		for(String blockName : specialBlocks.keySet()) {
 			Block block = (Block) Block.blockRegistry.getObject(blockName.replace("tile.", ""));
@@ -45,7 +46,7 @@ public class Temperature {
 						int posY = (int) player.posY;
 						int posZ = (int) player.posZ;
 						
-						Block atCoordinates = player.worldObj.getBlock(posX + x, posY + y, posZ + z);
+						Block atCoordinates = player.worldObj.getBlockState(new BlockPos(posX+x, posY+y, posZ+z)).getBlock();
 						if(atCoordinates.getUnlocalizedName().equals(block.getUnlocalizedName())) {
 							temp += specialBlocks.get(blockName);
 						}
@@ -60,7 +61,7 @@ public class Temperature {
 		float temp = 0f;
 		if(player.isInsideOfMaterial(Material.water)) {
 			for(int y = (int) player.posY + 2; y < player.worldObj.getHeight(); y++) {
-				Block b = player.worldObj.getBlock((int)player.posX, y, (int)player.posZ);
+				Block b = player.worldObj.getBlockState(new BlockPos((int)player.posX, y, (int)player.posZ)).getBlock();
 				if(b.getUnlocalizedName().equals(Blocks.water.getUnlocalizedName())) {
 					temp -= 2f;
 				}
