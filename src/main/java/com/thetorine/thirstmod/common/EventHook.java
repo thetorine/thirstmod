@@ -15,11 +15,17 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -106,6 +112,54 @@ public class EventHook {
             }
         } else {
             NetworkManager.getNetworkWrapper().sendToServer(new PacketMovementSpeed(event.player, ThirstMod.getClientProxy().clientStats));
+        }
+    }
+
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event) {
+        Items.registerDrinkItems(event);
+    }
+
+    @SubscribeEvent
+    public void onAttack(AttackEntityEvent attack) {
+        if (!attack.getEntityPlayer().world.isRemote) {
+            ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(attack.getEntityPlayer().getUniqueID());
+            stats.addExhaustion(0.5f);
+        }
+        attack.setResult(Event.Result.DEFAULT);
+    }
+
+    @SubscribeEvent
+    public void onHurt(LivingHurtEvent hurt) {
+        if (hurt.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) hurt.getEntity();
+            if (!player.world.isRemote) {
+                ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
+                stats.addExhaustion(0.4f);
+            }
+        }
+        hurt.setResult(Event.Result.DEFAULT);
+    }
+
+    @SubscribeEvent
+    public void onBlockBreak(BlockEvent.BreakEvent event) {
+        EntityPlayer player = event.getPlayer();
+        if(player != null) {
+            if(!player.world.isRemote) {
+                ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
+                stats.addExhaustion(0.03f);
+            }
+        }
+        event.setResult(Event.Result.DEFAULT);
+    }
+
+    @SubscribeEvent
+    public void playedCloned(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
+        if(!event.getEntityPlayer().world.isRemote) {
+            if(event.isWasDeath()) {
+                ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(event.getEntityPlayer().getUniqueID());
+                stats.resetStats();
+            }
         }
     }
 

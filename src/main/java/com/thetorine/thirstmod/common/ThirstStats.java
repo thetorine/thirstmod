@@ -1,7 +1,14 @@
 package com.thetorine.thirstmod.common;
 
+/*
+    Author: tarun1998 (http://www.minecraftforum.net/members/tarun1998)
+    Date: 21/07/2017
+    Handles all thirst bar related logic.
+*/
+
 import com.thetorine.thirstmod.network.NetworkManager;
 import com.thetorine.thirstmod.network.PacketThirstStats;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -9,12 +16,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.biome.BiomeDesert;
 
-/*
-    Author: tarun1998 (http://www.minecraftforum.net/members/tarun1998)
-    Date: 21/07/2017
-    Handles all thirst bar related logic.
- */
 public class ThirstStats {
 
     public int thirstLevel;
@@ -64,16 +67,38 @@ public class ThirstStats {
             }
         }
 
-        float exhaustMultiplier = player.world.getWorldTime() % 24000 >= 13000 ? 0.9f : 1.0f;
-        exhaustMultiplier *= player.world.getBiomeForCoordsBody(player.getPosition()).getBiomeName().equals("Desert") ? 2.0f : 1.0f;
+        int ms = player.isRiding() ? 10 : movementSpeed;
+        float exhaustMultiplier = player.world.isDaytime() ? 1.0f : 0.9f;
+        exhaustMultiplier *= player.world.getBiomeForCoordsBody(player.getPosition()) instanceof BiomeDesert ? 2.0f : 1.0f;
 
-        // Debug code.
-        /*if (Keyboard.isKeyDown(Keyboard.KEY_J)) {
-            thirstLevel = Math.max(thirstLevel - 1, 0);
-            System.out.println(thirstLevel);
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_K)) {
-            thirstLevel = Math.min(thirstLevel + 1, 20);
-        }*/
+        if (player.isInsideOfMaterial(Material.WATER) || player.isInWater()) {
+            addExhaustion(0.03f * ms * 0.003f * exhaustMultiplier);
+        } else if (player.onGround) {
+            if (player.isSprinting()) {
+                addExhaustion(0.06f * ms * 0.018f * exhaustMultiplier);
+            } else {
+                addExhaustion(0.01f * ms * 0.018f * exhaustMultiplier);
+            }
+        } else if (!player.isRiding()) { // must be in the air/jumping
+            if (player.isSprinting()) {
+                addExhaustion(0.06f * ms * 0.025f * exhaustMultiplier);
+            } else {
+                addExhaustion(0.01f * ms * 0.025f * exhaustMultiplier);
+            }
+        }
+    }
+
+    public void addStats(int heal, float sat) {
+        thirstLevel = Math.min(thirstLevel + heal, 20);
+        saturation = Math.min(saturation + (heal * sat * 2.0f), thirstLevel);
+    }
+
+    public void addExhaustion(float exhaustion) {
+        this.exhaustion = Math.min(this.exhaustion + exhaustion, 40.0f);
+    }
+
+    public boolean canDrink() {
+        return thirstLevel < 20;
     }
 
     public int getMovementSpeed(EntityPlayer player) {

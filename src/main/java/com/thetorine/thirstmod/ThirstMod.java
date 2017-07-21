@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import com.thetorine.thirstmod.client.ClientProxy;
 import com.thetorine.thirstmod.common.CommonProxy;
 import com.thetorine.thirstmod.common.EventHook;
+import com.thetorine.thirstmod.common.Items;
+import com.thetorine.thirstmod.common.drinks.Drink;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -18,6 +20,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.*;
 
 @Mod(modid = Constants.MOD_ID, version = Constants.MOD_VERSION)
 public class ThirstMod {
@@ -45,11 +49,14 @@ public class ThirstMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(EventHook.getInstance());
+
+        Drink.registerDrink(new Drink("Test 1", 1, 5, Color.BLUE.getRGB()));
+        Drink.registerDrink(new Drink("Test 2", 2, 5, 0x000000));
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-
+        Items.initialise();
     }
 
     @Mod.EventHandler

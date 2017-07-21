@@ -27,7 +27,8 @@ public class CommonProxy {
     public void registerPlayer(EntityPlayer player, ThirstStats stats) {
         UUID uuid = player.getUniqueID();
         if (loadedPlayers.containsKey(uuid)) {
-            System.out.println("Warning: Attempting to add already registered player with UUID: " + uuid);
+            // Player already loaded from previous login session where the
+            // server was not closed since the players last login.
             return;
         }
         loadedPlayers.put(uuid, stats);
