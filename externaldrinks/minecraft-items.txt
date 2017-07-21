@@ -1,3 +1,0 @@
-minecraft:mushroom_stew 7 1.2
-minecraft:milk_bucket 8 3.4
-minecraft:potion 3 1.4 true 0.4 0

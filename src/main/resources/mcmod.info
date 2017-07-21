@@ -1,0 +1,15 @@
+[
+{
+  "modid": "thirstmod",
+  "name": "Thirst Mod",
+  "description": "The Mod That Makes You Thirsty!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["tarun1998"],
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

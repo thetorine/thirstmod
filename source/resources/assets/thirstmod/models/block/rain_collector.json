@@ -1,8 +1,0 @@
-{
-    "parent": "block/orientable",
-    "textures": {
-        "top": "thirstmod:blocks/rain_top",
-        "front": "blocks/furnace_top",
-        "side": "blocks/furnace_top"
-    }
-}
