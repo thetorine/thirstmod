@@ -1,14 +1,8 @@
-package com.thetorine.thirstmod.common.drinks;
-
-/*
-    Author: tarun1998 (http://www.minecraftforum.net/members/tarun1998)
-    Date: 21/07/2017
-    Generic drink item class.
- */
+package com.thetorine.thirstmod.common.items;
 
 import com.thetorine.thirstmod.Constants;
 import com.thetorine.thirstmod.ThirstMod;
-import com.thetorine.thirstmod.common.ThirstStats;
+import com.thetorine.thirstmod.common.logic.ThirstStats;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,6 +34,11 @@ public class ItemDrink extends Item {
     }
 
     @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return Drink.ALL_DRINKS.get(stack.getMetadata()).drinkName;
+    }
+
+    @Override
     public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entityLiving) {
         EntityPlayer player = entityLiving instanceof EntityPlayer ? (EntityPlayer)entityLiving : null;
 
@@ -52,10 +51,9 @@ public class ItemDrink extends Item {
 
         stack.shrink(1);
         if (stack.isEmpty()) {
-            if (stack.isEmpty()) {
-                player.inventory.addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
-            }
+            return new ItemStack(Items.GLASS_BOTTLE);
         }
+        player.inventory.addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
 
         return stack;
     }

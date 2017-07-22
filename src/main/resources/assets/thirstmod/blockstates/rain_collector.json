@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "normal": [{
+      "model":"thirstmod:rain_collector"
+    }],
+    "inventory": [{
+      "model":"thirstmod:rain_collector"
+    }]
+
+  }
+}

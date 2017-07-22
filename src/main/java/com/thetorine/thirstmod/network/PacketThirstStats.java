@@ -1,13 +1,7 @@
 package com.thetorine.thirstmod.network;
 
-/*
-    Author: tarun1998 (http://www.minecraftforum.net/members/tarun1998)
-    Date: 21/07/2017
-    Contains code to update the client side of changes in the thirst bar.
- */
-
 import com.thetorine.thirstmod.ThirstMod;
-import com.thetorine.thirstmod.common.ThirstStats;
+import com.thetorine.thirstmod.common.logic.ThirstStats;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

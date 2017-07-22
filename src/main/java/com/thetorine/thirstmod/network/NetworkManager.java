@@ -1,11 +1,5 @@
 package com.thetorine.thirstmod.network;
 
-/*
-    Author: tarun1998 (http://www.minecraftforum.net/members/tarun1998)
-    Date: 21/07/2017
-    Network wrapper.
- */
-
 import com.thetorine.thirstmod.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

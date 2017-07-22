@@ -1,4 +1,4 @@
-package com.thetorine.thirstmod.common.drinks;
+package com.thetorine.thirstmod.common.items;
 
 import java.util.ArrayList;
 import java.util.List;

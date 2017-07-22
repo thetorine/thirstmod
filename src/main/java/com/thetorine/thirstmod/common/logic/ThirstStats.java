@@ -1,10 +1,4 @@
-package com.thetorine.thirstmod.common;
-
-/*
-    Author: tarun1998 (http://www.minecraftforum.net/members/tarun1998)
-    Date: 21/07/2017
-    Handles all thirst bar related logic.
-*/
+package com.thetorine.thirstmod.common.logic;
 
 import com.thetorine.thirstmod.network.NetworkManager;
 import com.thetorine.thirstmod.network.PacketThirstStats;
@@ -17,6 +11,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.biome.BiomeDesert;
+import org.lwjgl.input.Keyboard;
 
 public class ThirstStats {
 
@@ -85,6 +80,13 @@ public class ThirstStats {
             } else {
                 addExhaustion(0.01f * ms * 0.025f * exhaustMultiplier);
             }
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_J)) {
+            thirstLevel = Math.max(thirstLevel - 1, 0);
+            System.out.println(thirstLevel);
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_K)) {
+            thirstLevel = Math.min(thirstLevel + 1, 20);
         }
     }
 

@@ -1,25 +1,19 @@
-package com.thetorine.thirstmod.common;
+package com.thetorine.thirstmod.common.logic;
 
-/*
-    Author: tarun1998 (http://www.minecraftforum.net/members/tarun1998)
-    Date: 21/07/2017
-    Handles all events for this mod.
- */
-
+import com.thetorine.thirstmod.Constants;
 import com.thetorine.thirstmod.ThirstMod;
+import com.thetorine.thirstmod.client.gui.GuiThirstBar;
+import com.thetorine.thirstmod.common.blocks.TileEntityRainCollector;
 import com.thetorine.thirstmod.network.NetworkManager;
 import com.thetorine.thirstmod.network.PacketMovementSpeed;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiIngame;
-import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.item.ItemBlock;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -28,6 +22,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -43,64 +38,10 @@ public class EventHook {
         return instance;
     }
 
-    public static ResourceLocation THIRST_BAR_ICONS = new ResourceLocation("thirstmod:textures/gui/thirstbar.png");
-
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onRenderGameOverlayEvent(RenderGameOverlayEvent event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {
-            GuiIngame gui = Minecraft.getMinecraft().ingameGUI;
-            ScaledResolution scaledRes = event.getResolution();
-
-            Minecraft.getMinecraft().getTextureManager().bindTexture(THIRST_BAR_ICONS);
-
-            if (!Minecraft.getMinecraft().player.isRidingHorse() && ThirstMod.getClientProxy().clientStats != null) {
-                int thirstLevel = ThirstMod.getClientProxy().clientStats.thirstLevel;
-                int xStart = scaledRes.getScaledWidth()/2 + 10;
-                int yStart = scaledRes.getScaledHeight() - 49;
-
-                for (int i = 0; i < 10; i++) {
-                    gui.drawTexturedModalRect(xStart + i*8, yStart, 1, 1, 7, 9); //empty thirst droplet
-                    if (thirstLevel % 2 != 0 && 10 - i - 1 == thirstLevel/2) {
-                        gui.drawTexturedModalRect(xStart + i*8, yStart, 17, 1, 7, 9); //half full thirst droplet
-                    } else if (thirstLevel/2 >= 10 - i) {
-                        gui.drawTexturedModalRect(xStart + i*8, yStart, 9, 1, 7, 9); //full thirst droplet
-                    }
-                }
-            }
-
-            Minecraft.getMinecraft().getTextureManager().bindTexture(Gui.ICONS);
-        } else if (event.getType() == RenderGameOverlayEvent.ElementType.AIR) {
-            event.setCanceled(true);
-
-            GuiIngame gui = Minecraft.getMinecraft().ingameGUI;
-            ScaledResolution scaledRes = event.getResolution();
-
-            int xStart = (scaledRes.getScaledWidth() / 2) + 91;
-            int yStart = scaledRes.getScaledHeight() - 49;
-            int xModifier = 0;
-            int yModifier = 0;
-
-            int armorLevel = ForgeHooks.getTotalArmorValue(Minecraft.getMinecraft().player);
-
-            if (!Minecraft.getMinecraft().player.isRidingHorse()) {
-                if (armorLevel > 0) {
-                    yModifier = -10;
-                } else {
-                    xModifier = -101;
-                }
-            }
-
-            if (Minecraft.getMinecraft().player.isInsideOfMaterial(Material.WATER)) {
-                int air = Minecraft.getMinecraft().player.getAir();
-                int full = MathHelper.ceil(((air - 2) * 10.0D) / 300.0D);
-                int partial = MathHelper.ceil((air * 10.0D) / 300.0D) - full;
-
-                for (int i = 0; i < (full + partial); ++i) {
-                    gui.drawTexturedModalRect((xStart - (i * 8) - 9) + xModifier, yStart + yModifier, (i < full ? 16 : 25), 18, 9, 9);
-                }
-            }
-        }
+        GuiThirstBar.onRenderGameOverlayEvent(event);
     }
 
     @SubscribeEvent
@@ -116,8 +57,20 @@ public class EventHook {
     }
 
     @SubscribeEvent
+    public void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().register(ThirstMod.getProxy().RAIN_COLLECTOR);
+        GameRegistry.registerTileEntity(TileEntityRainCollector.class, ThirstMod.getProxy().RAIN_COLLECTOR.getRegistryName().toString());
+    }
+
+    @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
-        Items.registerDrinkItems(event);
+        event.getRegistry().register(ThirstMod.getProxy().DRINKS);
+        event.getRegistry().register(new ItemBlock(ThirstMod.getProxy().RAIN_COLLECTOR).setRegistryName(Constants.MOD_ID, "rain_collector"));
+    }
+
+    @SubscribeEvent
+    public void registerModels(ModelRegistryEvent event) {
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ThirstMod.getProxy().RAIN_COLLECTOR), 0, new ModelResourceLocation("thirstmod:rain_collector", "inventory"));
     }
 
     @SubscribeEvent
