@@ -1,1 +1,7 @@
+// blocks
 tile.rain_collector.name=Rain Collector
+
+// items
+item.dirty_filter.name=Dirty Filter
+item.filter.name=Filter
+item.charcoal_filter.name=Charcoal Filter

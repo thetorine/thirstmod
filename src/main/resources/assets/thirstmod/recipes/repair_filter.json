@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:string"
+    },
+    {
+      "item": "thirstmod:dirty_filter"
+    }
+  ],
+  "result": {
+    "item": "thirstmod:filter"
+  }
+}

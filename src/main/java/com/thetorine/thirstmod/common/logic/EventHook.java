@@ -4,6 +4,7 @@ import com.thetorine.thirstmod.Constants;
 import com.thetorine.thirstmod.ThirstMod;
 import com.thetorine.thirstmod.client.gui.GuiThirstBar;
 import com.thetorine.thirstmod.common.blocks.TileEntityRainCollector;
+import com.thetorine.thirstmod.common.items.Drink;
 import com.thetorine.thirstmod.network.NetworkManager;
 import com.thetorine.thirstmod.network.PacketMovementSpeed;
 import net.minecraft.block.Block;
@@ -64,13 +65,35 @@ public class EventHook {
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(ThirstMod.getProxy().DRINKS);
-        event.getRegistry().register(new ItemBlock(ThirstMod.getProxy().RAIN_COLLECTOR).setRegistryName(Constants.MOD_ID, "rain_collector"));
+        final Item items[] = {
+            ThirstMod.getProxy().DRINKS,
+            ThirstMod.getProxy().FILTER,
+            ThirstMod.getProxy().CHARCOAL_FILTER,
+            ThirstMod.getProxy().DIRTY_FILTER,
+            new ItemBlock(ThirstMod.getProxy().RAIN_COLLECTOR).setRegistryName(Constants.MOD_ID, "rain_collector")
+        };
+
+        event.getRegistry().registerAll(items);
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void registerModels(ModelRegistryEvent event) {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ThirstMod.getProxy().RAIN_COLLECTOR), 0, new ModelResourceLocation("thirstmod:rain_collector", "inventory"));
+        final Item items[] = {
+                ThirstMod.getProxy().DRINKS,
+                ThirstMod.getProxy().FILTER,
+                ThirstMod.getProxy().CHARCOAL_FILTER,
+                ThirstMod.getProxy().DIRTY_FILTER,
+                Item.getItemFromBlock(ThirstMod.getProxy().RAIN_COLLECTOR)
+        };
+
+        for (Item item : items) {
+            ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+        }
+
+        for (int i = 0; i < Drink.ALL_DRINKS.size(); i++) {
+            ModelLoader.setCustomModelResourceLocation(items[0], i, new ModelResourceLocation(items[0].getRegistryName(), "inventory"));
+        }
     }
 
     @SubscribeEvent
@@ -106,7 +129,6 @@ public class EventHook {
         event.setResult(Event.Result.DEFAULT);
     }
 
-    @SubscribeEvent
     public void playedCloned(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
         if(!event.getEntityPlayer().world.isRemote) {
             if(event.isWasDeath()) {

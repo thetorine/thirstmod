@@ -1,0 +1,19 @@
+{
+  "type":"minecraft:crafting_shaped",
+  "pattern": [
+    "***",
+    "*#*",
+    "***"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:bucket"
+    },
+    "*": {
+      "item": "minecraft:cobblestone"
+    }
+  },
+  "result": {
+    "item": "thirstmod:rain_collector"
+  }
+}

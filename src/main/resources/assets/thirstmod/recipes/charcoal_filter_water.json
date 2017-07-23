@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:potion",
+      "data": 0
+    },
+    {
+      "item": "thirstmod:charcoal_filter",
+      "data": 32767
+    }
+  ],
+  "result": {
+    "item": "thirstmod:drink_item",
+    "data": 0
+  }
+}
