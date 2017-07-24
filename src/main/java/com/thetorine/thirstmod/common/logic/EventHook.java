@@ -67,6 +67,7 @@ public class EventHook {
     public void registerItems(RegistryEvent.Register<Item> event) {
         final Item items[] = {
             ThirstMod.getProxy().DRINKS,
+            ThirstMod.getProxy().CANTEEN,
             ThirstMod.getProxy().FILTER,
             ThirstMod.getProxy().CHARCOAL_FILTER,
             ThirstMod.getProxy().DIRTY_FILTER,
@@ -81,6 +82,7 @@ public class EventHook {
     public void registerModels(ModelRegistryEvent event) {
         final Item items[] = {
                 ThirstMod.getProxy().DRINKS,
+                ThirstMod.getProxy().CANTEEN,
                 ThirstMod.getProxy().FILTER,
                 ThirstMod.getProxy().CHARCOAL_FILTER,
                 ThirstMod.getProxy().DIRTY_FILTER,
@@ -91,8 +93,12 @@ public class EventHook {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
         }
 
+        ModelLoader.setCustomModelResourceLocation(items[1], 0, new ModelResourceLocation(items[1].getRegistryName(), "inventory"));
         for (int i = 0; i < Drink.ALL_DRINKS.size(); i++) {
             ModelLoader.setCustomModelResourceLocation(items[0], i, new ModelResourceLocation(items[0].getRegistryName(), "inventory"));
+            for (int j = 0; j < Constants.CANTEEN_CAPACITY; j++) {
+                ModelLoader.setCustomModelResourceLocation(items[1], i*Constants.CANTEEN_CAPACITY + j + 1, new ModelResourceLocation(items[1].getRegistryName(), "inventory"));
+            }
         }
     }
 
@@ -149,7 +155,11 @@ public class EventHook {
                 try {
                     FileReader reader = new FileReader(saveFile);
                     ThirstStats stats = gsonInstance.fromJson(reader, ThirstStats.class);
-                    ThirstMod.getProxy().registerPlayer(player, stats);
+                    if (stats == null) {
+                        ThirstMod.getProxy().registerPlayer(player, new ThirstStats());
+                    } else {
+                        ThirstMod.getProxy().registerPlayer(player, stats);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

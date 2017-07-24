@@ -8,4 +8,6 @@ public class Constants {
     public static final String COMMON_SIDE_PROXY = "com.thetorine.thirstmod.common.logic.CommonProxy";
 
     public static final int RAIN_COLLECTOR_ID = 0;
+
+    public static final int CANTEEN_CAPACITY = 3;
 }

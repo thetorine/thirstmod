@@ -3,6 +3,7 @@ package com.thetorine.thirstmod.client.gui;
 import com.thetorine.thirstmod.ThirstMod;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
@@ -22,7 +23,9 @@ public class GuiThirstBar {
 
             Minecraft.getMinecraft().getTextureManager().bindTexture(THIRST_BAR_ICONS);
 
-            if (!Minecraft.getMinecraft().player.isRidingHorse() && ThirstMod.getClientProxy().clientStats != null) {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+
+            if (!player.isRidingHorse() && ThirstMod.getClientProxy().clientStats != null) {
                 int thirstLevel = ThirstMod.getClientProxy().clientStats.thirstLevel;
                 int xStart = scaledRes.getScaledWidth()/2 + 10;
                 int yStart = scaledRes.getScaledHeight() - 49;
