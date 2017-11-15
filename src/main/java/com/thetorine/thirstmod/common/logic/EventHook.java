@@ -3,6 +3,7 @@ package com.thetorine.thirstmod.common.logic;
 import com.thetorine.thirstmod.Constants;
 import com.thetorine.thirstmod.ThirstMod;
 import com.thetorine.thirstmod.client.gui.GuiThirstBar;
+import com.thetorine.thirstmod.common.blocks.TileEntityDrinksBrewer;
 import com.thetorine.thirstmod.common.blocks.TileEntityRainCollector;
 import com.thetorine.thirstmod.common.items.Drink;
 import com.thetorine.thirstmod.network.NetworkManager;
@@ -60,7 +61,10 @@ public class EventHook {
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
         event.getRegistry().register(ThirstMod.getProxy().RAIN_COLLECTOR);
+        event.getRegistry().register(ThirstMod.getProxy().DRINKS_BREWER);
+
         GameRegistry.registerTileEntity(TileEntityRainCollector.class, ThirstMod.getProxy().RAIN_COLLECTOR.getRegistryName().toString());
+        GameRegistry.registerTileEntity(TileEntityDrinksBrewer.class, ThirstMod.getProxy().DRINKS_BREWER.getRegistryName().toString());
     }
 
     @SubscribeEvent
@@ -72,7 +76,8 @@ public class EventHook {
             ThirstMod.getProxy().FILTER,
             ThirstMod.getProxy().CHARCOAL_FILTER,
             ThirstMod.getProxy().DIRTY_FILTER,
-            new ItemBlock(ThirstMod.getProxy().RAIN_COLLECTOR).setRegistryName(Constants.MOD_ID, "rain_collector")
+            new ItemBlock(ThirstMod.getProxy().RAIN_COLLECTOR).setRegistryName(Constants.MOD_ID, "rain_collector"),
+            new ItemBlock(ThirstMod.getProxy().DRINKS_BREWER).setRegistryName(Constants.MOD_ID, "drinks_brewer")
         };
 
         event.getRegistry().registerAll(items);
@@ -88,7 +93,8 @@ public class EventHook {
                 ThirstMod.getProxy().FILTER,
                 ThirstMod.getProxy().CHARCOAL_FILTER,
                 ThirstMod.getProxy().DIRTY_FILTER,
-                Item.getItemFromBlock(ThirstMod.getProxy().RAIN_COLLECTOR)
+                Item.getItemFromBlock(ThirstMod.getProxy().RAIN_COLLECTOR),
+                Item.getItemFromBlock(ThirstMod.getProxy().DRINKS_BREWER)
         };
 
         for (Item item : items) {

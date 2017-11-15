@@ -1,5 +1,6 @@
 package com.thetorine.thirstmod.common.logic;
 
+import com.thetorine.thirstmod.common.blocks.BlockDrinksBrewer;
 import com.thetorine.thirstmod.common.blocks.BlockRainCollector;
 import com.thetorine.thirstmod.common.items.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +16,7 @@ public class CommonProxy {
     public HashMap<UUID, ThirstStats> loadedPlayers = new HashMap<>();
 
     public static final BlockRainCollector RAIN_COLLECTOR = new BlockRainCollector();
+    public static final BlockDrinksBrewer  DRINKS_BREWER  = new BlockDrinksBrewer();
 
     public static final ItemDrink   DRINKS          = new ItemDrink("drink_item");
     public static final ItemCanteen CANTEEN         = new ItemCanteen("canteen");
@@ -31,6 +33,7 @@ public class CommonProxy {
 
         Recipes.addRainCollectorRecipe(Items.GLASS_BOTTLE, new ItemStack(DRINKS, 1, 0), 80);
         Recipes.addRainCollectorRecipe(Items.BUCKET, new ItemStack(Items.WATER_BUCKET, 1), 160);
+        Recipes.addDrinksBrewerRecipe(Items.BEETROOT, new ItemStack(DRINKS, 1, 0), 80);
     }
 
     public void init() {}

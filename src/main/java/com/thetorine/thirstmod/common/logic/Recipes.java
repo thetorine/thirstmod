@@ -8,16 +8,22 @@ import java.util.HashMap;
 public class Recipes {
 
     private static HashMap<Item, Output> rainCollectorRecipes = new HashMap<>();
+    private static HashMap<Item, Output> drinksBrewerRecipes = new HashMap<>();
 
     public static void addRainCollectorRecipe(Item input, ItemStack output, int time) {
         rainCollectorRecipes.put(input, new Output(output, time));
     }
 
     public static Output getRainCollectorRecipe(Item input) {
-        if (rainCollectorRecipes.containsKey(input)) {
-            return rainCollectorRecipes.get(input);
-        }
-        return null;
+        return rainCollectorRecipes.get(input);
+    }
+
+    public static void addDrinksBrewerRecipe(Item input, ItemStack output, int time) {
+        drinksBrewerRecipes.put(input, new Output(output, time));
+    }
+
+    public static Output getDrinksBrewerRecipe(Item input) {
+        return drinksBrewerRecipes.get(input);
     }
 
     public static class Output {
