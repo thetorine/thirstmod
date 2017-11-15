@@ -22,4 +22,14 @@ public class Drink {
     public static void registerDrink(Drink drink) {
         ALL_DRINKS.add(drink);
     }
+
+    public static int getDrinkIndexByName(String name) {
+        for (int i = 0; i < ALL_DRINKS.size(); i++) {
+            Drink d = ALL_DRINKS.get(i);
+            if (d.drinkName.equals(name)) {
+                return i;
+            }
+        }
+        return 0;
+    }
 }

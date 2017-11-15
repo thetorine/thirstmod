@@ -3,6 +3,7 @@ package com.thetorine.thirstmod.client.logic;
 import com.thetorine.thirstmod.ThirstMod;
 import com.thetorine.thirstmod.client.gui.GuiHandler;
 import com.thetorine.thirstmod.common.items.ItemCanteen;
+import com.thetorine.thirstmod.common.items.ItemCup;
 import com.thetorine.thirstmod.common.items.ItemDrink;
 import com.thetorine.thirstmod.common.logic.CommonProxy;
 import com.thetorine.thirstmod.common.logic.ThirstStats;
@@ -24,5 +25,6 @@ public class ClientProxy extends CommonProxy {
         super.init();
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemDrink.BottleColorHandler(), DRINKS);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemCanteen.CanteenColorHandler(), CANTEEN);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemCup.CupColorHandler(), CUP);
     }
 }

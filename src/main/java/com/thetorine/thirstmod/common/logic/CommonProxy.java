@@ -1,10 +1,7 @@
 package com.thetorine.thirstmod.common.logic;
 
 import com.thetorine.thirstmod.common.blocks.BlockRainCollector;
-import com.thetorine.thirstmod.common.items.Drink;
-import com.thetorine.thirstmod.common.items.ItemCanteen;
-import com.thetorine.thirstmod.common.items.ItemDrink;
-import com.thetorine.thirstmod.common.items.ItemFilter;
+import com.thetorine.thirstmod.common.items.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -19,11 +16,12 @@ public class CommonProxy {
 
     public static final BlockRainCollector RAIN_COLLECTOR = new BlockRainCollector();
 
-    public static final ItemDrink DRINKS = new ItemDrink("drink_item");
-    public static final ItemCanteen CANTEEN = new ItemCanteen("canteen");
-    public static final Item FILTER = new ItemFilter("filter", 0);
-    public static final Item CHARCOAL_FILTER = new ItemFilter("charcoal_filter", 1);
-    public static final Item DIRTY_FILTER = new ItemFilter("dirty_filter", 2);
+    public static final ItemDrink   DRINKS          = new ItemDrink("drink_item");
+    public static final ItemCanteen CANTEEN         = new ItemCanteen("canteen");
+    public static final ItemCup     CUP             = new ItemCup("cup");
+    public static final Item        FILTER          = new ItemFilter("filter", 0);
+    public static final Item        CHARCOAL_FILTER = new ItemFilter("charcoal_filter", 1);
+    public static final Item        DIRTY_FILTER    = new ItemFilter("dirty_filter", 2);
 
     public void preInit() {
         Drink.registerDrink(new Drink("Fresh Water", 7, 2.0f, 0x11DEF5));

@@ -3,18 +3,22 @@ package com.thetorine.thirstmod.common.items;
 import com.thetorine.thirstmod.Constants;
 import com.thetorine.thirstmod.ThirstMod;
 import com.thetorine.thirstmod.common.logic.ThirstStats;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.init.PotionTypes;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 public class ItemCanteen extends Item {
@@ -43,7 +47,8 @@ public class ItemCanteen extends Item {
         if (stack.getMetadata() == 0) {
             return "Empty Canteen";
         }
-        return getDrink(stack.getMetadata()).drinkName + " Canteen " + getCanteenLevel(stack.getMetadata());
+        int level = getCanteenLevel(stack.getMetadata()) + 1;
+        return getDrink(stack.getMetadata()).drinkName + " Canteen " + level  + "/" + Constants.CANTEEN_CAPACITY;
     }
 
     @Override
@@ -84,13 +89,21 @@ public class ItemCanteen extends Item {
 
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
-        ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-        if ((stats.canDrink() || player.capabilities.isCreativeMode) && itemstack.getMetadata() > 0) {
-            player.setActiveHand(hand);
-            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
-        } else {
-            return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
+        RayTraceResult result = this.rayTrace(world, player, true);
+        if (result == null || itemstack.getMetadata() > 0) {
+            ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
+            if ((stats.canDrink() || player.capabilities.isCreativeMode)) {
+                player.setActiveHand(hand);
+                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
+            }
+        } else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+            BlockPos blockpos = result.getBlockPos();
+            if (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
+                world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CANTEEN, 1, Drink.getDrinkIndexByName("Fresh Water") * Constants.CANTEEN_CAPACITY + Constants.CANTEEN_CAPACITY));
+            }
         }
+        return new ActionResult(EnumActionResult.PASS, itemstack);
     }
 
     public int getMaxItemUseDuration(ItemStack stack) {

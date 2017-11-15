@@ -68,6 +68,7 @@ public class EventHook {
         final Item items[] = {
             ThirstMod.getProxy().DRINKS,
             ThirstMod.getProxy().CANTEEN,
+            ThirstMod.getProxy().CUP,
             ThirstMod.getProxy().FILTER,
             ThirstMod.getProxy().CHARCOAL_FILTER,
             ThirstMod.getProxy().DIRTY_FILTER,
@@ -83,6 +84,7 @@ public class EventHook {
         final Item items[] = {
                 ThirstMod.getProxy().DRINKS,
                 ThirstMod.getProxy().CANTEEN,
+                ThirstMod.getProxy().CUP,
                 ThirstMod.getProxy().FILTER,
                 ThirstMod.getProxy().CHARCOAL_FILTER,
                 ThirstMod.getProxy().DIRTY_FILTER,
@@ -93,9 +95,9 @@ public class EventHook {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
         }
 
-        ModelLoader.setCustomModelResourceLocation(items[1], 0, new ModelResourceLocation(items[1].getRegistryName(), "inventory"));
         for (int i = 0; i < Drink.ALL_DRINKS.size(); i++) {
             ModelLoader.setCustomModelResourceLocation(items[0], i, new ModelResourceLocation(items[0].getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(items[2], i + 1, new ModelResourceLocation(items[2].getRegistryName(), "inventory"));
             for (int j = 0; j < Constants.CANTEEN_CAPACITY; j++) {
                 ModelLoader.setCustomModelResourceLocation(items[1], i*Constants.CANTEEN_CAPACITY + j + 1, new ModelResourceLocation(items[1].getRegistryName(), "inventory"));
             }
