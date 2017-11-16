@@ -22,6 +22,13 @@ public class GuiRainCollector extends GuiContainer {
     }
 
     @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
         this.fontRenderer.drawString("Rain Collector", 55, 6, 0x404040);
         this.fontRenderer.drawString("Item to Fill", 78, 60, 0x404040);

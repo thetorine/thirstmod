@@ -23,13 +23,13 @@ public class Drink {
         ALL_DRINKS.add(drink);
     }
 
-    public static int getDrinkIndexByName(String name) {
+    public static Drink getDrinkByName(String name) {
         for (int i = 0; i < ALL_DRINKS.size(); i++) {
             Drink d = ALL_DRINKS.get(i);
             if (d.drinkName.equals(name)) {
-                return i;
+                return d;
             }
         }
-        return 0;
+        return null;
     }
 }

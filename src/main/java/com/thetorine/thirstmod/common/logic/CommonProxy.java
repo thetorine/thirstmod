@@ -33,7 +33,7 @@ public class CommonProxy {
 
         Recipes.addRainCollectorRecipe(Items.GLASS_BOTTLE, new ItemStack(DRINKS, 1, 0), 80);
         Recipes.addRainCollectorRecipe(Items.BUCKET, new ItemStack(Items.WATER_BUCKET, 1), 160);
-        Recipes.addDrinksBrewerRecipe(Items.BEETROOT, new ItemStack(DRINKS, 1, 0), 80);
+        Recipes.addDrinksBrewerRecipe(Items.BEETROOT, Drink.getDrinkByName("Milk"), 80);
     }
 
     public void init() {}

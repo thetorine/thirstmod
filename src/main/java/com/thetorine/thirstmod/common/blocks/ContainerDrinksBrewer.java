@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFurnace;
 
 public class ContainerDrinksBrewer extends Container {
 
@@ -67,13 +68,19 @@ public class ContainerDrinksBrewer extends Container {
             stack = slot.getStack();
             switch(index) {
                 case 0:
-                case 1: {
-                    if(!mergeItemStack(stack, 2, inventorySlots.size(), false)) return ItemStack.EMPTY;
+                case 1:
+                case 2:
+                case 3: {
+                    if(!mergeItemStack(stack, 4, inventorySlots.size(), false)) return ItemStack.EMPTY;
                     break;
                 }
                 default: {
-                    if(Recipes.getDrinksBrewerRecipe(stack.getItem()) != null) {
-                        if(!mergeItemStack(stack, 0, 1, false)) return ItemStack.EMPTY;
+                    if (Recipes.getContainerFromItemStack(stack) != Recipes.DrinkContainer.UNKNOWN) {
+                        if (!mergeItemStack(stack, 0, 1, false)) return ItemStack.EMPTY;
+                    } else if (Recipes.getDrinksBrewerRecipe(stack.getItem()) != null) {
+                        if(!mergeItemStack(stack, 1, 2, false)) return ItemStack.EMPTY;
+                    } else if (TileEntityFurnace.getItemBurnTime(stack) > 0) {
+                        if (!mergeItemStack(stack, 2, 3, false)) return ItemStack.EMPTY;
                     } else {
                         return ItemStack.EMPTY;
                     }

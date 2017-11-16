@@ -77,7 +77,7 @@ public class ItemCup extends Item {
             BlockPos blockpos = result.getBlockPos();
             if (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
                 world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CUP, 1, Drink.getDrinkIndexByName("Fresh Water") + 1));
+                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CUP, 1, Drink.ALL_DRINKS.indexOf(Drink.getDrinkByName("Fresh Water")) + 1));
             }
         }
         return new ActionResult(EnumActionResult.PASS, itemstack);

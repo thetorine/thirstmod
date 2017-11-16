@@ -92,7 +92,7 @@ public class ItemCanteen extends Item {
         RayTraceResult result = this.rayTrace(world, player, true);
         if (result == null || itemstack.getMetadata() > 0) {
             ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-            if ((stats.canDrink() || player.capabilities.isCreativeMode)) {
+            if ((stats.canDrink() || player.capabilities.isCreativeMode) && itemstack.getMetadata() > 0) {
                 player.setActiveHand(hand);
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
             }
@@ -100,10 +100,15 @@ public class ItemCanteen extends Item {
             BlockPos blockpos = result.getBlockPos();
             if (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
                 world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CANTEEN, 1, Drink.getDrinkIndexByName("Fresh Water") * Constants.CANTEEN_CAPACITY + Constants.CANTEEN_CAPACITY));
+                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CANTEEN, 1, getIndexOfDrink(Drink.getDrinkByName("Fresh Water"))));
             }
         }
         return new ActionResult(EnumActionResult.PASS, itemstack);
+    }
+
+    public static int getIndexOfDrink(Drink d) {
+        int drinkIndex = Drink.ALL_DRINKS.indexOf(d);
+        return drinkIndex * Constants.CANTEEN_CAPACITY + Constants.CANTEEN_CAPACITY;
     }
 
     public int getMaxItemUseDuration(ItemStack stack) {

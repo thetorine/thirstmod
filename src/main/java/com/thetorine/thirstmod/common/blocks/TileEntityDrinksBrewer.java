@@ -2,10 +2,10 @@ package com.thetorine.thirstmod.common.blocks;
 
 import com.thetorine.thirstmod.common.logic.Recipes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
@@ -25,21 +25,22 @@ public class TileEntityDrinksBrewer extends TileEntity implements ITickable, ISi
     public void update() {
         ItemStack containerStack = getStackInSlot(0);
         ItemStack ingredientStack = getStackInSlot(1);
-        ItemStack fuelStack = getStackInSlot(2);
         ItemStack outputStack = getStackInSlot(3);
 
         Recipes.Output output = Recipes.getDrinksBrewerRecipe(ingredientStack.getItem());
-        boolean flag = containerStack.getItem() == Items.GLASS_BOTTLE && output != null;
+        Recipes.DrinkContainer container = Recipes.getContainerFromItemStack(containerStack);
+        boolean flag = container != Recipes.DrinkContainer.UNKNOWN && output != null;
 
         if (flag) {
             manufactureTime = output.manufactureTime;
-            if (outputStack.isEmpty() || outputStack.isItemEqual(output.outputItem)) {
+            ItemStack outputItem = Recipes.getItemStackFromOutput(output, container);
+            if (outputStack.isEmpty() || outputStack.isItemEqual(outputItem)) {
                 if (isBurningFuel()) fillTime++;
                 if (fillTime >= output.manufactureTime && outputStack.getCount() < getInventoryStackLimit()) {
                     decrStackSize(0, 1);
                     decrStackSize(1, 1);
                     if (outputStack.isEmpty()) {
-                        itemStacks.set(3, output.outputItem.copy());
+                        itemStacks.set(3, outputItem.copy());
                     } else {
                         itemStacks.get(3).setCount(outputStack.getCount() + 1);
                     }
@@ -49,6 +50,8 @@ public class TileEntityDrinksBrewer extends TileEntity implements ITickable, ISi
         } else {
             fillTime = 0;
         }
+
+        fuelRemaining = Math.max(fuelRemaining - 1, 0);
     }
 
     public boolean isBurningFuel() {
@@ -64,6 +67,27 @@ public class TileEntityDrinksBrewer extends TileEntity implements ITickable, ISi
             fuelRemaining--;
         }
         return fuelRemaining > 0;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+        compound.setInteger("fuelRemaining", fuelRemaining);
+        compound.setInteger("fillTime", fillTime);
+        compound.setInteger("manufactureTime", manufactureTime);
+        compound.setInteger("maxFuel", maxFuel);
+        ItemStackHelper.saveAllItems(compound, itemStacks);
+        return compound;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        ItemStackHelper.loadAllItems(compound, itemStacks);
+        fuelRemaining = compound.getInteger("fuelRemaining");
+        fillTime = compound.getInteger("filLTime");
+        manufactureTime = compound.getInteger("manufactureTime");
+        maxFuel = compound.getInteger("maxFuel");
     }
 
     public int getFillTimeScaled(int scale) {
