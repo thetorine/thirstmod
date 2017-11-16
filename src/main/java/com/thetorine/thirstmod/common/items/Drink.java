@@ -1,9 +1,12 @@
 package com.thetorine.thirstmod.common.items;
 
+import net.minecraft.item.Item;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Drink {
+public class Drink implements Serializable {
 
     public static List<Drink> ALL_DRINKS = new ArrayList<>();
 
@@ -12,11 +15,20 @@ public class Drink {
     public float saturationReplenish;
     public int drinkColor;
 
+    public boolean alwaysDrinkable;
+    public boolean shiny;
+    public String recipeItem;
+    public int manufactureTime;
+
     public Drink(String name, int thirst, float sat, int color) {
         this.drinkName = name;
         this.thirstReplenish = thirst;
         this.saturationReplenish = sat;
         this.drinkColor = color;
+    }
+
+    public Item getItem() {
+        return Item.getByNameOrId(recipeItem);
     }
 
     public static void registerDrink(Drink drink) {
@@ -31,5 +43,9 @@ public class Drink {
             }
         }
         return null;
+    }
+
+    public static Drink getDrinkByIndex(int i) {
+        return ALL_DRINKS.get(i);
     }
 }

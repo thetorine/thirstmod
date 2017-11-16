@@ -69,7 +69,7 @@ public class ItemCup extends Item {
         RayTraceResult result = this.rayTrace(world, player, true);
         if (result == null || itemstack.getMetadata() > 0) {
             ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-            if ((stats.canDrink() || player.capabilities.isCreativeMode)) {
+            if ((stats.canDrink() || player.capabilities.isCreativeMode || Drink.getDrinkByIndex(itemstack.getMetadata() - 1).alwaysDrinkable) && itemstack.getMetadata() > 0) {
                 player.setActiveHand(hand);
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
             }
@@ -83,10 +83,18 @@ public class ItemCup extends Item {
         return new ActionResult(EnumActionResult.PASS, itemstack);
     }
 
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+        if (stack.getMetadata() == 0) return false;
+        return Drink.getDrinkByIndex(stack.getMetadata() - 1).shiny;
+    }
+
+    @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 32;
     }
 
+    @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.DRINK;
     }

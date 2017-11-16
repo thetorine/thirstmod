@@ -92,7 +92,7 @@ public class ItemCanteen extends Item {
         RayTraceResult result = this.rayTrace(world, player, true);
         if (result == null || itemstack.getMetadata() > 0) {
             ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-            if ((stats.canDrink() || player.capabilities.isCreativeMode) && itemstack.getMetadata() > 0) {
+            if ((stats.canDrink() || player.capabilities.isCreativeMode || Drink.getDrinkByIndex(getDrinkIndexByMetadata(itemstack.getMetadata())).alwaysDrinkable) && itemstack.getMetadata() > 0) {
                 player.setActiveHand(hand);
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
             }
@@ -111,10 +111,22 @@ public class ItemCanteen extends Item {
         return drinkIndex * Constants.CANTEEN_CAPACITY + Constants.CANTEEN_CAPACITY;
     }
 
+    public static int getDrinkIndexByMetadata(int meta) {
+        return (meta - 1) / Constants.CANTEEN_CAPACITY;
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+        if (stack.getMetadata() == 0) return false;
+        return Drink.getDrinkByIndex(getDrinkIndexByMetadata(stack.getMetadata())).shiny;
+    }
+
+    @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 32;
     }
 
+    @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.DRINK;
     }

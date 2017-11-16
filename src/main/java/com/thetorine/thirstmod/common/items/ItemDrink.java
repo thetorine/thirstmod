@@ -58,10 +58,11 @@ public class ItemDrink extends Item {
         return stack;
     }
 
+    @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
         ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-        if (stats.canDrink() || player.capabilities.isCreativeMode) {
+        if (stats.canDrink() || player.capabilities.isCreativeMode || Drink.getDrinkByIndex(itemstack.getMetadata()).alwaysDrinkable) {
             player.setActiveHand(hand);
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
         } else {
@@ -69,10 +70,17 @@ public class ItemDrink extends Item {
         }
     }
 
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+        return Drink.getDrinkByIndex(stack.getMetadata()).shiny;
+    }
+
+    @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 32;
     }
 
+    @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.DRINK;
     }
