@@ -95,7 +95,7 @@ public class ItemCup extends Item {
         @Override
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (stack.getMetadata() == 0) {
-                return 0xffffff;
+                return tintIndex > 0 ? 0x957328 : 0xffffff;
             }
             return tintIndex > 0 ? Drink.ALL_DRINKS.get(stack.getMetadata() - 1).drinkColor : 0xffffff;
         }

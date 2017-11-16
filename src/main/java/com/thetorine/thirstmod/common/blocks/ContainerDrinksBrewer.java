@@ -62,8 +62,8 @@ public class ContainerDrinksBrewer extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack stack = null;
-        Slot slot = (Slot) inventorySlots.get(index);
+        ItemStack stack = ItemStack.EMPTY;
+        Slot slot = inventorySlots.get(index);
         if (slot != null && slot.getHasStack()) {
             stack = slot.getStack();
             switch(index) {
