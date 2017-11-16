@@ -1,0 +1,10 @@
+{
+  "drinkName": "Dandelion Tea",
+  "thirstReplenish": 1,
+  "saturationReplenish": 0.5,
+  "drinkColor": 16447595,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:yellow_flower",
+  "manufactureTime": 100
+}

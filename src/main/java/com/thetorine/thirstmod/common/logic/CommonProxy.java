@@ -29,11 +29,11 @@ public class CommonProxy {
         Drink.registerDrink(new Drink("Fresh Water", 7, 2.0f, 0x11DEF5));
         Drink.registerDrink(new Drink("Milk", 5, 1.8f, 0xF0E8DF));
         Drink.registerDrink(new Drink("Chocolate Milk", 7, 2.0f, 0x6E440D));
-        // TODO buckets
 
-        Recipes.addRainCollectorRecipe(Items.GLASS_BOTTLE, new ItemStack(DRINKS, 1, 0), 80);
+        Recipes.addRainCollectorRecipe(Items.GLASS_BOTTLE, new ItemStack(DRINKS, 1, 0), 120);
+        Recipes.addRainCollectorRecipe(CANTEEN, new ItemStack(CANTEEN, 1, ItemCanteen.getIndexOfDrink(Drink.getDrinkByName("Fresh Water"))), 200);
+        Recipes.addRainCollectorRecipe(CUP, new ItemStack(CUP, 1, 1), 120);
         Recipes.addRainCollectorRecipe(Items.BUCKET, new ItemStack(Items.WATER_BUCKET, 1), 160);
-        Recipes.addDrinksBrewerRecipe(Items.BEETROOT, Drink.getDrinkByName("Milk"), 80);
     }
 
     public void init() {}
@@ -41,7 +41,7 @@ public class CommonProxy {
     public ThirstStats getStatsByUUID(UUID uuid) {
         ThirstStats stats = loadedPlayers.get(uuid);
         if (stats == null) {
-            System.out.println("Error: Attempted to access non-existent player with UUID: " + uuid);
+            System.out.println("[Thirst Mod] Error: Attempted to access non-existent player with UUID: " + uuid);
             return null;
         }
         return stats;

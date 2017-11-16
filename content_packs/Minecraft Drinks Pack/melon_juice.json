@@ -1,0 +1,10 @@
+{
+  "drinkName": "Melonade Juice",
+  "thirstReplenish": 7,
+  "saturationReplenish": 1.5,
+  "drinkColor": 15569738,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:melon",
+  "manufactureTime": 100
+}

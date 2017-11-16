@@ -1,0 +1,10 @@
+{
+  "drinkName": "Apple Juice",
+  "thirstReplenish": 5,
+  "saturationReplenish": 1.2,
+  "drinkColor": 12872011,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:apple",
+  "manufactureTime": 100
+}

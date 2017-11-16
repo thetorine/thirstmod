@@ -1,0 +1,10 @@
+{
+  "drinkName": "Rabbit Stew",
+  "thirstReplenish": 6,
+  "saturationReplenish": 1.3,
+  "drinkColor": 14199313,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:rabbit",
+  "manufactureTime": 100
+}

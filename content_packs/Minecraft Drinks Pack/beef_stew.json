@@ -1,0 +1,10 @@
+{
+  "drinkName": "Beef Stew",
+  "thirstReplenish": 5,
+  "saturationReplenish": 1.2,
+  "drinkColor": 13724949,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:cooked_beef",
+  "manufactureTime": 100
+}

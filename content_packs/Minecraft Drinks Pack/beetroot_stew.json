@@ -1,0 +1,10 @@
+{
+  "drinkName": "Beetroot Stew",
+  "thirstReplenish": 6,
+  "saturationReplenish": 1.4,
+  "drinkColor": 11471884,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:beetroot",
+  "manufactureTime": 100
+}

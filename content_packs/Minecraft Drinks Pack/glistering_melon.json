@@ -1,0 +1,10 @@
+{
+  "drinkName": "Glistering Melon Juice",
+  "thirstReplenish": 8,
+  "saturationReplenish": 2.1,
+  "drinkColor": 16757621,
+  "alwaysDrinkable": false,
+  "shiny": true,
+  "recipeItem": "minecraft:speckled_melon",
+  "manufactureTime": 100
+}

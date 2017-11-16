@@ -1,0 +1,10 @@
+{
+  "drinkName": "Diamond Drink",
+  "thirstReplenish": 20,
+  "saturationReplenish": 10,
+  "drinkColor": 27483,
+  "alwaysDrinkable": false,
+  "shiny": true,
+  "recipeItem": "minecraft:diamond",
+  "manufactureTime": 100
+}

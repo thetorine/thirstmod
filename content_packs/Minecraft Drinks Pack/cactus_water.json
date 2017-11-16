@@ -1,0 +1,10 @@
+{
+  "drinkName": "Cactus Water",
+  "thirstReplenish": 3,
+  "saturationReplenish": 1.7,
+  "drinkColor": 5346965,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:cactus",
+  "manufactureTime": 100
+}

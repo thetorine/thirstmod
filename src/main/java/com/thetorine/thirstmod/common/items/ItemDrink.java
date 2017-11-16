@@ -35,7 +35,7 @@ public class ItemDrink extends Item {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return Drink.ALL_DRINKS.get(stack.getMetadata()).drinkName + " Bottle";
+        return "Bottle of " + Drink.ALL_DRINKS.get(stack.getMetadata()).drinkName;
     }
 
     @Override

@@ -43,17 +43,21 @@ public class ItemCanteen extends Item {
     }
 
     @Override
+    public boolean isRepairable() {
+        return false;
+    }
+
+    @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getMetadata() == 0) {
             return "Empty Canteen";
         }
-        int level = getCanteenLevel(stack.getMetadata()) + 1;
-        return getDrink(stack.getMetadata()).drinkName + " Canteen " + level  + "/" + Constants.CANTEEN_CAPACITY;
+        return "Canteen of " + getDrink(stack.getMetadata()).drinkName;
     }
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return stack.getMetadata() > 0;
     }
 
     @Override
@@ -66,7 +70,7 @@ public class ItemCanteen extends Item {
     }
 
     public int getCanteenLevel(int metadata) {
-        return (metadata - 1) % 3;
+        return (metadata - 1) % Constants.CANTEEN_CAPACITY;
     }
 
     public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entityLiving) {

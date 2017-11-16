@@ -1,0 +1,10 @@
+{
+  "drinkName": "Golden Apple Juice",
+  "thirstReplenish": 20,
+  "saturationReplenish": 10,
+  "drinkColor": 14926080,
+  "alwaysDrinkable": true,
+  "shiny": true,
+  "recipeItem": "minecraft:golden_apple",
+  "manufactureTime": 100
+}

@@ -1,0 +1,10 @@
+{
+  "drinkName": "Mushroom Stew",
+  "thirstReplenish": 3,
+  "saturationReplenish": 1,
+  "drinkColor": 9216917,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:brown_mushroom",
+  "manufactureTime": 100
+}

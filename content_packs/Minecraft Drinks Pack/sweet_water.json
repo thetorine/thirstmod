@@ -1,0 +1,10 @@
+{
+  "drinkName": "Sweet Water",
+  "thirstReplenish": 6,
+  "saturationReplenish": 1,
+  "drinkColor": 7535787,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:sugar",
+  "manufactureTime": 100
+}

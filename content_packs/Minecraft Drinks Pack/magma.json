@@ -1,0 +1,10 @@
+{
+  "drinkName": "Liquid Magma Cream",
+  "thirstReplenish": 9,
+  "saturationReplenish": 1.6,
+  "drinkColor": 4198931,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:magma_cream",
+  "manufactureTime": 100
+}

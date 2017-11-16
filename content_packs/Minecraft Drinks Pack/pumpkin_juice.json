@@ -1,0 +1,10 @@
+{
+  "drinkName": "Pumpkin Juice",
+  "thirstReplenish": 4,
+  "saturationReplenish": 1.4,
+  "drinkColor": 16741120,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:pumpkin",
+  "manufactureTime": 100
+}

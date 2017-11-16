@@ -1,0 +1,10 @@
+{
+  "drinkName": "Protein Mix",
+  "thirstReplenish": 4,
+  "saturationReplenish": 1.3,
+  "drinkColor": 15659183,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:egg",
+  "manufactureTime": 100
+}

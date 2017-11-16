@@ -1,0 +1,10 @@
+{
+  "drinkName": "Red Mushroom Stew",
+  "thirstReplenish": 5,
+  "saturationReplenish": 1.5,
+  "drinkColor": 14694479,
+  "alwaysDrinkable": false,
+  "shiny": false,
+  "recipeItem": "minecraft:red_mushroom",
+  "manufactureTime": 100
+}
