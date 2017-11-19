@@ -18,12 +18,18 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
-public class ItemDrink extends Item {
-    public ItemDrink(String name) {
-        this.setUnlocalizedName(name);
-        this.setRegistryName(Constants.MOD_ID, name);
-        this.setCreativeTab(CreativeTabs.FOOD);
-        this.setHasSubtypes(true);
+public class ItemDrink extends ItemContainer {
+
+    public ItemDrink(String unlocalisedName) {
+        super(unlocalisedName);
+    }
+
+    public Drink getDrinkFromMetadata(int metadata) {
+        return Drink.getDrinkByIndex(metadata);
+    }
+
+    public int getMetadataForDrink(Drink drink) {
+        return Drink.ALL_DRINKS.indexOf(drink);
     }
 
     @Override
@@ -35,7 +41,7 @@ public class ItemDrink extends Item {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return "Bottle of " + Drink.ALL_DRINKS.get(stack.getMetadata()).drinkName;
+        return "Bottle of " + getDrinkFromMetadata(stack.getMetadata()).drinkName;
     }
 
     @Override
@@ -44,7 +50,7 @@ public class ItemDrink extends Item {
 
         if (!world.isRemote && player != null) {
             ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-            Drink drink = Drink.ALL_DRINKS.get(stack.getMetadata());
+            Drink drink = getDrinkFromMetadata(stack.getMetadata());
             stats.addStats(drink.thirstReplenish, drink.saturationReplenish);
             player.addStat(StatList.getObjectUseStats(this));
         }
@@ -62,7 +68,7 @@ public class ItemDrink extends Item {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
         ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-        if (stats.canDrink() || player.capabilities.isCreativeMode || Drink.getDrinkByIndex(itemstack.getMetadata()).alwaysDrinkable) {
+        if (stats.canDrink() || player.capabilities.isCreativeMode || getDrinkFromMetadata(itemstack.getMetadata()).alwaysDrinkable) {
             player.setActiveHand(hand);
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
         } else {
@@ -70,25 +76,10 @@ public class ItemDrink extends Item {
         }
     }
 
-    @Override
-    public boolean hasEffect(ItemStack stack) {
-        return Drink.getDrinkByIndex(stack.getMetadata()).shiny;
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 32;
-    }
-
-    @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
-        return EnumAction.DRINK;
-    }
-
     public static class BottleColorHandler implements IItemColor {
         @Override
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
-            return tintIndex > 0 ? Drink.ALL_DRINKS.get(stack.getMetadata()).drinkColor : 0xffffff;
+            return tintIndex > 0 ? ThirstMod.getProxy().DRINKS.getDrinkFromMetadata(stack.getMetadata()).drinkColor : 0xffffff;
         }
     }
 

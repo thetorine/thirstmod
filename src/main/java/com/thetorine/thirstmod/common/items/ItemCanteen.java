@@ -21,15 +21,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class ItemCanteen extends Item {
+public class ItemCanteen extends ItemContainer {
 
-    private final int maxCapacity = 3;
+    public ItemCanteen(String unlocalisedName) {
+        super(unlocalisedName);
+    }
 
-    public ItemCanteen(String name) {
-        this.setUnlocalizedName(name);
-        this.setRegistryName(Constants.MOD_ID, name);
-        this.setCreativeTab(CreativeTabs.FOOD);
-        this.setHasSubtypes(true);
+    public Drink getDrinkFromMetadata(int metadata) {
+        return Drink.ALL_DRINKS.get((metadata - 1) / Constants.CANTEEN_CAPACITY);
+    }
+
+    public int getMetadataForDrink(Drink drink) {
+        int drinkIndex = Drink.ALL_DRINKS.indexOf(drink);
+        return drinkIndex * Constants.CANTEEN_CAPACITY + Constants.CANTEEN_CAPACITY;
+    }
+
+    public int getCanteenLevel(int metadata) {
+        return (metadata - 1) % Constants.CANTEEN_CAPACITY;
     }
 
     @Override
@@ -52,7 +60,7 @@ public class ItemCanteen extends Item {
         if (stack.getMetadata() == 0) {
             return "Empty Canteen";
         }
-        return "Canteen of " + getDrink(stack.getMetadata()).drinkName;
+        return "Canteen of " + getDrinkFromMetadata(stack.getMetadata()).drinkName;
     }
 
     @Override
@@ -65,17 +73,11 @@ public class ItemCanteen extends Item {
         return 1.0d - (getCanteenLevel(stack.getMetadata()) + 1) / (double) Constants.CANTEEN_CAPACITY;
     }
 
-    public Drink getDrink(int metadata) {
-        return Drink.ALL_DRINKS.get((metadata - 1) / Constants.CANTEEN_CAPACITY);
-    }
 
-    public int getCanteenLevel(int metadata) {
-        return (metadata - 1) % Constants.CANTEEN_CAPACITY;
-    }
-
+    @Override
     public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entityLiving) {
         EntityPlayer player = entityLiving instanceof EntityPlayer ? (EntityPlayer)entityLiving : null;
-        Drink drink = getDrink(stack.getMetadata());
+        Drink drink = getDrinkFromMetadata(stack.getMetadata());
 
         if (!world.isRemote && player != null) {
             ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
@@ -91,12 +93,13 @@ public class ItemCanteen extends Item {
         return stack;
     }
 
+    @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
         RayTraceResult result = this.rayTrace(world, player, true);
         if (result == null || itemstack.getMetadata() > 0) {
             ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-            if ((stats.canDrink() || player.capabilities.isCreativeMode || Drink.getDrinkByIndex(getDrinkIndexByMetadata(itemstack.getMetadata())).alwaysDrinkable) && itemstack.getMetadata() > 0) {
+            if (itemstack.getMetadata() > 0 && (stats.canDrink() || player.capabilities.isCreativeMode || getDrinkFromMetadata(itemstack.getMetadata()).alwaysDrinkable)) {
                 player.setActiveHand(hand);
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
             }
@@ -104,42 +107,23 @@ public class ItemCanteen extends Item {
             BlockPos blockpos = result.getBlockPos();
             if (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
                 world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CANTEEN, 1, getIndexOfDrink(Drink.getDrinkByName("Fresh Water"))));
+                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CANTEEN, 1, getMetadataForDrink(Drink.getDrinkByName("Fresh Water"))));
             }
         }
         return new ActionResult(EnumActionResult.PASS, itemstack);
     }
 
-    public static int getIndexOfDrink(Drink d) {
-        int drinkIndex = Drink.ALL_DRINKS.indexOf(d);
-        return drinkIndex * Constants.CANTEEN_CAPACITY + Constants.CANTEEN_CAPACITY;
-    }
-
-    public static int getDrinkIndexByMetadata(int meta) {
-        return (meta - 1) / Constants.CANTEEN_CAPACITY;
-    }
-
     @Override
     public boolean hasEffect(ItemStack stack) {
         if (stack.getMetadata() == 0) return false;
-        return Drink.getDrinkByIndex(getDrinkIndexByMetadata(stack.getMetadata())).shiny;
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 32;
-    }
-
-    @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
-        return EnumAction.DRINK;
+        return super.hasEffect(stack);
     }
 
     public static class CanteenColorHandler implements IItemColor {
         @Override
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (tintIndex > 0 && stack.getMetadata() > 0) {
-                return ThirstMod.getProxy().CANTEEN.getDrink(stack.getMetadata()).drinkColor;
+                return ThirstMod.getProxy().CANTEEN.getDrinkFromMetadata(stack.getMetadata()).drinkColor;
             }
             return 0xffffff;
         }

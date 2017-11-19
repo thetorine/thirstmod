@@ -18,13 +18,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class ItemCup extends Item {
+public class ItemCup extends ItemContainer {
 
-    public ItemCup(String name) {
-        this.setUnlocalizedName(name);
-        this.setRegistryName(Constants.MOD_ID, name);
-        this.setCreativeTab(CreativeTabs.FOOD);
-        this.setHasSubtypes(true);
+    public ItemCup(String unlocalisedName) {
+        super(unlocalisedName);
+    }
+
+    public Drink getDrinkFromMetadata(int metadata) {
+        return Drink.ALL_DRINKS.get(metadata - 1);
+    }
+
+    public int getMetadataForDrink(Drink drink) {
+        return Drink.ALL_DRINKS.indexOf(drink) + 1;
     }
 
     @Override
@@ -40,7 +45,7 @@ public class ItemCup extends Item {
         if (stack.getMetadata() == 0) {
             return "Cup";
         }
-        return "Cup of " + Drink.ALL_DRINKS.get(stack.getMetadata() - 1).drinkName;
+        return "Cup of " + getDrinkFromMetadata(stack.getMetadata()).drinkName;
     }
 
     @Override
@@ -49,7 +54,7 @@ public class ItemCup extends Item {
 
         if (!world.isRemote && player != null) {
             ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-            Drink drink = Drink.ALL_DRINKS.get(stack.getMetadata() - 1);
+            Drink drink = getDrinkFromMetadata(stack.getMetadata());
             stats.addStats(drink.thirstReplenish, drink.saturationReplenish);
             player.addStat(StatList.getObjectUseStats(this));
         }
@@ -69,7 +74,7 @@ public class ItemCup extends Item {
         RayTraceResult result = this.rayTrace(world, player, true);
         if (result == null || itemstack.getMetadata() > 0) {
             ThirstStats stats = world.isRemote ? ThirstMod.getClientProxy().clientStats : ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
-            if ((stats.canDrink() || player.capabilities.isCreativeMode || Drink.getDrinkByIndex(itemstack.getMetadata() - 1).alwaysDrinkable) && itemstack.getMetadata() > 0) {
+            if (itemstack.getMetadata() > 0 && (stats.canDrink() || player.capabilities.isCreativeMode || getDrinkFromMetadata(itemstack.getMetadata()).alwaysDrinkable)) {
                 player.setActiveHand(hand);
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
             }
@@ -77,7 +82,7 @@ public class ItemCup extends Item {
             BlockPos blockpos = result.getBlockPos();
             if (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
                 world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CUP, 1, Drink.ALL_DRINKS.indexOf(Drink.getDrinkByName("Fresh Water")) + 1));
+                return new ActionResult(EnumActionResult.SUCCESS, new ItemStack(ThirstMod.getProxy().CUP, 1, getMetadataForDrink(Drink.getDrinkByName("Fresh Water"))));
             }
         }
         return new ActionResult(EnumActionResult.PASS, itemstack);
@@ -86,17 +91,7 @@ public class ItemCup extends Item {
     @Override
     public boolean hasEffect(ItemStack stack) {
         if (stack.getMetadata() == 0) return false;
-        return Drink.getDrinkByIndex(stack.getMetadata() - 1).shiny;
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 32;
-    }
-
-    @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
-        return EnumAction.DRINK;
+        return super.hasEffect(stack);
     }
 
     public static class CupColorHandler implements IItemColor {
@@ -105,7 +100,7 @@ public class ItemCup extends Item {
             if (stack.getMetadata() == 0) {
                 return tintIndex > 0 ? 0x957328 : 0xffffff;
             }
-            return tintIndex > 0 ? Drink.ALL_DRINKS.get(stack.getMetadata() - 1).drinkColor : 0xffffff;
+            return tintIndex > 0 ? ThirstMod.getProxy().CUP.getDrinkFromMetadata(stack.getMetadata()).drinkColor : 0xffffff;
         }
     }
 }

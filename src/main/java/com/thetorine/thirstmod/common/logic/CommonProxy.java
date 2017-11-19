@@ -31,7 +31,7 @@ public class CommonProxy {
         Drink.registerDrink(new Drink("Chocolate Milk", 7, 2.0f, 0x6E440D));
 
         Recipes.addRainCollectorRecipe(Items.GLASS_BOTTLE, new ItemStack(DRINKS, 1, 0), 120);
-        Recipes.addRainCollectorRecipe(CANTEEN, new ItemStack(CANTEEN, 1, ItemCanteen.getIndexOfDrink(Drink.getDrinkByName("Fresh Water"))), 200);
+        Recipes.addRainCollectorRecipe(CANTEEN, new ItemStack(CANTEEN, 1, CANTEEN.getMetadataForDrink(Drink.getDrinkByName("Fresh Water"))), 200);
         Recipes.addRainCollectorRecipe(CUP, new ItemStack(CUP, 1, 1), 120);
         Recipes.addRainCollectorRecipe(Items.BUCKET, new ItemStack(Items.WATER_BUCKET, 1), 160);
     }

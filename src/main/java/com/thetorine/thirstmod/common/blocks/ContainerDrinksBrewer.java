@@ -75,7 +75,7 @@ public class ContainerDrinksBrewer extends Container {
                     break;
                 }
                 default: {
-                    if (Recipes.getContainerFromItemStack(stack) != Recipes.DrinkContainer.UNKNOWN) {
+                    if (Recipes.isContainer(stack)) {
                         if (!mergeItemStack(stack, 0, 1, false)) return ItemStack.EMPTY;
                     } else if (Recipes.getDrinksBrewerRecipe(stack.getItem()) != null) {
                         if(!mergeItemStack(stack, 1, 2, false)) return ItemStack.EMPTY;

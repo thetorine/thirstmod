@@ -1,5 +1,6 @@
 package com.thetorine.thirstmod.common.blocks;
 
+import com.thetorine.thirstmod.common.items.ItemContainer;
 import com.thetorine.thirstmod.common.logic.Recipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -28,12 +29,11 @@ public class TileEntityDrinksBrewer extends TileEntity implements ITickable, ISi
         ItemStack outputStack = getStackInSlot(3);
 
         Recipes.Output output = Recipes.getDrinksBrewerRecipe(ingredientStack.getItem());
-        Recipes.DrinkContainer container = Recipes.getContainerFromItemStack(containerStack);
-        boolean flag = container != Recipes.DrinkContainer.UNKNOWN && output != null;
+        boolean flag = Recipes.isContainer(containerStack) && output != null;
 
         if (flag) {
             manufactureTime = output.manufactureTime;
-            ItemStack outputItem = Recipes.getItemStackFromOutput(output, container);
+            ItemStack outputItem = Recipes.getItemStackFromOutput(output, containerStack.getItem());
             if (outputStack.isEmpty() || outputStack.isItemEqual(outputItem)) {
                 if (isBurningFuel()) fillTime++;
                 if (fillTime >= output.manufactureTime && outputStack.getCount() < getInventoryStackLimit()) {
