@@ -3,6 +3,7 @@ package com.thetorine.thirstmod;
 import com.google.gson.Gson;
 import com.thetorine.thirstmod.client.logic.ClientProxy;
 import com.thetorine.thirstmod.common.content.ContentPack;
+import com.thetorine.thirstmod.common.content.ExternalDrink;
 import com.thetorine.thirstmod.common.logic.CommonProxy;
 import com.thetorine.thirstmod.common.logic.EventHook;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,6 +41,7 @@ public class ThirstMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         ContentPack.load();
+        ExternalDrink.load();
         MinecraftForge.EVENT_BUS.register(EventHook.getInstance());
         getProxy().preInit();
     }

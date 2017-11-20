@@ -5,6 +5,8 @@ import com.thetorine.thirstmod.ThirstMod;
 import com.thetorine.thirstmod.client.gui.GuiThirstBar;
 import com.thetorine.thirstmod.common.blocks.TileEntityDrinksBrewer;
 import com.thetorine.thirstmod.common.blocks.TileEntityRainCollector;
+import com.thetorine.thirstmod.common.content.DrinkItem;
+import com.thetorine.thirstmod.common.content.ExternalDrink;
 import com.thetorine.thirstmod.common.items.Drink;
 import com.thetorine.thirstmod.network.NetworkManager;
 import com.thetorine.thirstmod.network.PacketMovementSpeed;
@@ -13,10 +15,12 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -189,6 +193,24 @@ public class EventHook {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onFinishUsingItem(LivingEntityUseItemEvent.Finish event) {
+        if (!event.getEntity().world.isRemote && event.getEntityLiving() instanceof EntityPlayer) {
+            ItemStack eventItem = event.getItem();
+            // have to increment count because if count == 0, then ItemAir is returned instead of the item that was just consumed.
+            eventItem.setCount(eventItem.getCount() + 1);
+            EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+            for (DrinkItem drinkItem : ExternalDrink.EXTERNAL_DRINKS) {
+                Item item = Item.getByNameOrId(drinkItem.name);
+                if (eventItem.getItem().equals(item) && (drinkItem.metadata == -1 || eventItem.getMetadata() == drinkItem.metadata)) {
+                    ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
+                    stats.addStats(drinkItem.thirstReplenish, drinkItem.saturationReplenish);
+                }
+            }
+            eventItem.setCount(eventItem.getCount() - 1);
         }
     }
 }

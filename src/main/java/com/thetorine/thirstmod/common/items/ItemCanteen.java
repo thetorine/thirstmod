@@ -73,7 +73,6 @@ public class ItemCanteen extends ItemContainer {
         return 1.0d - (getCanteenLevel(stack.getMetadata()) + 1) / (double) Constants.CANTEEN_CAPACITY;
     }
 
-
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entityLiving) {
         EntityPlayer player = entityLiving instanceof EntityPlayer ? (EntityPlayer)entityLiving : null;
