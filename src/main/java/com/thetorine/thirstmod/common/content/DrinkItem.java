@@ -5,4 +5,5 @@ public class DrinkItem {
     public int metadata = -1;
     public int thirstReplenish;
     public float saturationReplenish;
+    public float poisonChance;
 }

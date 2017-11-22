@@ -11,6 +11,7 @@ public class PacketThirstStats implements IMessage {
 
     public int thirstLevel;
     public float saturation, exhaustion;
+    public boolean poisoned;
 
     public PacketThirstStats() {}
 
@@ -18,6 +19,7 @@ public class PacketThirstStats implements IMessage {
         this.thirstLevel = stats.thirstLevel;
         this.saturation = stats.saturation;
         this.exhaustion = stats.exhaustion;
+        this.poisoned = stats.poisoned;
     }
 
     @Override
@@ -25,6 +27,7 @@ public class PacketThirstStats implements IMessage {
         thirstLevel = buf.readInt();
         saturation = buf.readFloat();
         exhaustion = buf.readFloat();
+        poisoned = buf.readBoolean();
     }
 
     @Override
@@ -32,6 +35,7 @@ public class PacketThirstStats implements IMessage {
         buf.writeInt(this.thirstLevel);
         buf.writeFloat(this.saturation);
         buf.writeFloat(this.exhaustion);
+        buf.writeBoolean(this.poisoned);
     }
 
     public void handleClientSide() {
@@ -39,6 +43,7 @@ public class PacketThirstStats implements IMessage {
         stats.thirstLevel = this.thirstLevel;
         stats.saturation = this.saturation;
         stats.exhaustion = this.exhaustion;
+        stats.poisoned = this.poisoned;
     }
 
     public static class Handler implements IMessageHandler<PacketThirstStats, IMessage> {

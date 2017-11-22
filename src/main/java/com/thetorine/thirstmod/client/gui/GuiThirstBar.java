@@ -30,12 +30,14 @@ public class GuiThirstBar {
                 int xStart = scaledRes.getScaledWidth()/2 + 10;
                 int yStart = scaledRes.getScaledHeight() - 49;
 
+                int poisonModifier = ThirstMod.getClientProxy().clientStats.poisoned ? 16 : 0;
+
                 for (int i = 0; i < 10; i++) {
                     gui.drawTexturedModalRect(xStart + i*8, yStart, 1, 1, 7, 9); //empty thirst droplet
                     if (thirstLevel % 2 != 0 && 10 - i - 1 == thirstLevel/2) {
-                        gui.drawTexturedModalRect(xStart + i*8, yStart, 17, 1, 7, 9); //half full thirst droplet
+                        gui.drawTexturedModalRect(xStart + i*8, yStart, 17 + poisonModifier, 1, 7, 9); //half full thirst droplet
                     } else if (thirstLevel/2 >= 10 - i) {
-                        gui.drawTexturedModalRect(xStart + i*8, yStart, 9, 1, 7, 9); //full thirst droplet
+                        gui.drawTexturedModalRect(xStart + i*8, yStart, 9 + poisonModifier, 1, 7, 9); //full thirst droplet
                     }
                 }
             }

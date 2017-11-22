@@ -1,5 +1,6 @@
 package com.thetorine.thirstmod.common.logic;
 
+import com.thetorine.thirstmod.Constants;
 import com.thetorine.thirstmod.network.NetworkManager;
 import com.thetorine.thirstmod.network.PacketThirstStats;
 import net.minecraft.block.material.Material;
@@ -7,11 +8,15 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.FoodStats;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.biome.BiomeDesert;
 import org.lwjgl.input.Keyboard;
+
+import java.lang.reflect.Field;
+import java.util.Random;
 
 public class ThirstStats {
 
@@ -19,13 +24,19 @@ public class ThirstStats {
     public float saturation;
     public float exhaustion;
     public int thirstTimer;
+    public boolean poisoned;
+    public int poisonTimer;
 
     public int movementSpeed;
 
     public transient int lastThirstLevel;
     public transient float lastSaturation;
+    public transient boolean lastPoisoned;
 
+    public transient Random random = new Random();
     public transient DamageSource thirstDmgSource = new DamageThirst();
+
+    public transient Field foodTimer;
 
     public ThirstStats() {
         lastThirstLevel = -1; // Trigger a refresh when this class is loaded.
@@ -34,10 +45,11 @@ public class ThirstStats {
 
     public void update(EntityPlayer player) {
         // Only send packet update if the thirst level or saturation has changed.
-        if (lastThirstLevel != thirstLevel || lastSaturation != saturation) {
+        if (lastThirstLevel != thirstLevel || lastSaturation != saturation || lastPoisoned != poisoned) {
             NetworkManager.getNetworkWrapper().sendTo(new PacketThirstStats(this), (EntityPlayerMP) player);
             lastThirstLevel = thirstLevel;
             lastSaturation = saturation;
+            lastPoisoned = poisoned;
         }
 
         if (exhaustion > 5.0f) {
@@ -52,8 +64,7 @@ public class ThirstStats {
         if (thirstLevel <= 6) {
             player.setSprinting(false);
             if (thirstLevel == 0) {
-                thirstTimer++;
-                if (thirstTimer > 200) {
+                if (thirstTimer++ > 200) {
                     if (player.getHealth() > 10.0f || player.world.getDifficulty() == EnumDifficulty.HARD || (player.world.getDifficulty() == EnumDifficulty.NORMAL && player.getHealth() > 1.0f)) {
                         thirstTimer = 0;
                         player.attackEntityFrom(this.thirstDmgSource, 1);
@@ -82,9 +93,35 @@ public class ThirstStats {
             }
         }
 
+        if (poisoned && thirstLevel > 0) {
+            if (poisonTimer++ < Constants.POISON_DURATION) {
+                if (player.getHealth() > 1.0f && player.world.getDifficulty() != EnumDifficulty.PEACEFUL && thirstTimer++ > 200) {
+                    thirstTimer = 0;
+                    player.attackEntityFrom(this.thirstDmgSource, 1);
+                }
+            } else {
+                poisoned = false;
+                poisonTimer = 0;
+            }
+        }
+
+        if (foodTimer == null) {
+            try {
+                foodTimer = player.getFoodStats().getClass().getDeclaredField("foodTimer");
+                foodTimer.setAccessible(true);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        } else if (thirstLevel == 0 || poisoned) {
+            try {
+                foodTimer.setInt(player.getFoodStats(), 0);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (Keyboard.isKeyDown(Keyboard.KEY_J)) {
             thirstLevel = Math.max(thirstLevel - 1, 0);
-            System.out.println(thirstLevel);
         } else if (Keyboard.isKeyDown(Keyboard.KEY_K)) {
             thirstLevel = Math.min(thirstLevel + 1, 20);
         }
@@ -97,6 +134,12 @@ public class ThirstStats {
 
     public void addExhaustion(float exhaustion) {
         this.exhaustion = Math.min(this.exhaustion + exhaustion, 40.0f);
+    }
+
+    public void attemptToPoison(float chance) {
+        if (random.nextFloat() < chance) {
+            poisoned = true;
+        }
     }
 
     public boolean canDrink() {
@@ -114,6 +157,8 @@ public class ThirstStats {
         thirstLevel = 20;
         saturation = 5f;
         exhaustion = 0f;
+        poisoned = false;
+        poisonTimer = 0;
     }
 
     public static class DamageThirst extends DamageSource {

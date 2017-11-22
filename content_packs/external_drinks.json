@@ -13,6 +13,7 @@
     "name": "minecraft:potion",
     "metadata": 0,
     "thirstReplenish": 3,
-    "saturationReplenish": 1.4
+    "saturationReplenish": 1.4,
+    "poisonChance": 0.4
   }
 ]

@@ -208,6 +208,7 @@ public class EventHook {
                 if (eventItem.getItem().equals(item) && (drinkItem.metadata == -1 || eventItem.getMetadata() == drinkItem.metadata)) {
                     ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
                     stats.addStats(drinkItem.thirstReplenish, drinkItem.saturationReplenish);
+                    stats.attemptToPoison(drinkItem.poisonChance);
                 }
             }
             eventItem.setCount(eventItem.getCount() - 1);

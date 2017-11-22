@@ -11,4 +11,6 @@ public class Constants {
     public static final int DRINKS_BREWER_ID = 1;
 
     public static final int CANTEEN_CAPACITY = 3;
+
+    public static final int POISON_DURATION = 60 * 20; // 60 seconds
 }
