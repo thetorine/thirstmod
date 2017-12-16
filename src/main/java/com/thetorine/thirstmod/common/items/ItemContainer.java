@@ -1,10 +1,15 @@
 package com.thetorine.thirstmod.common.items;
 
 import com.thetorine.thirstmod.Constants;
+import com.thetorine.thirstmod.ThirstMod;
+import com.thetorine.thirstmod.common.content.Drink;
+import com.thetorine.thirstmod.common.logic.ThirstStats;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 
 public class ItemContainer extends Item {
 
@@ -36,5 +41,15 @@ public class ItemContainer extends Item {
     @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.DRINK;
+    }
+
+    public void onDrinkItem(EntityPlayer player, ItemStack stack) {
+        if (!player.world.isRemote && player != null) {
+            ThirstStats stats = ThirstMod.getProxy().getStatsByUUID(player.getUniqueID());
+            Drink drink = getDrinkFromMetadata(stack.getMetadata());
+            stats.addStats(drink.thirstReplenish, drink.saturationReplenish);
+            stats.attemptToPoison(drink.poisonChance);
+            player.addStat(StatList.getObjectUseStats(this));
+        }
     }
 }

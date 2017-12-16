@@ -7,7 +7,7 @@ import com.thetorine.thirstmod.common.blocks.TileEntityDrinksBrewer;
 import com.thetorine.thirstmod.common.blocks.TileEntityRainCollector;
 import com.thetorine.thirstmod.common.content.DrinkItem;
 import com.thetorine.thirstmod.common.content.ExternalDrink;
-import com.thetorine.thirstmod.common.items.Drink;
+import com.thetorine.thirstmod.common.content.Drink;
 import com.thetorine.thirstmod.network.NetworkManager;
 import com.thetorine.thirstmod.network.PacketMovementSpeed;
 import net.minecraft.block.Block;

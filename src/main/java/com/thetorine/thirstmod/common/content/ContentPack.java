@@ -2,7 +2,6 @@ package com.thetorine.thirstmod.common.content;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.thetorine.thirstmod.common.items.Drink;
 import com.thetorine.thirstmod.common.logic.Recipes;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;

@@ -44,14 +44,6 @@ public class ThirstStats {
     }
 
     public void update(EntityPlayer player) {
-        // Only send packet update if the thirst level or saturation has changed.
-        if (lastThirstLevel != thirstLevel || lastSaturation != saturation || lastPoisoned != poisoned) {
-            NetworkManager.getNetworkWrapper().sendTo(new PacketThirstStats(this), (EntityPlayerMP) player);
-            lastThirstLevel = thirstLevel;
-            lastSaturation = saturation;
-            lastPoisoned = poisoned;
-        }
-
         if (exhaustion > 5.0f) {
             exhaustion -= 5.0f;
             if (saturation > 0.0f) {
@@ -112,12 +104,22 @@ public class ThirstStats {
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
-        } else if (thirstLevel == 0 || poisoned) {
+        }
+
+        if (thirstLevel < 16 || poisoned) {
             try {
                 foodTimer.setInt(player.getFoodStats(), 0);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+        }
+
+        // Only send packet update if the thirst level or saturation has changed.
+        if (lastThirstLevel != thirstLevel || lastSaturation != saturation || lastPoisoned != poisoned) {
+            NetworkManager.getNetworkWrapper().sendTo(new PacketThirstStats(this), (EntityPlayerMP) player);
+            lastThirstLevel = thirstLevel;
+            lastSaturation = saturation;
+            lastPoisoned = poisoned;
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_J)) {

@@ -1,4 +1,4 @@
-package com.thetorine.thirstmod.common.items;
+package com.thetorine.thirstmod.common.content;
 
 import net.minecraft.item.Item;
 
@@ -19,6 +19,7 @@ public class Drink implements Serializable {
     public boolean shiny;
     public String recipeItem;
     public int manufactureTime;
+    public float poisonChance;
 
     public Drink(String name, int thirst, float sat, int color) {
         this.drinkName = name;

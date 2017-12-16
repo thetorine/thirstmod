@@ -2,6 +2,7 @@ package com.thetorine.thirstmod.common.logic;
 
 import com.thetorine.thirstmod.common.blocks.BlockDrinksBrewer;
 import com.thetorine.thirstmod.common.blocks.BlockRainCollector;
+import com.thetorine.thirstmod.common.content.Drink;
 import com.thetorine.thirstmod.common.items.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;

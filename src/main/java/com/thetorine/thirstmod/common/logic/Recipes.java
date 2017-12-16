@@ -1,10 +1,8 @@
 package com.thetorine.thirstmod.common.logic;
 
 import com.thetorine.thirstmod.ThirstMod;
-import com.thetorine.thirstmod.common.items.Drink;
+import com.thetorine.thirstmod.common.content.Drink;
 import com.thetorine.thirstmod.common.items.ItemContainer;
-import com.thetorine.thirstmod.common.items.ItemDrink;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGlassBottle;
 import net.minecraft.item.ItemStack;
