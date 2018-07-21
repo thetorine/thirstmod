@@ -1,5 +1,7 @@
 // blocks
 tile.rain_collector.name=Rain Collector
+tile.drinks_brewer.name=Drinks Brewer
+tile.drinks_store.name=Drinks Store
 
 // items
 item.dirty_filter.name=Dirty Filter

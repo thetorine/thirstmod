@@ -9,6 +9,7 @@ public class Constants {
 
     public static final int RAIN_COLLECTOR_ID = 0;
     public static final int DRINKS_BREWER_ID = 1;
+    public static final int DRINKS_STORE_ID = 2;
 
     public static final int CANTEEN_CAPACITY = 3;
 

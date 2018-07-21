@@ -9,9 +9,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketThirstStats implements IMessage {
 
-    public int thirstLevel;
-    public float saturation, exhaustion;
-    public boolean poisoned;
+    private int thirstLevel;
+    private float saturation, exhaustion;
+    private boolean poisoned;
 
     public PacketThirstStats() {}
 

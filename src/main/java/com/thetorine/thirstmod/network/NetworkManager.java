@@ -16,6 +16,7 @@ public class NetworkManager {
             networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_ID);
             registerPacket(PacketThirstStats.class, PacketThirstStats.Handler.class, Side.CLIENT);
             registerPacket(PacketMovementSpeed.class, PacketMovementSpeed.Handler.class, Side.SERVER);
+            registerPacket(PacketDrinksStore.class, PacketDrinksStore.Handler.class, Side.SERVER);
         }
         return networkWrapper;
     }

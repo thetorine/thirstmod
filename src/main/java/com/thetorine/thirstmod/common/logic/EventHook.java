@@ -4,6 +4,7 @@ import com.thetorine.thirstmod.Constants;
 import com.thetorine.thirstmod.ThirstMod;
 import com.thetorine.thirstmod.client.gui.GuiThirstBar;
 import com.thetorine.thirstmod.common.blocks.TileEntityDrinksBrewer;
+import com.thetorine.thirstmod.common.blocks.TileEntityDrinksStore;
 import com.thetorine.thirstmod.common.blocks.TileEntityRainCollector;
 import com.thetorine.thirstmod.common.content.DrinkItem;
 import com.thetorine.thirstmod.common.content.ExternalDrink;
@@ -66,9 +67,11 @@ public class EventHook {
     public void registerBlocks(RegistryEvent.Register<Block> event) {
         event.getRegistry().register(ThirstMod.getProxy().RAIN_COLLECTOR);
         event.getRegistry().register(ThirstMod.getProxy().DRINKS_BREWER);
+        event.getRegistry().register(ThirstMod.getProxy().DRINKS_STORE);
 
         GameRegistry.registerTileEntity(TileEntityRainCollector.class, ThirstMod.getProxy().RAIN_COLLECTOR.getRegistryName().toString());
         GameRegistry.registerTileEntity(TileEntityDrinksBrewer.class, ThirstMod.getProxy().DRINKS_BREWER.getRegistryName().toString());
+        GameRegistry.registerTileEntity(TileEntityDrinksStore.class, ThirstMod.getProxy().DRINKS_STORE.getRegistryName().toString());
     }
 
     @SubscribeEvent
@@ -81,7 +84,8 @@ public class EventHook {
             ThirstMod.getProxy().CHARCOAL_FILTER,
             ThirstMod.getProxy().DIRTY_FILTER,
             new ItemBlock(ThirstMod.getProxy().RAIN_COLLECTOR).setRegistryName(Constants.MOD_ID, "rain_collector"),
-            new ItemBlock(ThirstMod.getProxy().DRINKS_BREWER).setRegistryName(Constants.MOD_ID, "drinks_brewer")
+            new ItemBlock(ThirstMod.getProxy().DRINKS_BREWER).setRegistryName(Constants.MOD_ID, "drinks_brewer"),
+            new ItemBlock(ThirstMod.getProxy().DRINKS_STORE).setRegistryName(Constants.MOD_ID, "drinks_store")
         };
 
         event.getRegistry().registerAll(items);
@@ -98,7 +102,8 @@ public class EventHook {
                 ThirstMod.getProxy().CHARCOAL_FILTER,
                 ThirstMod.getProxy().DIRTY_FILTER,
                 Item.getItemFromBlock(ThirstMod.getProxy().RAIN_COLLECTOR),
-                Item.getItemFromBlock(ThirstMod.getProxy().DRINKS_BREWER)
+                Item.getItemFromBlock(ThirstMod.getProxy().DRINKS_BREWER),
+                Item.getItemFromBlock(ThirstMod.getProxy().DRINKS_STORE)
         };
 
         for (Item item : items) {

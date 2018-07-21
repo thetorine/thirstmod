@@ -1,6 +1,7 @@
 package com.thetorine.thirstmod.common.logic;
 
 import com.thetorine.thirstmod.common.blocks.BlockDrinksBrewer;
+import com.thetorine.thirstmod.common.blocks.BlockDrinksStore;
 import com.thetorine.thirstmod.common.blocks.BlockRainCollector;
 import com.thetorine.thirstmod.common.content.Drink;
 import com.thetorine.thirstmod.common.items.*;
@@ -18,6 +19,7 @@ public class CommonProxy {
 
     public static final BlockRainCollector RAIN_COLLECTOR = new BlockRainCollector();
     public static final BlockDrinksBrewer  DRINKS_BREWER  = new BlockDrinksBrewer();
+    public static final BlockDrinksStore   DRINKS_STORE   = new BlockDrinksStore();
 
     public static final ItemDrink   DRINKS          = new ItemDrink("drink_item");
     public static final ItemCanteen CANTEEN         = new ItemCanteen("canteen");

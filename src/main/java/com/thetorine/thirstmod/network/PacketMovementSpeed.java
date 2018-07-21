@@ -13,8 +13,8 @@ import java.util.UUID;
 
 public class PacketMovementSpeed implements IMessage {
 
-    public UUID uuid;
-    public int ms = 0;
+    private UUID uuid;
+    private int ms = 0;
 
     public PacketMovementSpeed() {}
 
